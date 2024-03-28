@@ -1115,106 +1115,79 @@ const CarAccessories = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const [accessories, setAccessories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Assume you have a function to fetch accessory data from the backend
-  const fetchAccessories = async () => {
+  const fetchAccessories = async (category) => {
     try {
-      
-      const response = await fetch(`http://localhost:5000/customer_accessories/${userData.customer_id}`);
+      const response = await fetch(`http://localhost:5000/accessories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category }),
+      });
       const data = await response.json();
+      console.log("data collect", data)
       setAccessories(data);
     } catch (error) {
       console.error('Error fetching accessories:', error);
     }
   };
 
-  useEffect(() => {
-    fetchAccessories();
-  }, [userData]); 
+  const handleSelectChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
 
-
-  const AccessoriesDropdown = () => {
-    const accessorySchemeOptions = [
-      { value: "", label: "Select some accessory...", colorScheme: "blue" },
-      { value: "car-mat", label: "car-mat", colorScheme: "purple" },
-      { value: "cover", label: "cover", colorScheme: "red" },
-      { value: "wiper", label: "wiper", colorScheme: "orange" },
-      { value: "air-freshener", label: "air-freshener", colorScheme: "yellow" },
-      { value: "dash-cam", label: "dash-cam", colorScheme: "green" }
-    ];
-  
-    const [selectedAccessory, setSelectedAccessory] = useState("");
-  
-    const handleSelectChange = (event) => {
-      setSelectedAccessory(event.target.value);
-      console.log("my selected color is: ", selectedAccessory);
-    };
-  
-    return (
-      <FormControl p={4}>
-        <FormLabel>Accessories</FormLabel>
-        <Select
-          name="option-color-scheme"
-          defaultValue={accessorySchemeOptions[0].value}
-          onChange={handleSelectChange}
-          colorScheme="red"
-        >
-          {accessorySchemeOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
-        <p>Selected Accessory: {selectedAccessory}</p>
-      </FormControl>
-    );
+  const handleButtonClick = () => {
+    fetchAccessories(selectedCategory);
   };
 
   return (
     <>
-      <Box
-        bg='black'
-        w='100%'
-        color='white'
-        height='100vh'
-        bgGradient="linear(to-b, black, gray.600)"
-        p={4}
-      >
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="3xl" fontWeight="bold">Accessories</Text>
-          {/* You can add additional components or actions here */}
-        </Flex>
-        <AccessoriesDropdown></AccessoriesDropdown>
-        {accessories.length === 0 ? (
-          <Text mt={4} color="gray.400">There are no accessories at the moment.</Text>
-          
-        ) : (
-          <Table variant="simple" mt={4}>
-            <Thead>
-              <Tr>
-                <Th>Accessory Name</Th>
-                <Th>Price</Th>
-                <Th>Description</Th>
-                <Th>Added Date</Th>
-                <Th>Quantity</Th>
-                <Th>Car ID</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {accessories.map((accessory) => (
-                <Tr key={accessory.accessory_id}>
-                  <Td>{accessory.accessory_name}</Td>
-                  <Td>${accessory.price}</Td>
-                  <Td>{accessory.description}</Td>
-                  <Td>{accessory.added_date}</Td>
-                  <Td>{accessory.quantity}</Td>
-                  <Td>{accessory.car_id}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        )}
-      </Box>
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
+        Accessories
+      </Text>
+      <FormControl mx="auto" my={4} w="max-content">
+        <FormLabel>Category</FormLabel>
+        <Select
+          name="category"
+          defaultValue=""
+          onChange={handleSelectChange}
+          colorScheme="red"
+        >
+          <option value="">Select a category...</option>
+          <option value="car-mat">Car Mat</option>
+          <option value="cover">Cover</option>
+          <option value="wiper">Wiper</option>
+          <option value="air-freshener">Air Freshener</option>
+          <option value="dash-cam">Dash Cam</option>
+        </Select>
+      </FormControl>
+      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
+        Fetch Accessories
+      </Button>
+      <Table variant="striped" colorScheme="blue" mx="auto" w="max-content">
+        <Thead>
+          <Tr>
+            <Th>Accessory ID</Th>
+            <Th>Name</Th>
+            <Th>Description</Th>
+            <Th>Price</Th>
+            <Th>Image</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {accessories.map((accessory, index) => (
+            <Tr key={index}>
+              <Td>{accessory.accessoire_id}</Td>
+              <Td>{accessory.name}</Td>
+              <Td>{accessory.description}</Td>
+              <Td>{accessory.price}</Td>
+              <Td>{accessory.image}</Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
     </>
   );
 };
