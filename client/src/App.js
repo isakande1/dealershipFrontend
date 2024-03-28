@@ -18,8 +18,6 @@ import CarDetails from './carDetails';
 import Addons from './Addons'
 //import CarAccessories from './carAccessories';
 
-
-
 function App() {
   return (
     // this will be used to navigate to different pages in our website
@@ -1687,7 +1685,10 @@ const handleAppointmentRequests = () => {
 };
 
 // component to handle when the user clicks on "add cars" button and selects a file
-const handleAddCars = (managerId) => {
+const HandleAddCars = ({managerId}) => {
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   // parse the information from the file entered
   const parseFileContent = (fileContent) => {
     const lines = fileContent.split('\n'); 
@@ -1717,24 +1718,26 @@ const handleAddCars = (managerId) => {
 
   // when user enters file, display filename 
   const handleFileInputChange = (event) => {
-      const file = event.target.files[0];
+    setErrorMessage(''); // Reset error message when file input changes
+    setSuccessMessage(''); // Reset success message when file input changes
+    const file = event.target.files[0];
 
-      if (file) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-              const fileContent = event.target.result;
-              console.log('File Content', fileContent);
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const fileContent = event.target.result;
+            console.log('File Content', fileContent);
 
-              // parse the file and show results of parse in console log
-              const cars = parseFileContent(fileContent);
-              console.log('Parsed Cars', cars);
+            // parse the file and show results of parse in console log
+            const cars = parseFileContent(fileContent);
+            console.log('Parsed Cars', cars);
 
-              // send parsed info to backend
-              sendCars(cars);
-          };
+            // send parsed info to backend
+            sendCars(cars);
+        };
 
-          reader.readAsText(file);
-      }
+        reader.readAsText(file);
+    }
   };
 
   // function that sends the parsed data from the file to the backend
@@ -1748,24 +1751,29 @@ const handleAddCars = (managerId) => {
         body: JSON.stringify({ cars })  // ensure data is being converted to JSON
     })
     .then(response => {
-        if (response.ok) {
-            console.log('Cars added successfully');
-        } else {
-            console.error('Failed to add cars:', response.statusText);
-        }
+      if (response.ok) {
+        console.log('Cars added successfully');
+        setSuccessMessage('Cars added successfully!');
+      } else {
+        console.error('Failed to add cars:', response.statusText);
+        setErrorMessage('Failed to add cars. Please try again.');
+      }
     })
     .catch(error => {
-        console.error('Error:', error);
+      console.error('Error:', error);
+      setErrorMessage('An error occurred. Please try again.');
     });
 };
 
-  return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: "300px", marginTop: "-375px"}}>
-          <div>
-              <Text fontWeight="bold" color="white" fontSize="4xl">Select a file to add cars</Text>
-              <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"30px", marginLeft: "90px" }} />
-          </div>
+return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: "300px", marginTop: "-375px"}}>
+      <div>
+          <Text fontWeight="bold" color="white" fontSize="4xl">Select a file to add cars</Text>
+          <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"30px", marginLeft: "90px" }} />
+          {successMessage && <p style={{ color: 'green',  marginLeft: '60px', marginTop: '10px' }}>{successMessage}</p>}
+          {errorMessage && <p style={{ color: 'red', marginLeft: '20px', marginTop: '10px' }}>{errorMessage}</p>}
       </div>
+    </div>
   );
 };
 
@@ -1831,11 +1839,6 @@ const Manager = () => {
   // when user clicks on create technician, show the relevant form immediately
   const handleCreateTechnician = () => {
     setShowTechnicianForm(true);
-  };
-
-  // once user clicks on the add car button, set the addCars flag to true and display file upload form
-  const handleAddCarsButtonClick = () => {
-    setShowAddCars(true);
   };
 
   // ensures that when a button is clicked, only the relevant information of that button is shown
@@ -1974,7 +1977,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
         </Flex>
       </Box>
-      {showAddCars && handleAddCars(userData.manager_id)}
+      {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
     </>
   );
 };
