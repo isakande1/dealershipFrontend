@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope } from 'react-icons/fa';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -40,11 +40,67 @@ function App() {
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
           <Route path="/Addons" element={<Addons/>} />
+          <Route path="ContactPage" element={<ContactPage/>} />
         </Routes>
       </ChakraProvider>
     </Router>
   )
 }
+
+// contact page that displays the email and phone number as text fields to the user
+const ContactPage = () => {
+  const handleClickCart = () => {
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+    // Redirect to login page
+    window.location.href = '/login';
+  }
+    };
+
+  return (
+    <>
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height="90vh"
+        bgGradient="linear(to-b, black, gray.600)"
+      >
+        <Flex justifyContent="space-between" alignItems="center" p={4}>
+          <Box>
+            <span>Logo Will Go Here</span>
+          </Box>
+          <Flex>
+            <Button as={Link} to="/login" variant="link" color="white" marginRight="20px">Login/Signup</Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={handleClickCart}>Cart</Button>
+          </Flex>
+        </Flex>
+        <center><Text fontSize="4xl" fontWeight="bold" marginTop="30px">Contact Information</Text></center>
+        <Text style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FaPhone style={{ marginRight: '15px', fontSize: '25px', marginTop: '50px' }} /> 
+          <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '50px' }}>123-321-1234</span>
+        </Text>
+        <Text style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FaEnvelope style={{ marginRight: '15px', fontSize: '25px', marginTop: '30px'}} />
+          <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
+        </Text>
+      </Box>
+      <Footer marginTop='-37px' />
+    </>
+  )
+}
+
+// this will be used as the footer on the site, must declare a marginTop or else defaults to 0px
+const Footer = ({ marginTop }) => { 
+  return (
+    <Box bg="purple.900" height="100px" marginTop={marginTop}> {/* Use marginTop prop */}
+      <Text textAlign="center" fontSize="lg" color="white">Velocity Motors &copy; {new Date().getFullYear()}</Text>
+      <Flex justifyContent="center">
+        <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
+      </Flex>
+    </Box>
+  );
+};
 
 const DropdownMenu = ({ title, options, selected, onSelect }) => {
   return (
@@ -304,6 +360,7 @@ const Homepage = () => {
           ))}
         </Flex>
       </Box>
+      <Footer marginTop="40px"/>
     </>
   );
 };
@@ -510,6 +567,7 @@ const SignedInHomepage = () => {
           ))}
         </Flex>
       </Box>
+      <Footer marginTop="40px"/>
     </>
   );
 };
@@ -1960,11 +2018,65 @@ const Admin = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
+  const [showTechnicianForm, setShowTechnicianForm] = useState(false);
+  const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
+  const [technicianFormData, setTechnicianFormData] = useState({
+    firstName: '',  
+    lastName: '',  
+    email: '',
+    username: '',
+    phone: '',
+    password: '',
+    admin_id: userData.admin_id
+  });
+
+  // handler to toggle technician form visibility
+  const handleSubmitTechnicianForm = (event) => {
+    event.preventDefault();
+    const formData = {
+      ...technicianFormData,
+      admin_id: userData.admin_id
+    };
+  
+    axios.post('/add_technician', formData)
+      .then(response => {
+        console.log('Technician added successfully');
+        setTechnicianFormData({  // Reset all form fields to blank
+          firstName: '',  
+          lastName: '',  
+          email: '',
+          username: '',
+          phone: '',
+          password: ''
+        });
+        setAccountCreationSuccess(true); // Set account creation success state to true
+
+        setTimeout(() => {
+          setAccountCreationSuccess(false); // Hide the success message after 3 seconds
+        }, 3000);
+      })
+      .catch(error => {
+        console.error('Error adding technician:', error);
+      });
+  };
 
   // when admin clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
+  };
+
+  const handleCreateTechnician = () => {
+    setShowTechnicianForm(true);
+  };
+
+  // ensures that when a button is clicked, only the relevant information of that button is shown
+  const handleButtonClick = (section) => {
+    switch (section) {
+      case 'createTechnician':
+        setShowTechnicianForm(true);
+        break;
+    }
   };
 
   return (
@@ -1988,6 +2100,80 @@ const Admin = () => {
         </Flex>
       </Box>
 
+      {/* Form with information required to create a technician account */}
+      {showTechnicianForm && (
+        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+              <FormControl id="firstName" isRequired marginBottom="20px">
+                <FormLabel color="white">First Name</FormLabel>
+                <Input
+                  type="text"
+                  value={technicianFormData.firstName}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+              <FormControl id="lastName" isRequired marginBottom="20px">
+                <FormLabel>Last Name</FormLabel>
+                <Input
+                  type="text"
+                  value={technicianFormData.lastName}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+              <FormControl id="email" isRequired marginBottom="20px">
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  value={technicianFormData.email}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+            </Flex>
+            <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+              <FormControl id="username" isRequired marginBottom="20px">
+                <FormLabel>Username</FormLabel>
+                <Input
+                  type="text"
+                  value={technicianFormData.username}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+              <FormControl id="phone" isRequired marginBottom="20px">
+                <FormLabel>Phone</FormLabel>
+                <Input
+                  type="number"
+                  value={technicianFormData.phone}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+              <FormControl id="password" isRequired marginBottom="20px">
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  value={technicianFormData.password}
+                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, password: e.target.value })}
+                  color="white"
+                />
+              </FormControl>
+            </Flex>
+          </Flex>
+          <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
+        </form>
+      )}
+
+      { /* if the account is successfully created, display a success message to the user */}
+      {accountCreationSuccess && (
+        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
+          Technician account created successfully!
+        </Box>
+      )}
+
       {/* dashboard options shown to admin upon signing in */}
       <Box
         bg="rgba(128, 128, 128, 0.15)"
@@ -2003,7 +2189,7 @@ const Admin = () => {
         { /* options for the admin to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="green" color="white" marginBottom="10px">Create Manager Account</Button>
-          <Button variant="green" color="white" marginBottom="10px">Create Technician Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
           <Button variant="green" color="white" marginBottom="10px">Service Appointment Requests</Button>
           <Button variant="green" color="white" marginBottom="10px">Assign Technicians</Button>
           <Button variant="green" color="white" marginBottom="10px">Add Cars To Dealership</Button>
