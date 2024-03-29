@@ -175,3 +175,8 @@ button:hover {
 .dashboard-header {
   font-size: 40px;
 }
+
+/* for navbar */
+.bg-color {
+  background-color: #d3d3d3 !important; /* Change background color to red */
+}
