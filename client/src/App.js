@@ -2055,7 +2055,7 @@ const Admin = () => {
           phone: '',
           password: ''
         });
-        setAccountCreationSuccess(true); // Set account creation success state to true
+        setAccountCreationSuccess(true); // Set account creation success state to True
 
         setTimeout(() => {
           setAccountCreationSuccess(false); // Hide the success message after 3 seconds
