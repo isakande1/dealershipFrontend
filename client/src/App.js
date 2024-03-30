@@ -2024,9 +2024,23 @@ const Admin = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
+  /*Create Technician Form Hooks and Variables*/
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
+    firstName: '',  
+    lastName: '',  
+    email: '',
+    username: '',
+    phone: '',
+    password: '',
+    admin_id: userData.admin_id
+  });
+  /*End Of: Create Technician Form Hooks and Variables*/
+
+  /*Create Manager Form Hooks and Variables*/
+  const [showManagerForm, setShowManagerForm] = useState(false);
+  const [managerFormData, setManagerFormData] = useState({
     firstName: '',  
     lastName: '',  
     email: '',
@@ -2064,6 +2078,14 @@ const Admin = () => {
       .catch(error => {
         console.error('Error adding technician:', error);
       });
+  };
+
+
+  const handleChange = (e) => {
+    setManagerFormData({ ...managerFormData, [e.target.name]: e.target.value });
+  };
+  const handleManagerFormSubmit = (managerFormData) => {
+    console.log('Form data: ', managerFormData);
   };
 
   // when admin clicks on sign out, gets redirected to the homepage
@@ -2173,6 +2195,96 @@ const Admin = () => {
         </form>
       )}
 
+      {/* Conditional Rendering of the Create Manager Account Form */}
+      {showManagerForm && (
+            <Box
+              bg="rgba(128, 128, 128, 0.15)"
+              color="white"
+              w="400px"
+              h="600px"
+              position="relative"
+              marginTop="90px"
+              borderRadius="xl"
+              p={4}
+            >
+              <Text fontSize="2xl" fontWeight="bold" mb={4}>
+                Create Manager Account
+              </Text>
+              {/* Render your form fields here */}
+              <Box as="form" onSubmit={handleManagerFormSubmit}>
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="firstName">First Name</FormLabel>
+                  <Input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={managerFormData.firstName}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                  <Input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={managerFormData.lastName}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={managerFormData.email}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="username">Username</FormLabel>
+                  <Input
+                    type="username"
+                    id="username"
+                    name="username"
+                    value={managerFormData.username}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="phone">Phone</FormLabel>
+                  <Input
+                    type="phone"
+                    id="phone"
+                    name="phone"
+                    value={managerFormData.phone}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl mb={4}>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={managerFormData.password}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <Button type="submit" colorScheme="green">
+                  Create Manager
+                </Button>
+              </Box>
+            </Box>
+        )}
+
       { /* if the account is successfully created, display a success message to the user */}
       {accountCreationSuccess && (
         <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
@@ -2194,7 +2306,7 @@ const Admin = () => {
       >
         { /* options for the admin to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px">Create Manager Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => setShowManagerForm(true)}>Create Manager Account</Button>
           <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
           <Button variant="green" color="white" marginBottom="10px">Service Appointment Requests</Button>
           <Button variant="green" color="white" marginBottom="10px">Assign Technicians</Button>
