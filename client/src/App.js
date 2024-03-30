@@ -29,7 +29,7 @@ function App() {
   return (
     // this will be used to navigate to different pages in our website
     <div>
-    <NavBar/>
+    {/* <NavBar/> */}
     <Router>
       <ChakraProvider>
         <Routes>
@@ -1821,6 +1821,7 @@ const Manager = () => {
   const navigate = useNavigate();
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
   const [showAddCars, setShowAddCars] = useState(false);
+  const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -1831,6 +1832,19 @@ const Manager = () => {
     password: '',
     manager_id: userData.manager_id
   });
+  const [serviceRequests, setServiceRequests] = useState([]);
+  useEffect(() => {
+    if (showServiceRequests) {
+      axios.get('/show_customer_service_requests/')
+        .then(response => {
+          setServiceRequests(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching service requests:', error);
+        });
+    }
+  }, [showServiceRequests]);
+
 
   // handler to toggle technician form visibility
   const handleSubmitTechnicianForm = (event) => {
@@ -1870,7 +1884,6 @@ const Manager = () => {
 
   // function that handles service appointment requests when the user clicks the button
   const handleAppointmentRequests = () => {
-    
   };
 
   // when user clicks on create technician, show the relevant form immediately
@@ -1884,10 +1897,18 @@ const Manager = () => {
       case 'createTechnician':
         setShowTechnicianForm(true);
         setShowAddCars(false);
+        setShowServiceRequests(false);
         break;
       case 'addCars':
         setShowAddCars(true);
         setShowTechnicianForm(false);
+        setShowServiceRequests(false);
+        break;
+      case 'manageServiceRequests':
+        setShowServiceRequests(true);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+
         break;
       default:
         break;
@@ -1989,6 +2010,48 @@ const Manager = () => {
         </Box>
       )}
 
+      { /* if the account is successfully created, display a success message to the user */}
+      {showServiceRequests && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '50%', top: '150px', left: '500px'}}>
+          <h2>Service Requests</h2>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Service Request ID #</th>
+                <th>Service Requested</th>
+                <th>Price of Service</th>
+                <th>Proposed Date and Time</th>
+                <th>Car ID#</th>
+                <th>Status</th>
+                <th>Requested by</th>
+                <th>Phone</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {serviceRequests.map(request => (
+                <tr key={request.service_request_id}>
+                  <td>{request.service_request_id}</td>
+                  <td>{request.service_name}: {request.description}</td>
+                  <td>{request.service_price}</td>
+                  <td>{request.proposed_datetime}</td>
+                  <td>{request.car_id}</td>
+                  <td>{request.status}</td>
+                  <td>{request.customer_username}</td>
+                  <td>{request.customer_phone}</td>
+                  <td>
+                    <Button colorScheme="red">
+                      Decline
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Box>
+      )}
+
+
       {/* Dashboard options shown to the manager upon signing in */}
       <Box
         bg="rgba(128, 128, 128, 0.15)"
@@ -2004,7 +2067,7 @@ const Manager = () => {
         {/* options for the manager to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={handleAppointmentRequests}>Service Appointment Requests</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageServiceRequests')}>Service Appointment Requests</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Assign Technicians</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Remove Cars From Dealership</Button>
@@ -2283,7 +2346,7 @@ const Admin = () => {
                 </Button>
               </Box>
             </Box>
-        )}
+      )}
 
       { /* if the account is successfully created, display a success message to the user */}
       {accountCreationSuccess && (
