@@ -6,72 +6,99 @@ import {
     AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Image
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
-import axios from 'axios';
+import {flushSync, unstable_batchedUpdates} from 'react-dom';
+import axios, { all } from 'axios';
 
 export default function Addons(){
     const location = useLocation();
-    const [fetChedPackages, setFetchedPackages] = useState({});
+    const [allpackagesInfos, setAllpackagesInfos] = useState([]);
     const [itemsCount, setItemsCount] = useState(0);
     const {car_name} = location.state;
     const {car_image} = location.state;
     const {car_price} = location.state;
+    const userData = location.state?.userData; 
+    const customer_id =userData.customer_id;
     const [total, setTotal] = useState(car_price);
-    const [packageToAdd,setPackageToadd] = useState([]);
-    
+    const [packageToAdd,setPackageToAdd]= useState([]);
+    //below state use to switch between add and remove option
+    const [isAdded0,setIsAdded0]  = useState(false);
+    const [isAdded1,setIsAdded1]  = useState(false);
+    const [isAdded2,setIsAdded2]  = useState(false);
+    const [isAdded3,setIsAdded3]  = useState(false);
+    const [isAdded4,setIsAdded4]  = useState(false);
+    const [isAdded5,setIsAdded5]  = useState(false);
+    const navigate = useNavigate();   
+
+    //fetch the service packages
     const fetchPackages = () => {
       axios.get('/ServicesPackage')
-        .then(response => {
-          console.log('services package cars:', response.data);
-          setFetchedPackages(response.data);
-           })
+          .then(response => {
+              console.log('services package cars:', response.data);
+              setAllpackagesInfos( response.data);
+          })
+          .catch(error => {
+              console.error('Error fetching service package:', error);
+          });
+  };
+
+    useEffect(() => {
+      console.log("usfhfg", userData);
+      fetchPackages();
+  }, []);
+
+  //send the packages to add to a single end point that will had them to the cart and to subscribed dervices
+  const AddtoCartAndOwnedService = (customer_id, packages,userData ) => {
+    if(packages.length ===0){
+      navigate('/Cart', { state: { userData } });
+      return;
+    }
+    console.log("packages",packages);
+      axios.post('/addtoCartAndOwnedService', { customer_id , packages})
+        .then(()=> {
+          navigate('/Cart', { state: { userData } }) ;
+        })
         .catch(error => {
-          console.error('Error fetching service package:', error);
+          window.confirm('Something wrong happened, please try again !');
+          
         });
     };
+//end
 
-    useEffect( () =>{
-        fetchPackages();
-    },[]
-   );
-   /*styling */
-   //highlight the package if added
+//use to highklight a selected package
        const highlight = (isAdded) => {
         return isAdded ? { border: "2px solid white" } : {};
     };
     //end
     const imageStyle = {
       overflow: "hidden",
-      boxSize: "100%",
+       h: "200px",
+       w:"100%",
       alt: "package",
       objectFit: 'cover'
   }
    const buttonStyle = {
     display :"block",
     variant : "light",
-    w:"200px",
-    bg :"green"
+     w:"100%",
+    bg :"green",
+    position:"absolute",
+    bottom:"0"
+   
    }
 
+   //use to switch the color of a package box button
    const buttonColor = (isAdded) =>{
     return isAdded ? { bg : "red" } : {bg : "blue"};
    }
-    //style package i
+   //end
+    //style package box
     const packageBoxStyle = {
-      height : "200px",
+      height : "350px",
       width : "200px",
-      borderRadius:"2px"
+      borderRadius:"3px"
     }
   
-    const AddtoCart = ({ customer_id, item_price, item_name,  service_package_id}) => {
-        axios.post('/add_cart_service', { customer_id, item_price, item_name,  service_package_id })
-          .then(response => {
-            console.log('Filtered cars:', response.data);
-            return { border: "2px solid white" };
-          })
-          .catch(error => {
-            console.error('Error adding cars:', error);
-          });
-      };
+  //display the car
     const CarInfos = () =>{
         return(
         <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" > 
@@ -89,53 +116,110 @@ export default function Addons(){
            </Box>
            <Box>
              <Text color="white" > Total </Text>
-             <Text color="orange"> ${total} </Text>
+             <Text color="orange"> ${total.toFixed(2)} </Text>
            </Box>
         </Grid>);
-    }
-     const Packages =(allpackagesInfos)=>{
-        <Grid>
-         </Grid>
+    };
+
+    //regroup all packages displayed
+     const Packages =({allpackagesInfos})=>{
+  
+      return(
+       
+        <Grid w= "90%" h="100%" gridTemplateColumns="repeat(3,1fr)"rowGap="25px" marginLeft="230px" >
+          
+      {/* {allpackagesInfos.map((packageInfos, index) => (
+        <Package key={index} packageInfos={packageInfos} isAdded={isAdded[index]} setIsAdded={setIsAdded} />
+      ))} */}
+      
+      { <Package  packageInfos={allpackagesInfos[0]} isAdded={isAdded0} setIsAdded={setIsAdded0} />}
+      { <Package packageInfos={allpackagesInfos[1]} isAdded={isAdded1} setIsAdded={setIsAdded1} />}
+      { <Package  packageInfos={allpackagesInfos[2]} isAdded={isAdded2} setIsAdded={setIsAdded2} />}
+      { <Package packageInfos={allpackagesInfos[3]} isAdded={isAdded3} setIsAdded={setIsAdded3} />}
+      { <Package  packageInfos={allpackagesInfos[4]} isAdded={isAdded4} setIsAdded={setIsAdded4} />}
+      { <Package packageInfos={allpackagesInfos[1]} isAdded={isAdded5} setIsAdded={setIsAdded5} />}
+     
+    </Grid>
+    
+         );
      }
+    
 //add a package
-     const addPackage =(packageInfos,setIsAdded) =>{
-      setPackageToadd(prevArray => [...prevArray,packageInfos]);
-      setIsAdded(false);
-
+    const AddPackage =(packageInfos,index) =>{
+    flushSync(()=>{  
+      setPackageToAdd([...packageToAdd, packageInfos]);
+      console.log(packageToAdd) ;
+      setTotal((prev)=>prev + packageInfos.price);
+       packageToAdd[index] = packageInfos;
+      console.log(packageToAdd[index]) ;
+      setItemsCount((prev) => prev + 1);
+    });
         
      }
-     //remove a package
-     const removePackage =(setIsAdded) =>{
-      const newArray = packageToAdd.slice(0,-1);
-      setPackageToadd(newArray);
-      setIsAdded(true);
+  
+    
+     
+     //remove a package 
+     const RemovePackage =(packageInfos) =>{
+      console.log("packinfos" ,packageInfos) ;
+      console.log("remove" ,packageInfos.service_package_id) ;
+      setTotal((prev)=> prev - packageToAdd.filter(a=>a.service_package_id == packageInfos.service_package_id)[0].price);
+      setPackageToAdd(packageToAdd.filter(a=>a.service_package_id !== packageInfos.service_package_id));
+      console.log(packageToAdd);
+      setItemsCount((prev) => prev - 1);
      }
 
-    const Package =(packageInfos) =>{
-      const [isAdded,setIsAdded]  = useState(false);
-      const [buttonName, setButtonName] = useState(isAdded ? "Add" : "Remove");
-       <Box sx = {{...packageBoxStyle,...highlight(isAdded)}} > 
+    
+    //box for one package
+     const Package = ({ packageInfos, isAdded, setIsAdded }) => {
+      // useEffect(()=>{
+      //   isAdded ? RemovePackage(index) : AddPackage(packageInfos,index);
+      // },[]);
+  
+      if (!packageInfos) {
+          return null; // Render nothing if packageInfos is undefined
+      }
+  
+      const handleClick = () => unstable_batchedUpdates(() => {
+          isAdded ? setIsAdded(false) : setIsAdded(true);
+          isAdded ? RemovePackage(packageInfos) : AddPackage(packageInfos);
+      });
 
-        <Button  sx={{...buttonStyle,...buttonColor(isAdded)}}onClick={()=>{ isAdded ?  removePackage(setIsAdded) : addPackage(packageInfos,setIsAdded)}}> 
-        {buttonName}
-        </Button>
-        </Box>
-        
-
-        
-    }
+  
+  
+      return (
+          <Grid sx={{ ...packageBoxStyle, ...highlight(isAdded)}}    pos="relative">
+             <Box> 
+              <Image sx={imageStyle} src={packageInfos.image} />
+              </Box>
+              <Box h="150px" >
+              <Text color="white" fontWeight="bold" margin="0" >{packageInfos.name} </Text>
+              <Text color="white"margin="0" > ${packageInfos.price}</Text>
+              <Text color="white" margin="0" > {packageInfos.description}</Text>
+              </Box>
+            
+              <Button sx={{ ...buttonStyle, ...buttonColor(isAdded) }} onClick={() => handleClick()}>
+                  {isAdded ? "Remove" : "Add"}
+                  {console.log({ isAdded })}
+              </Button>
+              
+          </Grid>
+      );
+  };
+  
+  
    
     return(
         <>
         <Box> 
        < CarInfos />
-        </Box>
-        <Grid bg="gray.700" minH="100vh">
-
-       </Grid>
-       <Flex bg="black" justifyContent="center" position="fixed" h="140px" w="100%" zIndex="2" bottom="0" left="0">
-       <Button>
-       <Text>Continue</Text>
+        </Box >
+        <Center bg="gray.700" minH="100vh"  rowGap="25px" >
+       { <Packages allpackagesInfos= {allpackagesInfos}/>}
+        </Center>
+       <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
+       <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData)}>
+       <Text>{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>
         </>

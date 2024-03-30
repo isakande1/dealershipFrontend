@@ -126,6 +126,7 @@ export default function CarDetails() {
         const navigate = useNavigate();   
         const handleAddToCart = async () => {
             //prompt user to log in
+            // console.log("id" , userData.customer_id);
             if( typeof userData == "undefined"){
             const confirmed = window.confirm('You need to be logged in. Proceed to login?');
             if (confirmed) {
@@ -156,9 +157,11 @@ export default function CarDetails() {
             if (response.ok) {
               //window.confirm('Car added successfully');
               //NAvigate to the next page 
+              console.log('userData', userData)
               navigate('/Addons', {
+               
                 state: {
-                  
+                  userData: userData,
                   car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
                   car_image: carInfos.image0,
                   car_price: carInfos.price,
