@@ -1845,16 +1845,19 @@ const Manager = () => {
   const [serviceRequests, setServiceRequests] = useState([]);
   useEffect(() => {
     if (showServiceRequests) {
-      axios.get('/show_customer_service_requests/')
+      fetchServiceRequests();
+    }
+  }, [showServiceRequests]);
+
+  const fetchServiceRequests = () => {
+    axios.get('/show_customer_service_requests/')
         .then(response => {
           setServiceRequests(response.data);
         })
         .catch(error => {
           console.error('Error fetching service requests:', error);
         });
-    }
-  }, [showServiceRequests]);
-
+  };
 
   // handler to toggle technician form visibility
   const handleSubmitTechnicianForm = (event) => {
@@ -2051,6 +2054,53 @@ const Manager = () => {
       {accountCreationSuccess && (
         <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
           Technician account created successfully!
+        </Box>
+      )}
+
+      { /* if the account is successfully created, display a success message to the user */}
+      {showServiceRequests && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          <h1 style={{paddingBottom:'10px'}}><strong>Service Requests</strong></h1>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th style={{textAlign: 'center', width: '3%'}}>Service Request ID #</th>
+                <th style={{textAlign: 'center', width: '3%'}}>Service Requested</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Price of Service</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Proposed Date and Time</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Car ID#</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Status</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Requested by</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Phone</th>
+                <th style={{textAlign: 'center', width: '2%'}}></th>
+                <th style={{textAlign: 'center', width: '2%'}}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {serviceRequests.map(request => (
+                <tr key={request.service_request_id}>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.status}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                    <Button colorScheme="green">
+                      Accept
+                    </Button>
+                  </td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="red">
+                      Decline
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </Box>
       )}
 
