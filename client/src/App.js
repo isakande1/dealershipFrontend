@@ -1141,7 +1141,13 @@ const CarAccessories = () => {
   };
 
   return (
-    <>
+    <Box
+      bg='black'
+      w='100%'
+      color='white'
+      height='100vh'
+      bgGradient="linear(to-b, black, gray.600)"
+      >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
@@ -1186,7 +1192,7 @@ const CarAccessories = () => {
           ))}
         </Tbody>
       </Table>
-    </>
+    </Box>
   );
 };
 
@@ -1757,6 +1763,7 @@ const Manager = () => {
   const navigate = useNavigate();
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
   const [showAddCars, setShowAddCars] = useState(false);
+  const [showRemoveCars, setShowRemoveCars] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -1766,6 +1773,9 @@ const Manager = () => {
     phone: '',
     password: '',
     manager_id: userData.manager_id
+  });
+  const [removeCarFormData, setRemoveCarFormDataData] = useState({
+    car_id: ''
   });
 
   // handler to toggle technician form visibility
@@ -1798,6 +1808,33 @@ const Manager = () => {
       });
   };
 
+  const handleSubmitRemoveCarForm = async (event) => {
+    event.preventDefault();
+    console.log("the car id is", removeCarFormData.car_id);
+    try {
+        const response = await fetch(`http://localhost:5000/remove_car`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(removeCarFormData), // Sending formData in the request body
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Car removed successfully:", data);
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error removing car:', response.statusText);
+            // Handle the error, show an error message to the user, etc.
+        }
+    } catch (error) {
+        console.error('Error sending data:', error);
+        // Handle network errors, display error message, etc.
+    }
+};
+
+
   // when manager clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -1820,10 +1857,17 @@ const Manager = () => {
       case 'createTechnician':
         setShowTechnicianForm(true);
         setShowAddCars(false);
+        setShowRemoveCars(false);
         break;
       case 'addCars':
         setShowAddCars(true);
         setShowTechnicianForm(false);
+        setShowRemoveCars(false);
+        break;
+      case 'removeCars':
+        setShowAddCars(false);
+        setShowTechnicianForm(false);
+        setShowRemoveCars(true);
         break;
       default:
         break;
@@ -1925,6 +1969,26 @@ const Manager = () => {
         </Box>
       )}
 
+    {showRemoveCars && (
+            <form onSubmit={handleSubmitRemoveCarForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                  <FormControl id="car_id" isRequired marginBottom="20px">
+                    <FormLabel color="white">Car VIN</FormLabel>
+                    <Input
+                      type="text"
+                      value={removeCarFormData.car_id}
+                      onChange={(e) => setRemoveCarFormDataData({ ...removeCarFormData, car_id: e.target.value })}
+                      placeholder='Enter VIN to remove car'
+                      color="white"
+                    />
+                  </FormControl>
+                </Flex>
+              </Flex>
+              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
+            </form>
+          )}
+
       {/* Dashboard options shown to the manager upon signing in */}
       <Box
         bg="rgba(128, 128, 128, 0.15)"
@@ -1943,7 +2007,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={handleAppointmentRequests}>Service Appointment Requests</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Assign Technicians</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Remove Cars From Dealership</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Test Drive Appointments</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
