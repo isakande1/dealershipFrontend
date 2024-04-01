@@ -101,7 +101,7 @@ export default function Addons(){
   //display the car
     const CarInfos = () =>{
         return(
-        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" > 
+        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" position="fixed" zIndex="2" width="100%" top="0" left="0" > 
             <Box width="140px" height="100px"> 
             <Image
                         overflow="hidden"
@@ -126,7 +126,7 @@ export default function Addons(){
   
       return(
        
-        <Grid w= "90%" h="100%" gridTemplateColumns="repeat(3,1fr)"rowGap="25px" marginLeft="230px" >
+        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%" marginTop="90px" marginBottom="40px">
           
       {/* {allpackagesInfos.map((packageInfos, index) => (
         <Package key={index} packageInfos={packageInfos} isAdded={isAdded[index]} setIsAdded={setIsAdded} />
@@ -211,12 +211,12 @@ export default function Addons(){
    
     return(
         <>
-        <Box> 
+       
        < CarInfos />
-        </Box >
-        <Center bg="gray.700" minH="100vh"  rowGap="25px" >
+        
+        <Flex bg="gray.700" minH="100vh" justify="center" paddingTop="25px" >
        { <Packages allpackagesInfos= {allpackagesInfos}/>}
-        </Center>
+        </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
        <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData)}>
        <Text>{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>

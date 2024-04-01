@@ -249,11 +249,13 @@ const Homepage = () => {
   const [searchParams, setSearchParams] = useState({});
 
   useEffect(() => {
-    fetchCars();
-  }, [currentPage, searchParams]);
+      fetchCars();
+  }, [currentPage, searchParams]); // Include isCarsFiltered in the dependency array
+  
 
   // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
+    
     try {
       const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
       if (!response.ok) {
@@ -268,7 +270,7 @@ const Homepage = () => {
       setAllCars(data.cars);
     } catch (error) {
       console.error('Error fetching cars:', error.message);
-    }
+    } 
   };
 
   // component to handle clicking on a page number and seeing relevant cars on that page
