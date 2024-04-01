@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
+import TestDriveForm from './TestDriveForm';
 //import './App.css';
 
 
@@ -178,7 +179,9 @@ export default function CarDetails() {
             window.confirm('Car could not be added');
           }
         };
-      
+        const handleNavigateTestDrive = () => {
+          navigate('/carDetails/schedule-test-drive');
+        };
         return (
           <Grid bg="black" templateColumns="1fr 1fr" justifyItems="center">
             <Box>
@@ -212,8 +215,9 @@ export default function CarDetails() {
                 variant="light"
                 w="200px"
                 bg="#44337A"
+                onClick={handleNavigateTestDrive}
               >
-                Schedule test drive
+                Schedule test drive 
               </Button>
               <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A">
                 Financing
@@ -227,7 +231,7 @@ export default function CarDetails() {
                 variant="light"
                 w="200px"
                 bg="#44337A"
-                onClick={handleAddToCart} // Call handleAddToCart function on click
+                onClick={handleAddToCart} 
               >
                 Add to cart
               </Button>
@@ -240,12 +244,14 @@ export default function CarDetails() {
 
 
     return (
-        <Grid templateRows="1fr 1fr" >
-            <CarImagesLayout />
+      <Grid templateRows="1fr 1fr">
+          <CarImagesLayout />
             <Options />
-            
-        </Grid>
-
+      <Routes>
+      <Route path="/carDetails/*" element={<CarDetails />} />
+        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+      </Routes>
+    </Grid>
 
     );
 }

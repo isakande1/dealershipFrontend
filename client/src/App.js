@@ -15,6 +15,7 @@ import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -44,7 +45,8 @@ function App() {
           <Route path="/Cart" element={<CustomerCart/>} />
           <Route path="/PastPurchase" element={<PastPurchase />} />
           <Route path="/OwnCar" element={<OwnCar />} />
-          <Route path="/carDetails" element={<CarDetails />} />
+          <Route path="/carDetails/*" element={<CarDetails />} />
+        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
           <Route path="/Service" element={<CustomerSerivceAppointment />} />
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
@@ -599,9 +601,9 @@ const OwnCar = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission
-    // Assuming you have an endpoint like '/api/addCar'
-    fetch(`http://localhost:5000/add_car/${userData.customer_id}`, {
+    e.preventDefault(); 
+    
+    fetch(`http://localhost:5000/add_own_car/${userData.customer_id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
