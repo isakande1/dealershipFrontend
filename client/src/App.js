@@ -52,6 +52,8 @@ function App() {
           <Route path="/carAccessories" element={<CarAccessories />} />
           <Route path="/Addons" element={<Addons/>} />
           <Route path="ContactPage" element={<ContactPage/>} />
+          <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+          
         </Routes>
       </ChakraProvider>
     </Router>
@@ -422,7 +424,12 @@ const SignedInHomepage = () => {
   const handleNavigateToAddownCar = () => {
     navigate('/OwnCar', { state: { userData } });
   };
+
+
   
+  const handleNavigateToTestDrive = () => {
+    navigate('/TestDriveHistory', { state: { userData } });
+  };
 
   useEffect(() => {
     fetchCars();
@@ -543,7 +550,7 @@ const SignedInHomepage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
-            <Button variant="ghost" color="white" marginBottom="10px">View Test Drive Appointment</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px">Manage Offers</Button>
           </Flex>
         </Box>
@@ -580,6 +587,73 @@ const SignedInHomepage = () => {
         </Flex>
       </Box>
       <Footer marginTop="40px"/>
+    </>
+  );
+};
+
+const TestDriveHistory = () => {
+  const location = useLocation();
+  const userData = location.state?.userData;
+  const [driveHistory, setDriveHistory] = useState([]);
+
+  const fetchTestDriveHistory = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/test_drive_appointments/${userData.customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setDriveHistory(data);
+    } catch (error) {
+      console.error('Error fetching records:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestDriveHistory();
+  }, [userData]);
+
+  return (
+    <>
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100vh'
+        bgGradient="linear(to-b, black, gray.600)"
+        p={4}
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="3xl" fontWeight="bold">Test Drive Appointments</Text>
+        </Flex>
+
+        {driveHistory.length === 0 ? (
+          <Text mt={4} color="gray.400">You have no records.</Text>
+        ) : (
+          <Table variant="simple" mt={4}>
+            <Thead>
+              <Tr>
+                <Th>Appointment ID</Th>
+                <Th>Appointment date</Th>
+                <Th>Status</Th>
+                <Th>Car ID</Th>
+                <Th>Car Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {driveHistory.map((test) => (
+                <Tr key={test.appointment_id}>
+                  <Td>{test.appointment_id}</Td>
+                  <Td>{test.appointment_date}</Td>
+                  <Td>{test.status}</Td>
+                  <Td>{test.car_id}</Td>
+                  <Td>{test.car_name}</Td>  
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+      </Box>
     </>
   );
 };
@@ -752,7 +826,7 @@ const ServiceHistory = () => {
   const userData = location.state?.userData;
   const [serviceHistory, setServiceHistory] = useState([]);
 
-  // Assume you have a function to fetch service history data from the backend
+
   const fetchServiceHistory = async () => {
     try {
       const response = await fetch(`http://localhost:5000/customer_service_requests/${userData.customer_id}`);
@@ -779,7 +853,6 @@ const ServiceHistory = () => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Service History</Text>
-          {/* You can add additional components or actions here */}
         </Flex>
 
         {serviceHistory.length === 0 ? (
