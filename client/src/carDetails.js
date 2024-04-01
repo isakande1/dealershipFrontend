@@ -180,11 +180,20 @@ export default function CarDetails() {
           }
         };
         const handleNavigateTestDrive = () => {
-          navigate('/carDetails/schedule-test-drive');
+          if (userData && carInfos) {
+            navigate('/carDetails/schedule-test-drive', {
+              state: { userData, carInfos },
+            });
+          } else {
+            console.error('userData or carInfos is undefined.');
+          }
         };
         return (
           <Grid bg="black" templateColumns="1fr 1fr" justifyItems="center">
             <Box>
+            <Text marginBottom="5px" color="white">
+                VIN-number: {carInfos.car_id}
+              </Text>
               <Text marginBottom="5px" marginTop="8px" color="white">
                 Make: {carInfos.make}
               </Text>
