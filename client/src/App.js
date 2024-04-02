@@ -2909,6 +2909,25 @@ const Technician = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
+  const [showAssignedServices, setShowAssignedServices] = useState(false);
+  const [assignedServices, setAssignedServices] = useState([]);
+  
+  useEffect(() => {
+    if (showAssignedServices) {
+      fetchAssignedServices();
+    }
+  }, [showAssignedServices]);
+
+  const fetchAssignedServices = () => {
+    axios.get('/show_assigned_services')
+      .then(response => {
+        console.log(response.data); // Add this line
+        setAssignedServices(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching assigned services:', error);
+      });
+  };
 
   // when technician clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
@@ -2916,17 +2935,19 @@ const Technician = () => {
     navigate('/', { replace: true });
   };
 
+  const handleButtonClick = (section) => {
+    switch (section) {
+      case 'checkAssignedWork':
+        setShowAssignedServices(true);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <>
-      {/* this will be the gradient box */}
-      <Box
-        bg='black'
-        w='100%'
-        color='white'
-        height='100vh'
-        bgGradient="linear(to-b, black, gray.600)"
-      >
-        {/* will contain the greeting message for technician and the signout button */}
+      <Box bg='black' w='100%' color='white' height='100vh' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
             <Text fontSize="3xl" fontWeight="bold">{`Welcome, ${userData?.first_name}`}</Text>
@@ -2937,25 +2958,39 @@ const Technician = () => {
         </Flex>
       </Box>
 
-      {/* dashboard options shown to technician upon signing in */}
-      <Box
-        bg="rgba(128, 128, 128, 0.15)"
-        color="white"
-        w="300px"
-        h="600px"
-        position="fixed"
-        left="0"
-        top="0"
-        marginTop="90px"
-        borderRadius="xl"
-      >
-        { /* options for technician to choose from */}
+      <Box bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="600px" position="fixed" left="0" top="0" marginTop="90px" borderRadius="xl">
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px">Check Assigned Work</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('checkAssignedWork')}>Check Assigned Work</Button>
           <Button variant="green" color="white" marginBottom="10px">Modify Service Status</Button>
           <Button variant="green" color="white" marginBottom="10px">Send Service Report</Button>
         </Flex>
       </Box>
+
+      {showAssignedServices && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          <h1 style={{paddingBottom:'10px'}}><strong>Check Assigned Work</strong></h1>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th style={{textAlign: 'center'}}>Assigned Service ID</th>
+                <th style={{textAlign: 'center'}}>Assigned Technician</th>
+                <th style={{textAlign: 'center'}}>Assigned Email</th>
+                <th style={{textAlign: 'center'}}>Assigned Technician Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assignedServices.map(service => (
+                <tr key={service.assigned_service_id}>
+                  <td style={{textAlign: 'center'}}>{service.assigned_service_id}</td>
+                  <td style={{textAlign: 'center'}}>{`${service.technician_first_name} ${service.technician_last_name}`}</td>
+                  <td style={{textAlign: 'center'}}>{service.technician_email}</td>
+                  <td style={{textAlign: 'center'}}>{service.technician_phone}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Box>
+      )}
     </>
   );
 }
