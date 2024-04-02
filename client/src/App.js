@@ -17,6 +17,7 @@ import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -46,12 +47,15 @@ function App() {
           <Route path="/Cart" element={<CustomerCart/>} />
           <Route path="/PastPurchase" element={<PastPurchase />} />
           <Route path="/OwnCar" element={<OwnCar />} />
-          <Route path="/carDetails" element={<CarDetails />} />
+          <Route path="/carDetails/*" element={<CarDetails />} />
+          <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
           <Route path="/Service" element={<CustomerSerivceAppointment />} />
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
           <Route path="/Addons" element={<Addons/>} />
           <Route path="ContactPage" element={<ContactPage/>} />
+          <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+          
         </Routes>
       </ChakraProvider>
     </Router>
@@ -247,11 +251,13 @@ const Homepage = () => {
   const [searchParams, setSearchParams] = useState({});
 
   useEffect(() => {
-    fetchCars();
-  }, [currentPage, searchParams]);
+      fetchCars();
+  }, [currentPage, searchParams]); // Include isCarsFiltered in the dependency array
+  
 
   // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
+    
     try {
       const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
       if (!response.ok) {
@@ -266,7 +272,7 @@ const Homepage = () => {
       setAllCars(data.cars);
     } catch (error) {
       console.error('Error fetching cars:', error.message);
-    }
+    } 
   };
 
   // component to handle clicking on a page number and seeing relevant cars on that page
@@ -422,7 +428,12 @@ const SignedInHomepage = () => {
   const handleNavigateToAddownCar = () => {
     navigate('/OwnCar', { state: { userData } });
   };
+
+
   
+  const handleNavigateToTestDrive = () => {
+    navigate('/TestDriveHistory', { state: { userData } });
+  };
 
   useEffect(() => {
     fetchCars();
@@ -543,7 +554,7 @@ const SignedInHomepage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
-            <Button variant="ghost" color="white" marginBottom="10px">View Test Drive Appointment</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px">Manage Offers</Button>
           </Flex>
         </Box>
@@ -584,6 +595,73 @@ const SignedInHomepage = () => {
   );
 };
 
+const TestDriveHistory = () => {
+  const location = useLocation();
+  const userData = location.state?.userData;
+  const [driveHistory, setDriveHistory] = useState([]);
+
+  const fetchTestDriveHistory = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/test_drive_appointments/${userData.customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setDriveHistory(data);
+    } catch (error) {
+      console.error('Error fetching records:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestDriveHistory();
+  }, [userData]);
+
+  return (
+    <>
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100vh'
+        bgGradient="linear(to-b, black, gray.600)"
+        p={4}
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="3xl" fontWeight="bold">Test Drive Appointments</Text>
+        </Flex>
+
+        {driveHistory.length === 0 ? (
+          <Text mt={4} color="gray.400">You have no records.</Text>
+        ) : (
+          <Table variant="simple" mt={4}>
+            <Thead>
+              <Tr>
+                <Th>Appointment ID</Th>
+                <Th>Appointment date</Th>
+                <Th>Status</Th>
+                <Th>Car ID</Th>
+                <Th>Car Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {driveHistory.map((test) => (
+                <Tr key={test.appointment_id}>
+                  <Td>{test.appointment_id}</Td>
+                  <Td>{test.appointment_date}</Td>
+                  <Td>{test.status}</Td>
+                  <Td>{test.car_id}</Td>
+                  <Td>{test.car_name}</Td>  
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+      </Box>
+    </>
+  );
+};
+
 const OwnCar = () => {
   const [formData, setFormData] = useState({ car_id: '', make: '', model: '' });
   const [customerCars, setCustomerCars] = useState([]);
@@ -601,9 +679,9 @@ const OwnCar = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission
-    // Assuming you have an endpoint like '/api/addCar'
-    fetch(`http://localhost:5000/add_car/${userData.customer_id}`, {
+    e.preventDefault(); 
+    
+    fetch(`http://localhost:5000/add_own_car/${userData.customer_id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -752,7 +830,7 @@ const ServiceHistory = () => {
   const userData = location.state?.userData;
   const [serviceHistory, setServiceHistory] = useState([]);
 
-  // Assume you have a function to fetch service history data from the backend
+
   const fetchServiceHistory = async () => {
     try {
       const response = await fetch(`http://localhost:5000/customer_service_requests/${userData.customer_id}`);
@@ -779,7 +857,6 @@ const ServiceHistory = () => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Service History</Text>
-          {/* You can add additional components or actions here */}
         </Flex>
 
         {serviceHistory.length === 0 ? (
@@ -818,6 +895,7 @@ const ServiceHistory = () => {
 const CustomerCart = () => {
   const location = useLocation();
   const userData = location.state?.userData;
+  const customer_id = userData?.customer_id;
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
@@ -847,19 +925,19 @@ const CustomerCart = () => {
     const total = items.reduce((acc, item) => acc + parseFloat(item.item_price), 0);
     setTotalPrice(total);
   };
-
-  const handleRemoveItem = async (cartId) => {
+//modified to send  car_id also in order to delete the car along with it perks
+  const handleRemoveItem = async (cartId,car_id,service_package_id) => {
     try {
-      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}`, {
+      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0')
+       +(service_package_id ? `/${service_package_id}` : '/0') + `/${customer_id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('Failed to remove item from cart');
       }
       
-      setCartItems(prevCartItems => prevCartItems.filter(item => item.cart_id !== cartId));
-      
-      calculateTotalPrice(cartItems.filter(item => item.cart_id !== cartId));
+      setCartItems(prevCartItems => prevCartItems.filter(item => item.car_id && service_package_id ===null? item.car_id !== car_id :item.cart_id !== cartId ) );
+      calculateTotalPrice(cartItems.filter(item => item.car_id && service_package_id===null? item.car_id !== car_id :item.cart_id !== cartId ));
     } catch (error) {
       console.error('Error removing item from cart:', error);
       setError('Error removing item from cart. Please try again later.');
@@ -872,6 +950,10 @@ const CustomerCart = () => {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
+//IDENT PERKS UNDER ASSOCIATED CAR
+  const indentPerks = (service_package_id) => {
+    return  service_package_id ? { marginLeft:"30px"} : {};
+};
 
   return (
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
@@ -885,7 +967,7 @@ const CustomerCart = () => {
         {cartItems.length > 0 ? (
           <>
             {cartItems.map((item) => (
-              <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4}>
+              <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4} sx={indentPerks(item.service_package_id)}>
                 <Box onClick={() => handleImageClick(item.item_image)}>
                   <Image src={item.item_image} alt={item.item_name} boxSize="50px" cursor="pointer" />
                 </Box>
@@ -893,7 +975,7 @@ const CustomerCart = () => {
                   <Text color="white">{item.item_name}</Text>
                   <Text color="white">${item.item_price}</Text>
                 </Box>
-                <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id)}>Remove</Button>
+                <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
             <Text fontSize="2xl" fontWeight="bold">
@@ -2549,10 +2631,34 @@ const Admin = () => {
   };
 
 
-  const handleChange = (e) => {
-    setManagerFormData({ ...managerFormData, [e.target.name]: e.target.value });
-  };
-  const handleManagerFormSubmit = (managerFormData) => {
+  const handleManagerFormSubmit = (event) => {
+    event.preventDefault();
+    const formData = {
+      ...managerFormData,
+      admin_id: userData.admin_id
+    };
+
+    axios.post('/add_manager', formData)
+      .then(response => {
+        console.log('Manager added successfully');
+        setManagerFormData({  // Reset all form fields to blank
+          firstName: '',  
+          lastName: '',  
+          email: '',
+          username: '',
+          phone: '',
+          password: ''
+        });
+        setAccountCreationSuccess(true); // Set account creation success state to True
+
+        setTimeout(() => {
+          setAccountCreationSuccess(false); // Hide the success message after 3 seconds
+        }, 3000);
+      })
+      .catch(error => {
+        console.error('Error adding manager:', error);
+      });
+
     console.log('Form data: ', managerFormData);
   };
 
@@ -2665,92 +2771,69 @@ const Admin = () => {
 
       {/* Conditional Rendering of the Create Manager Account Form */}
       {showManagerForm && (
-            <Box
-              bg="rgba(128, 128, 128, 0.15)"
-              color="white"
-              w="400px"
-              h="600px"
-              position="relative"
-              marginTop="90px"
-              borderRadius="xl"
-              p={4}
-            >
-              <Text fontSize="2xl" fontWeight="bold" mb={4}>
-                Create Manager Account
-              </Text>
-              {/* Render your form fields here */}
-              <Box as="form" onSubmit={handleManagerFormSubmit}>
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="firstName">First Name</FormLabel>
+            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                <FormControl id="firstName" isRequired marginBottom="20px">
+                  <FormLabel color="white">First Name</FormLabel>
                   <Input
                     type="text"
-                    id="firstName"
-                    name="firstName"
                     value={managerFormData.firstName}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, firstName: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                <FormControl id="lastName" isRequired marginBottom="20px">
+                  <FormLabel>Last Name</FormLabel>
                   <Input
                     type="text"
-                    id="lastName"
-                    name="lastName"
                     value={managerFormData.lastName}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, lastName: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="email">Email</FormLabel>
+                <FormControl id="email" isRequired marginBottom="20px">
+                  <FormLabel>Email</FormLabel>
                   <Input
                     type="email"
-                    id="email"
-                    name="email"
                     value={managerFormData.email}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, email: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="username">Username</FormLabel>
+              </Flex>
+              <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+                <FormControl id="username" isRequired marginBottom="20px">
+                  <FormLabel>Username</FormLabel>
                   <Input
-                    type="username"
-                    id="username"
-                    name="username"
+                    type="text"
                     value={managerFormData.username}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="phone">Phone</FormLabel>
+                <FormControl id="phone" isRequired marginBottom="20px">
+                  <FormLabel>Phone</FormLabel>
                   <Input
-                    type="phone"
-                    id="phone"
-                    name="phone"
+                    type="number"
                     value={managerFormData.phone}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, phone: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="password">Password</FormLabel>
+                <FormControl id="password" isRequired marginBottom="20px">
+                  <FormLabel>Password</FormLabel>
                   <Input
                     type="password"
-                    id="password"
-                    name="password"
                     value={managerFormData.password}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, password: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <Button type="submit" colorScheme="green">
-                  Create Manager
-                </Button>
-              </Box>
-            </Box>
+              </Flex>
+            </Flex>
+            <Button type="submit" colorScheme="green" marginTop="10px">Create Manager</Button>
+          </form>
       )}
 
       { /* if the account is successfully created, display a success message to the user */}

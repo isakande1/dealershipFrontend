@@ -16,6 +16,7 @@ export default function Addons(){
     const {car_name} = location.state;
     const {car_image} = location.state;
     const {car_price} = location.state;
+    const {car_id} = location.state;
     const userData = location.state?.userData; 
     const customer_id =userData.customer_id;
     const [total, setTotal] = useState(car_price);
@@ -47,13 +48,13 @@ export default function Addons(){
   }, []);
 
   //send the packages to add to a single end point that will had them to the cart and to subscribed dervices
-  const AddtoCartAndOwnedService = (customer_id, packages,userData ) => {
+  const AddtoCartAndOwnedService = (customer_id, packages,userData,car_id ) => {
     if(packages.length ===0){
       navigate('/Cart', { state: { userData } });
       return;
     }
     console.log("packages",packages);
-      axios.post('/addtoCartAndOwnedService', { customer_id , packages})
+      axios.post('/addtoCartAndOwnedService', { customer_id , packages, car_id})
         .then(()=> {
           navigate('/Cart', { state: { userData } }) ;
         })
@@ -101,7 +102,7 @@ export default function Addons(){
   //display the car
     const CarInfos = () =>{
         return(
-        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" > 
+        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" position="fixed" zIndex="2" width="100%" top="0" left="0" > 
             <Box width="140px" height="100px"> 
             <Image
                         overflow="hidden"
@@ -126,7 +127,7 @@ export default function Addons(){
   
       return(
        
-        <Grid w= "90%" h="100%" gridTemplateColumns="repeat(3,1fr)"rowGap="25px" marginLeft="230px" >
+        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%" marginTop="90px" marginBottom="40px">
           
       {/* {allpackagesInfos.map((packageInfos, index) => (
         <Package key={index} packageInfos={packageInfos} isAdded={isAdded[index]} setIsAdded={setIsAdded} />
@@ -211,14 +212,14 @@ export default function Addons(){
    
     return(
         <>
-        <Box> 
+       
        < CarInfos />
-        </Box >
-        <Center bg="gray.700" minH="100vh"  rowGap="25px" >
+        
+        <Flex bg="gray.700" minH="100vh" justify="center" paddingTop="25px" >
        { <Packages allpackagesInfos= {allpackagesInfos}/>}
-        </Center>
+        </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
-       <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData)}>
+       <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData, car_id)}>
        <Text>{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>
