@@ -893,6 +893,7 @@ const ServiceHistory = () => {
 const CustomerCart = () => {
   const location = useLocation();
   const userData = location.state?.userData;
+  const customer_id = userData?.customer_id;
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
@@ -925,7 +926,8 @@ const CustomerCart = () => {
 //modified to send  car_id also in order to delete the car along with it perks
   const handleRemoveItem = async (cartId,car_id,service_package_id) => {
     try {
-      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0') +(service_package_id ? `/${service_package_id}` : '/0'), {
+      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0')
+       +(service_package_id ? `/${service_package_id}` : '/0') + `/${customer_id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
