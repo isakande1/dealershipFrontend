@@ -7,6 +7,8 @@ import {
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal,
   ModalOverlay,
   ModalContent,
+  ModalHeader,
+  ModalFooter,
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
@@ -1181,6 +1183,21 @@ const CarAccessories = () => {
   const userData = location.state?.userData;
   const [accessories, setAccessories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [showAddAccessoryModal, setShowAddAccessoryModal] = useState(false);
+  const [accessoryData, setAccessoryData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: "",
+    category: "",
+  });
+  const [cartData, setCartData] = useState({
+    customer_id: "",
+    item_price: "",
+    item_image: "",
+    item_name: "",
+    accessoire_id: "",
+  });
 
   const fetchAccessories = async (category) => {
     try {
@@ -1199,13 +1216,163 @@ const CarAccessories = () => {
     }
   };
 
+  const handleDeleteAccessory = async (accessoryID) => {
+    console.log("the ID recieved: ", accessoryID) // testing that we recieved the accessory_id to be deleted
+    try {
+      const response = await fetch(`http://localhost:5000/deleteAccessory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessoryID }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      // If deletion was successful, refetch the accessories data
+      if (response.ok) {
+        fetchAccessories(selectedCategory);
+      }
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+    }
+  };
+
+  const handleAddAccessory = async () => {
+    try {
+      // Add logic to send accessoryData to backend and handle addition
+      console.log("Accessory data:", accessoryData); // Log the accessoryData
+      const response = await fetch(`http://localhost:5000/addAccessory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({accessoryData}), // Send accessoryData in the request body
+      });
+      const data = await response.json();
+      console.log("Response dataaaa:", data);
+      // If addition was successful, refetch the accessories data
+      if (response.ok) {
+        fetchAccessories(selectedCategory);
+      } else {
+        throw new Error(data.error || 'Failed to add accessory');
+      }
+    } catch (error) {
+      console.error('Error adding accessory:', error);
+      // Handle error (e.g., display error message to the user)
+    } finally {
+      // Close the modal after adding accessory (whether successful or not)
+      setShowAddAccessoryModal(false);
+    }
+  };
+
+  const handleCart = async () =>{
+    try {
+      // Add logic to send accessoryData to backend and handle cart
+      console.log("Accessory data:", cartData); // Log the cartData
+      const response = await fetch(`http://localhost:5000/addAccessoryToCart`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cartData: {
+            customer_id: cartData.customer_id,
+            item_price: cartData.item_price,
+            item_image: cartData.item_image,
+            item_name: cartData.item_name,
+            accessoire_id: cartData.accessoire_id,
+          }
+        }), // Send cartData in the request body
+      });
+      const data = await response.json();
+      console.log("Response dataaaa:", data);
+      // If addition was successful, refetch the accessories data
+      if (response.ok) {
+        fetchAccessories(selectedCategory);
+      } else {
+        throw new Error(data.error || 'Failed to add accessory');
+      }
+    } catch (error) {
+      console.error('Error adding accessory:', error);
+      // Handle error (e.g., display error message to the user)
+    }
+  };
+
   const handleSelectChange = (event) => {
-    setSelectedCategory(event.target.value);
+    setSelectedCategory(event.target.value);  
   };
 
   const handleButtonClick = () => {
     fetchAccessories(selectedCategory);
   };
+
+  const handleAddAccessoryButton = () => {
+    setShowAddAccessoryModal(true);
+  };
+
+  const handleAddAccessoryModalClose = () => {
+    setShowAddAccessoryModal(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setAccessoryData({ ...accessoryData, [name]: value });
+  };
+
+  const handleAddToCart = (accessory) => {
+    const name = accessory.name;
+    const accessoire_id = accessory.accessoire_id;
+    const price = accessory.price;
+    const image = accessory.image;
+    const customer_id = userData?.customer_id;
+  
+    // Destructure and update existing properties
+    setCartData((prevCartData) => ({
+      ...prevCartData,
+      customer_id,
+      item_price: price,
+      item_image: image,
+      item_name: name,
+      accessoire_id,
+    }));
+
+    //handleCart();
+  };
+
+  useEffect(() => {
+    const handleAddToCart = async () => {
+      if (cartData.customer_id && cartData.item_price && cartData.item_image && cartData.item_name && cartData.accessoire_id) {
+        try {
+          const response = await fetch(`http://localhost:5000/addAccessoryToCart`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cartData: {
+                customer_id: cartData.customer_id,
+                item_price: cartData.item_price,
+                item_image: cartData.item_image,
+                item_name: cartData.item_name,
+                accessoire_id: cartData.accessoire_id,
+              },
+            }),
+          });
+  
+          const data = await response.json();
+          console.log("Backend response:", data);
+  
+          // Handle successful response (e.g., update UI, show confirmation message)
+        } catch (error) {
+          console.error('Error adding accessory:', error);
+          // Handle errors (e.g., display error message to user)
+        }
+      }
+    };
+  
+    handleAddToCart();
+  }, [cartData]);
+
 
   return (
     <Box
@@ -1237,6 +1404,52 @@ const CarAccessories = () => {
       <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Fetch Accessories
       </Button>
+      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+        Add Accessories
+      </Button>
+      {/* Add Accessory Modal */}
+      <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader >Add Accessory</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel color="black" >Name</FormLabel>
+              <Input type="text" name="name" value={accessoryData.name} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel color="black" >Description</FormLabel>
+              <Input type="text" name="description" value={accessoryData.description} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel color="black" >Price</FormLabel>
+              <Input type="number" name="price" value={accessoryData.price} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel color="black" >Image URL</FormLabel>
+              <Input type="text" name="image" value={accessoryData.image} onChange={handleInputChange} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel color="black" >Category</FormLabel>
+              <Select name="category" value={accessoryData.category} onChange={handleInputChange}>
+                <option value="">Select a category...</option>
+                <option value="car-mat">Car Mat</option>
+                <option value="cover">Cover</option>
+                <option value="wiper">Wiper</option>
+                <option value="air-freshener">Air Freshener</option>
+                <option value="dash-cam">Dash Cam</option>
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleAddAccessory}>
+              Add
+            </Button>
+            <Button onClick={handleAddAccessoryModalClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Table variant="striped" colorScheme="blue" mx="auto" w="max-content">
         <Thead>
           <Tr>
@@ -1245,6 +1458,7 @@ const CarAccessories = () => {
             <Th>Description</Th>
             <Th>Price</Th>
             <Th>Image</Th>
+            <Th>Action</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -1255,6 +1469,10 @@ const CarAccessories = () => {
               <Td>{accessory.description}</Td>
               <Td>{accessory.price}</Td>
               <Td>{accessory.image}</Td>
+              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+              <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td>
+              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
             </Tr>
           ))}
         </Tbody>
@@ -2116,7 +2334,7 @@ const Manager = () => {
                 <Flex flexDirection="row" justifyContent="space-between">
               <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
-                  <FormLabel color="white">First Name</FormLabel>
+                  <FormLabel color="white">Accessory Name</FormLabel>
                   <Input
                     type="text"
                     value={technicianFormData.firstName}
@@ -2125,7 +2343,7 @@ const Manager = () => {
                   />
                 </FormControl>
                 <FormControl id="lastName" isRequired marginBottom="20px">
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>description</FormLabel>
                   <Input
                     type="text"
                     value={technicianFormData.lastName}
@@ -2134,7 +2352,7 @@ const Manager = () => {
                   />
                 </FormControl>
                 <FormControl id="email" isRequired marginBottom="20px">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>price</FormLabel>
                   <Input
                     type="email"
                     value={technicianFormData.email}
@@ -2145,7 +2363,7 @@ const Manager = () => {
               </Flex>
               <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
                 <FormControl id="username" isRequired marginBottom="20px">
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>image</FormLabel>
                   <Input
                     type="text"
                     value={technicianFormData.username}
@@ -2154,20 +2372,11 @@ const Manager = () => {
                   />
                 </FormControl>
                 <FormControl id="phone" isRequired marginBottom="20px">
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>category</FormLabel>
                   <Input
                     type="number"
                     value={technicianFormData.phone}
                     onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-                <FormControl id="password" isRequired marginBottom="20px">
-                  <FormLabel>Password</FormLabel>
-                  <Input
-                    type="password"
-                    value={technicianFormData.password}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, password: e.target.value })}
                     color="white"
                   />
                 </FormControl>
