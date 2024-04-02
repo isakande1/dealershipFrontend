@@ -15,6 +15,7 @@ import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -44,12 +45,15 @@ function App() {
           <Route path="/Cart" element={<CustomerCart/>} />
           <Route path="/PastPurchase" element={<PastPurchase />} />
           <Route path="/OwnCar" element={<OwnCar />} />
-          <Route path="/carDetails" element={<CarDetails />} />
+          <Route path="/carDetails/*" element={<CarDetails />} />
+        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
           <Route path="/Service" element={<CustomerSerivceAppointment />} />
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
           <Route path="/Addons" element={<Addons/>} />
           <Route path="ContactPage" element={<ContactPage/>} />
+          <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+          
         </Routes>
       </ChakraProvider>
     </Router>
@@ -245,11 +249,13 @@ const Homepage = () => {
   const [searchParams, setSearchParams] = useState({});
 
   useEffect(() => {
-    fetchCars();
-  }, [currentPage, searchParams]);
+      fetchCars();
+  }, [currentPage, searchParams]); // Include isCarsFiltered in the dependency array
+  
 
   // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
+    
     try {
       const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
       if (!response.ok) {
@@ -264,7 +270,7 @@ const Homepage = () => {
       setAllCars(data.cars);
     } catch (error) {
       console.error('Error fetching cars:', error.message);
-    }
+    } 
   };
 
   // component to handle clicking on a page number and seeing relevant cars on that page
@@ -420,7 +426,12 @@ const SignedInHomepage = () => {
   const handleNavigateToAddownCar = () => {
     navigate('/OwnCar', { state: { userData } });
   };
+
+
   
+  const handleNavigateToTestDrive = () => {
+    navigate('/TestDriveHistory', { state: { userData } });
+  };
 
   useEffect(() => {
     fetchCars();
@@ -541,7 +552,7 @@ const SignedInHomepage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
-            <Button variant="ghost" color="white" marginBottom="10px">View Test Drive Appointment</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px">Manage Offers</Button>
           </Flex>
         </Box>
@@ -582,6 +593,73 @@ const SignedInHomepage = () => {
   );
 };
 
+const TestDriveHistory = () => {
+  const location = useLocation();
+  const userData = location.state?.userData;
+  const [driveHistory, setDriveHistory] = useState([]);
+
+  const fetchTestDriveHistory = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/test_drive_appointments/${userData.customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setDriveHistory(data);
+    } catch (error) {
+      console.error('Error fetching records:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestDriveHistory();
+  }, [userData]);
+
+  return (
+    <>
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100vh'
+        bgGradient="linear(to-b, black, gray.600)"
+        p={4}
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="3xl" fontWeight="bold">Test Drive Appointments</Text>
+        </Flex>
+
+        {driveHistory.length === 0 ? (
+          <Text mt={4} color="gray.400">You have no records.</Text>
+        ) : (
+          <Table variant="simple" mt={4}>
+            <Thead>
+              <Tr>
+                <Th>Appointment ID</Th>
+                <Th>Appointment date</Th>
+                <Th>Status</Th>
+                <Th>Car ID</Th>
+                <Th>Car Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {driveHistory.map((test) => (
+                <Tr key={test.appointment_id}>
+                  <Td>{test.appointment_id}</Td>
+                  <Td>{test.appointment_date}</Td>
+                  <Td>{test.status}</Td>
+                  <Td>{test.car_id}</Td>
+                  <Td>{test.car_name}</Td>  
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+      </Box>
+    </>
+  );
+};
+
 const OwnCar = () => {
   const [formData, setFormData] = useState({ car_id: '', make: '', model: '' });
   const [customerCars, setCustomerCars] = useState([]);
@@ -599,9 +677,9 @@ const OwnCar = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission
-    // Assuming you have an endpoint like '/api/addCar'
-    fetch(`http://localhost:5000/add_car/${userData.customer_id}`, {
+    e.preventDefault(); 
+    
+    fetch(`http://localhost:5000/add_own_car/${userData.customer_id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -750,7 +828,7 @@ const ServiceHistory = () => {
   const userData = location.state?.userData;
   const [serviceHistory, setServiceHistory] = useState([]);
 
-  // Assume you have a function to fetch service history data from the backend
+
   const fetchServiceHistory = async () => {
     try {
       const response = await fetch(`http://localhost:5000/customer_service_requests/${userData.customer_id}`);
@@ -777,7 +855,6 @@ const ServiceHistory = () => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Service History</Text>
-          {/* You can add additional components or actions here */}
         </Flex>
 
         {serviceHistory.length === 0 ? (
@@ -1828,6 +1905,7 @@ const Manager = () => {
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
   const [showAddCars, setShowAddCars] = useState(false);
   const [showRemoveCars, setShowRemoveCars] = useState(false);
+  const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
@@ -1839,10 +1917,11 @@ const Manager = () => {
     password: '',
     manager_id: userData.manager_id
   });
-  const [removeCarFormData, setRemoveCarFormDataData] = useState({
+  const [removeCarFormData, setRemoveCarFormData] = useState({
     car_id: ''
   });
   const [serviceRequests, setServiceRequests] = useState([]);
+  const [error, setError] = useState(null);
   useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
@@ -1891,6 +1970,11 @@ const Manager = () => {
 
   const handleSubmitRemoveCarForm = async (event) => {
     event.preventDefault();
+    const carId = parseInt(removeCarFormData.car_id);
+    if (isNaN(carId)) {
+      setError('Car ID must be an integer');
+      return;
+    }
     console.log("the car id is", removeCarFormData.car_id);
     try {
         const response = await fetch(`http://localhost:5000/remove_car`, {
@@ -1913,7 +1997,42 @@ const Manager = () => {
         console.error('Error sending data:', error);
         // Handle network errors, display error message, etc.
     }
-};
+    // Reset error state
+    setError(null);
+  };
+
+  const handleSubmitMiscellaneousForm = async (event) => {
+    event.preventDefault();
+    const carId = parseInt(removeCarFormData.car_id);
+    if (isNaN(carId)) {
+      setError('Car ID must be an integer');
+      return;
+    }
+    console.log("the car id is", removeCarFormData.car_id);
+    try {
+        const response = await fetch(`http://localhost:5000`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(removeCarFormData), // Sending formData in the request body
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Car removed successfully:", data);
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error removing car:', response.statusText);
+            // Handle the error, show an error message to the user, etc.
+        }
+    } catch (error) {
+        console.error('Error sending data:', error);
+        // Handle network errors, display error message, etc.
+    }
+    // Reset error state
+    setError(null);
+  };
 
 
   // when manager clicks on sign out, gets redirected to the homepage
@@ -1939,23 +2058,35 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowServiceRequests(false);
+        setShowRemoveMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
         setShowTechnicianForm(false);
         setShowRemoveCars(false);
+        setShowServiceRequests(false);
+        setShowRemoveMiscellaneous(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
         setShowTechnicianForm(false);
         setShowRemoveCars(true);
         setShowServiceRequests(false);
+        setShowRemoveMiscellaneous(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
         setShowTechnicianForm(false);
         setShowAddCars(false);
-
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        break;
+      case 'removeMiscellaneous':
+        setShowServiceRequests(false);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(true);
         break;
       default:
         break;
@@ -2057,6 +2188,73 @@ const Manager = () => {
         </Box>
       )}
 
+      {showRemoveMiscellaneous && (
+              <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+                <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                <FormControl id="firstName" isRequired marginBottom="20px">
+                  <FormLabel color="white">First Name</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.firstName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="lastName" isRequired marginBottom="20px">
+                  <FormLabel>Last Name</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.lastName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="email" isRequired marginBottom="20px">
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={technicianFormData.email}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+              </Flex>
+              <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+                <FormControl id="username" isRequired marginBottom="20px">
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.username}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="phone" isRequired marginBottom="20px">
+                  <FormLabel>Phone</FormLabel>
+                  <Input
+                    type="number"
+                    value={technicianFormData.phone}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="password" isRequired marginBottom="20px">
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={technicianFormData.password}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, password: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+              </Flex>
+            </Flex>
+              {error && <div style={{ color: 'red' }}>{error}</div>}
+              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
+            </form>
+          )}
+    
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
@@ -2113,13 +2311,14 @@ const Manager = () => {
                     <Input
                       type="text"
                       value={removeCarFormData.car_id}
-                      onChange={(e) => setRemoveCarFormDataData({ ...removeCarFormData, car_id: e.target.value })}
+                      onChange={(e) => setRemoveCarFormData({ ...removeCarFormData, car_id: e.target.value })}
                       placeholder='Enter VIN to remove car'
                       color="white"
                     />
                   </FormControl>
                 </Flex>
               </Flex>
+              {error && <div style={{ color: 'red' }}>{error}</div>}
               <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
             </form>
           )}
@@ -2147,6 +2346,8 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
