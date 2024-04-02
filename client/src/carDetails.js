@@ -166,6 +166,7 @@ export default function CarDetails() {
                   car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
                   car_image: carInfos.image0,
                   car_price: carInfos.price,
+                  car_id: carInfos.car_id
                 },
               });
 

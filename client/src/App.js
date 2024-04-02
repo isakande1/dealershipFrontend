@@ -922,19 +922,18 @@ const CustomerCart = () => {
     const total = items.reduce((acc, item) => acc + parseFloat(item.item_price), 0);
     setTotalPrice(total);
   };
-
-  const handleRemoveItem = async (cartId) => {
+//modified to send  car_id also in order to delete the car along with it perks
+  const handleRemoveItem = async (cartId,car_id,service_package_id) => {
     try {
-      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}`, {
+      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0') +(service_package_id ? `/${service_package_id}` : '/0'), {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('Failed to remove item from cart');
       }
       
-      setCartItems(prevCartItems => prevCartItems.filter(item => item.cart_id !== cartId));
-      
-      calculateTotalPrice(cartItems.filter(item => item.cart_id !== cartId));
+      setCartItems(prevCartItems => prevCartItems.filter(item => item.car_id && service_package_id ===null? item.car_id !== car_id :item.cart_id !== cartId ) );
+      calculateTotalPrice(cartItems.filter(item => item.car_id && service_package_id===null? item.car_id !== car_id :item.cart_id !== cartId ));
     } catch (error) {
       console.error('Error removing item from cart:', error);
       setError('Error removing item from cart. Please try again later.');
@@ -972,7 +971,7 @@ const CustomerCart = () => {
                   <Text color="white">{item.item_name}</Text>
                   <Text color="white">${item.item_price}</Text>
                 </Box>
-                <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id)}>Remove</Button>
+                <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
             <Text fontSize="2xl" fontWeight="bold">
