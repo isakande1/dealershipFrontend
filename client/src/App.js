@@ -2417,10 +2417,34 @@ const Admin = () => {
   };
 
 
-  const handleChange = (e) => {
-    setManagerFormData({ ...managerFormData, [e.target.name]: e.target.value });
-  };
-  const handleManagerFormSubmit = (managerFormData) => {
+  const handleManagerFormSubmit = (event) => {
+    event.preventDefault();
+    const formData = {
+      ...managerFormData,
+      admin_id: userData.admin_id
+    };
+
+    axios.post('/add_manager', formData)
+      .then(response => {
+        console.log('Manager added successfully');
+        setManagerFormData({  // Reset all form fields to blank
+          firstName: '',  
+          lastName: '',  
+          email: '',
+          username: '',
+          phone: '',
+          password: ''
+        });
+        setAccountCreationSuccess(true); // Set account creation success state to True
+
+        setTimeout(() => {
+          setAccountCreationSuccess(false); // Hide the success message after 3 seconds
+        }, 3000);
+      })
+      .catch(error => {
+        console.error('Error adding manager:', error);
+      });
+
     console.log('Form data: ', managerFormData);
   };
 
@@ -2533,92 +2557,69 @@ const Admin = () => {
 
       {/* Conditional Rendering of the Create Manager Account Form */}
       {showManagerForm && (
-            <Box
-              bg="rgba(128, 128, 128, 0.15)"
-              color="white"
-              w="400px"
-              h="600px"
-              position="relative"
-              marginTop="90px"
-              borderRadius="xl"
-              p={4}
-            >
-              <Text fontSize="2xl" fontWeight="bold" mb={4}>
-                Create Manager Account
-              </Text>
-              {/* Render your form fields here */}
-              <Box as="form" onSubmit={handleManagerFormSubmit}>
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="firstName">First Name</FormLabel>
+            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                <FormControl id="firstName" isRequired marginBottom="20px">
+                  <FormLabel color="white">First Name</FormLabel>
                   <Input
                     type="text"
-                    id="firstName"
-                    name="firstName"
                     value={managerFormData.firstName}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, firstName: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                <FormControl id="lastName" isRequired marginBottom="20px">
+                  <FormLabel>Last Name</FormLabel>
                   <Input
                     type="text"
-                    id="lastName"
-                    name="lastName"
                     value={managerFormData.lastName}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, lastName: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="email">Email</FormLabel>
+                <FormControl id="email" isRequired marginBottom="20px">
+                  <FormLabel>Email</FormLabel>
                   <Input
                     type="email"
-                    id="email"
-                    name="email"
                     value={managerFormData.email}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, email: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="username">Username</FormLabel>
+              </Flex>
+              <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+                <FormControl id="username" isRequired marginBottom="20px">
+                  <FormLabel>Username</FormLabel>
                   <Input
-                    type="username"
-                    id="username"
-                    name="username"
+                    type="text"
                     value={managerFormData.username}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="phone">Phone</FormLabel>
+                <FormControl id="phone" isRequired marginBottom="20px">
+                  <FormLabel>Phone</FormLabel>
                   <Input
-                    type="phone"
-                    id="phone"
-                    name="phone"
+                    type="number"
                     value={managerFormData.phone}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, phone: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <FormControl mb={4}>
-                  <FormLabel htmlFor="password">Password</FormLabel>
+                <FormControl id="password" isRequired marginBottom="20px">
+                  <FormLabel>Password</FormLabel>
                   <Input
                     type="password"
-                    id="password"
-                    name="password"
                     value={managerFormData.password}
-                    onChange={handleChange}
+                    onChange={(e) => setManagerFormData({ ...managerFormData, password: e.target.value })}
+                    color="white"
                   />
                 </FormControl>
-
-                <Button type="submit" colorScheme="green">
-                  Create Manager
-                </Button>
-              </Box>
-            </Box>
+              </Flex>
+            </Flex>
+            <Button type="submit" colorScheme="green" marginTop="10px">Create Manager</Button>
+          </form>
       )}
 
       { /* if the account is successfully created, display a success message to the user */}
