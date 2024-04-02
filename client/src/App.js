@@ -46,7 +46,7 @@ function App() {
           <Route path="/PastPurchase" element={<PastPurchase />} />
           <Route path="/OwnCar" element={<OwnCar />} />
           <Route path="/carDetails/*" element={<CarDetails />} />
-        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+          <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
           <Route path="/Service" element={<CustomerSerivceAppointment />} />
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
@@ -947,6 +947,10 @@ const CustomerCart = () => {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
+//IDENT PERKS UNDER ASSOCIATED CAR
+  const indentPerks = (service_package_id) => {
+    return  service_package_id ? { marginLeft:"30px"} : {};
+};
 
   return (
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
@@ -960,7 +964,7 @@ const CustomerCart = () => {
         {cartItems.length > 0 ? (
           <>
             {cartItems.map((item) => (
-              <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4}>
+              <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4} sx={indentPerks(item.service_package_id)}>
                 <Box onClick={() => handleImageClick(item.item_image)}>
                   <Image src={item.item_image} alt={item.item_name} boxSize="50px" cursor="pointer" />
                 </Box>
