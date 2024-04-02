@@ -2968,7 +2968,7 @@ const Technician = () => {
 
       {showAssignedServices && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px'}}><strong>Check Assigned Work</strong></h1>
+          <h1 style={{paddingBottom:'10px'}}><strong>Assigned Work</strong></h1>
           <Table striped bordered hover>
             <thead>
               <tr>
