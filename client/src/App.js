@@ -123,13 +123,13 @@ const DropdownMenu = ({ title, options, selected, onSelect }) => {
     <Menu>
       <Box marginTop="15px" marginLeft="20px">
         <Text fontSize="lg" fontWeight="bold" color="white">{title}</Text>
-        <MenuButton as={Box} bg="lightgray" color="black" fontSize="lg" p={2} width="180px" height="30px">
+        <MenuButton as={Box} bg="lightgray" color="black" fontSize="lg" p={2} width="180px" height="30px" marginTop='-10px'>
           <Flex alignItems="center" marginTop="-3px">
-            <Box marginRight={2}>
+            <Box marginRight={2} marginTop='-5px'>
               <Icon as={FaChevronDown} />
             </Box>
             {selected && (
-              <Text position="absolute" marginLeft="22px" marginTop="-8px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{selected}</Text>
+              <Text position="absolute" marginLeft="25px" marginTop="12px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{selected}</Text>
             )}
           </Flex>
         </MenuButton>
@@ -175,6 +175,7 @@ const CarDisplayBox = ({ car }) => {
       color="white"
       bg="gray.700"
       onClick={handleCarDetailsClick}
+      padding="10px 0 0 0"     // padding for top of the box where image and text goes of each car
     >
       <img
         src={car.image}
@@ -183,8 +184,7 @@ const CarDisplayBox = ({ car }) => {
           display: "block",
           margin: "auto",
           width: '240px',
-          height: '275px',
-          marginTop: '100px',
+          height: '275px'
         }}
       />
       <Flex
@@ -196,6 +196,15 @@ const CarDisplayBox = ({ car }) => {
       >
         <Text>{car.year} {car.make} {car.model}</Text>
         <Text>${car.price}</Text>
+      </Flex>
+      <Flex
+        alignItems="center"
+        marginLeft="15px"
+        marginTop="10px"
+        marginRight="15px"
+      >
+        <Text fontWeight="bold" marginTop="-10px">Color:</Text>
+        <Text marginLeft="5px" marginTop="-10px">{car.color}</Text>
       </Flex>
     </Box>
   );
@@ -234,10 +243,10 @@ const FilterCarsSearch = ({ handleSearch }) => {
               "Silverado", "Sierra", "Accord", "Mustang", "Camaro", "Forester", "Model S", "X3", "Terrain", "Rav4", "Odyssey", "Fusion"]}selected={model} onSelect={setModel} clearSelection={clearSelection} />
       <DropdownMenu title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
       <DropdownMenu title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
-      <Button bg="lightgray" marginLeft="10px" marginTop="42px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
-        <Text align="center">Search</Text>
+      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
+        <Text align="center" marginTop="16px">Search</Text>
       </Button>
-      <Button bg="lightgray" marginLeft="10px" marginTop="42px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
+      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
     </Flex>
   );
 };
@@ -249,70 +258,72 @@ const Homepage = () => {
   const [allCars, setAllCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
+  const [message, setMessage] = useState('');
+  const carsPerPage = 12;
 
   useEffect(() => {
-      fetchCars();
-  }, [currentPage, searchParams]); // Include isCarsFiltered in the dependency array
-  
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); // Reacts to changes in currentPage and searchParams
 
-  // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
-    
-    try {
-      const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch cars');
-      }
-      const data = await response.json();
-      if (filteredCars.length > 0) {
-        setTotalPages(Math.ceil(filteredCars.length / 6));
-      } else {
-        setTotalPages(data.total_pages);
-      }
-      setAllCars(data.cars);
-    } catch (error) {
-      console.error('Error fetching cars:', error.message);
-    } 
+    let url = '/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // If filters are applied, use a POST request
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      data = response.data;
+    } else {
+      // For fetching all cars, use a GET request
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      setMessage("Sorry, no cars found."); // This message is shown when no cars match the criteria
+    } else {
+      setMessage(''); // Clear the message when cars are found
+    }
   };
 
-  // component to handle clicking on a page number and seeing relevant cars on that page
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // component to handle searching for cars based on filters and applying appropriate cars to be displayed per page
-  const handleSearch = ({ make, model, color, budget }) => {
-    axios.post('/cars_details', { make, model, color, budget })
-      .then(response => {
-        console.log('Filtered cars:', response.data);
-        setFilteredCars(response.data);
-        setSearchParams({ make, model, color, budget });
-        setCurrentPage(1); // Reset currentPage when filters are applied
-      })
-      .catch(error => {
-        console.error('Error fetching filtered cars:', error);
-      });
+  const handleSearch = async (filters) => {
+    // Ensure currentPage is set to 1 when searching
+    setCurrentPage(1);
+    setSearchParams(filters);
+  
+    // Since useEffect listens to changes in searchParams and currentPage,
+    // the actual fetch operation will be triggered there.
   };
 
-  // once user clicks clear, their filter selection will be cleared and they will automatically see all the cars
   const handleClear = () => {
-    setFilteredCars([]);
-    setSearchParams({});
-    setCurrentPage(1);
-    fetchCars();
+    setSearchParams({}); // Clearing search params to fetch all cars
+    setCurrentPage(1); // Resetting page to 1
   };
 
   const handleClickCart = () => {
-  const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-  if (confirmed) {
-  // Redirect to login page
-  window.location.href = '/login';
-}
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+      window.location.href = '/login';
+    }
   };
 
-  // produces the format of 2 rows and 3 columns per page to be displayed
-  const rows = [];
   const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
+  // Calculate total number of pages based on filtered cars count
+  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
+
+  // Split cars into rows for display
+  const rows = [];
   for (let i = 0; i < carsToDisplay.length; i += 4) {
     const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
@@ -340,7 +351,7 @@ const Homepage = () => {
           </Flex>
         </Flex>
         <center><Text fontSize="3xl" fontWeight="bold">Home Page</Text></center>
-        <Box p={4} marginTop="10px" marginLeft="85px">
+        <Box p={3} marginTop="-40px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
@@ -348,37 +359,51 @@ const Homepage = () => {
         </Box>
       </Box>
 
-      {/* handles both clicking the search button and filtering cars as well as clearing the filters selected */}
-      <Flex justifyContent="center" alignItems="center" position="relative" marginTop="-10px">
-        <Box width="1000px" height="100px" bg="purple.800" position="absolute" borderRadius="xl">
+      {/* Filter cars */}
+      <Flex justifyContent="center" alignItems="center" marginTop="-10px">
+        <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
 
-      {/* displays the car boxes in the proper format */}
-      <Flex flexDirection="column" alignItems="center" marginTop="20px" marginBottom="20px">
-        {rows.slice(0, 3).map((row, rowIndex) => (
-          <Flex key={rowIndex} justifyContent="flex-start">
-            {row.map((car, index) => (
-              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom={rowIndex === 1 && row.length < 4 && index === row.length - 1 ? 0 : "10px"}>
-                <CarDisplayBox car={car} />
-              </Box>
-            ))}
-          </Flex>
-        ))}
-      </Flex>
+      {message ? (
+      <Box textAlign="center" color="white" mt="20px">
+        {message}
+      </Box>
+      ) : (
+        // Only display cars if there's no message
+        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+          {rows.map((row, rowIndex) => (
+            <Flex key={rowIndex} justifyContent="flex-start">
+              {row.map((car, index) => (
+                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                  <CarDisplayBox car={car} />
+                </Box>
+              ))}
+            </Flex>
+          ))}
+        </Flex>
+      )}
 
-      {/* buttons for pagination */}
+      {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(totalPages).keys()].map((pageNumber) => (
-            <Button key={pageNumber + 1} color="white" onClick={() => handlePageClick(pageNumber + 1)} variant="outline" ml={2} width="40px">
+          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+            <Button
+              key={pageNumber + 1}
+              color="white"
+              onClick={() => handlePageClick(pageNumber + 1)}
+              variant="outline"
+              ml={2}
+              width="40px"
+              disabled={pageNumber + 1 === currentPage} // Disable button for current page
+            >
               {pageNumber + 1}
             </Button>
           ))}
         </Flex>
       </Box>
-      <Footer marginTop="40px"/>
+      <Footer marginTop='15px' />
     </>
   );
 };
@@ -428,8 +453,6 @@ const SignedInHomepage = () => {
   const handleNavigateToAddownCar = () => {
     navigate('/OwnCar', { state: { userData } });
   };
-
-
   
   const handleNavigateToTestDrive = () => {
     navigate('/TestDriveHistory', { state: { userData } });
