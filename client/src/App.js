@@ -418,7 +418,8 @@ const SignedInHomepage = () => {
   const [allCars, setAllCars] = useState([]);             // use state for updating car data
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
-  
+  const [message, setMessage] = useState('');
+  const carsPerPage = 12;
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -458,58 +459,65 @@ const SignedInHomepage = () => {
   };
 
   useEffect(() => {
-    fetchCars();
-  }, [currentPage, searchParams]);
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); 
 
-  // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
-    try {
-      const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch cars');
-      }
-      const data = await response.json();
-      if (filteredCars.length > 0) {
-        setTotalPages(Math.ceil(filteredCars.length / 6));
-      } else {
-        setTotalPages(data.total_pages);
-      }
-      setAllCars(data.cars);
-    } catch (error) {
-      console.error('Error fetching cars:', error.message);
+    let url = '/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // POST request to endpoint if filters are applied
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      data = response.data;
+    } else {
+      // GET request for getting all cars in the db
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      setMessage("Sorry, no cars found.");  // if no cars found, show this
+    } else {
+      setMessage('');   // if cars found after error message, set error message to blank
     }
   };
 
-  // component to handle clicking on a page number and seeing relevant cars on that page
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // component to handle searching for cars based on filters and applying appropriate cars to be displayed per page
-  const handleSearch = ({ make, model, color, budget }) => {
-    axios.post('/cars_details', { make, model, color, budget })
-      .then(response => {
-        console.log('Filtered cars:', response.data);
-        setFilteredCars(response.data);
-        setSearchParams({ make, model, color, budget });
-        setCurrentPage(1); // Reset currentPage when filters are applied
-      })
-      .catch(error => {
-        console.error('Error fetching filtered cars:', error);
-      });
-  };
-
-  // once user clicks clear, their filter selection will be cleared and they will automatically see all the cars
-  const handleClear = () => {
-    setFilteredCars([]); 
-    setSearchParams({}); 
+  const handleSearch = async (filters) => {
+    // set the page to 1 when applying filters
     setCurrentPage(1);
-    fetchCars(); 
+    setSearchParams(filters);
   };
 
-  // produces the format of 2 rows and 3 columns per page to be displayed
-  const rows = [];
+  const handleClear = () => {
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
+  };
+
+  const handleClickCart = () => {
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+      window.location.href = '/login';
+    }
+  };
+
   const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
+  // get the total number of pages based on the amount of filtered cars found
+  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
+
+  // splits the cars into appropriate rows (4 in this case)
+  const rows = [];
   for (let i = 0; i < carsToDisplay.length; i += 4) {
     const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
@@ -517,9 +525,7 @@ const SignedInHomepage = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' h='100vh' position='fixed' zIndex='-1' /> {/* black background */}
-
-      {/* this will be the gradient box */}
+      <Box bg='black' w='100%' h='100vh' position='fixed' zIndex='-1' />
       <Box
         bg='black'
         w='100%'
@@ -529,20 +535,17 @@ const SignedInHomepage = () => {
         borderBottomLeftRadius="xl"
         borderBottomRightRadius="xl"
       >
-        {/* this will be the header with the logo and login, signup, and cart buttons */}
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
-            <Text fontSize="3xl" fontWeight="bold">{`Welcome, ${userData?.first_name}`}</Text>
+            <span>Logo Will Go Here</span>
           </Box>
           <Flex>
-            <Button variant="link" color="white" marginRight="10px" onClick={handleSignOut}>Sign Out</Button>
-            <Button variant="link" color="white" marginRight="10px" onClick={() => setShowDashboardOptions(!showDashboardOptions)}>Dashboard</Button>
-            <Button variant="link" color="white" marginRight="10px" onClick={handleNavigateToCart}>Cart</Button>
+            <Button as={Link} to="/login" variant="link" color="white" marginRight="20px">Login/Signup</Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={handleClickCart}>Cart</Button>
           </Flex>
         </Flex>
-
-        {/* the text that appears inside the gradient box */}
-        <Box p={4} marginTop="20px" marginLeft="85px">
+        <center><Text fontSize="3xl" fontWeight="bold">Home Page</Text></center>
+        <Box p={3} marginTop="-40px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
@@ -582,37 +585,51 @@ const SignedInHomepage = () => {
         </Box>
       )}
 
-      {/* handles both clicking the search button and filtering cars as well as clearing the filters selected */}
-      <Flex justifyContent="center" alignItems="center" position="relative" marginTop="-10px">
-        <Box width="1000px" height="100px" bg="purple.800" position="absolute" borderRadius="xl">
+      {/* Filter cars */}
+      <Flex justifyContent="center" alignItems="center" marginTop="-10px">
+        <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
 
-      {/* displays the car boxes in the proper format */}
-      <Flex flexDirection="column" alignItems="center" marginTop="20px" marginBottom="20px"> 
-        {rows.slice(0, 3).map((row, rowIndex) => (
-          <Flex key={rowIndex} justifyContent="flex-start">
-            {row.map((car, index) => (
-              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom={rowIndex === 1 && row.length < 4 && index === row.length - 1 ? 0 : "10px"}>
-                <CarDisplayBox car={car} />
-              </Box>
-            ))}
-          </Flex>
-        ))}
-      </Flex>
+      {message ? (
+      <Box textAlign="center" color="white" mt="20px">
+        {message}
+      </Box>
+      ) : (
+        // if no error message, display cars
+        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+          {rows.map((row, rowIndex) => (
+            <Flex key={rowIndex} justifyContent="flex-start">
+              {row.map((car, index) => (
+                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                  <CarDisplayBox car={car} />
+                </Box>
+              ))}
+            </Flex>
+          ))}
+        </Flex>
+      )}
 
-      {/* buttons for pagination */}
+      {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(totalPages).keys()].map((pageNumber) => (
-            <Button key={pageNumber + 1} color="white" onClick={() => handlePageClick(pageNumber + 1)} variant="outline" ml={2} width="40px">
+          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+            <Button
+              key={pageNumber + 1}
+              color="white"
+              onClick={() => handlePageClick(pageNumber + 1)}
+              variant="outline"
+              ml={2}
+              width="40px"
+              disabled={pageNumber + 1 === currentPage}
+            >
               {pageNumber + 1}
             </Button>
           ))}
         </Flex>
       </Box>
-      <Footer marginTop="40px"/>
+      <Footer marginTop='15px' />
     </>
   );
 };
