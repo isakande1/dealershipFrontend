@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
+import MakeOffer from './makeOffer'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/Addons" element={<Addons/>} />
           <Route path="ContactPage" element={<ContactPage/>} />
           <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+          <Route path="makeOffer" element={<MakeOffer/>} />
           
         </Routes>
       </ChakraProvider>
