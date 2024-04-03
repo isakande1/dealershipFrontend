@@ -2918,6 +2918,38 @@ const Technician = () => {
     }
   }, [showAssignedServices]);
 
+  const handleAccept = (serviceRequestId) => {
+    const updatedRequest = {
+      status: 'accepted'
+    };
+  
+    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+      .then(response => {
+        // Update UI if necessary
+        console.log('Service request accepted:', response.data);
+        fetchAssignedServices();
+      })
+      .catch(error => {
+        console.error('Error accepting service request:', error);
+      });
+  };
+  
+  const handleDecline = (serviceRequestId) => {
+    const updatedRequest = {
+      status: 'declined'
+    };
+  
+    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+      .then(response => {
+        // Update UI if necessary
+        console.log('Service request declined:', response.data);
+        fetchAssignedServices();
+      })
+      .catch(error => {
+        console.error('Error declining service request:', error);
+      });
+  };
+
   const fetchAssignedServices = () => {
     axios.get('/show_assigned_services')
       .then(response => {
@@ -2960,8 +2992,7 @@ const Technician = () => {
 
       <Box bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="600px" position="fixed" left="0" top="0" marginTop="90px" borderRadius="xl">
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('checkAssignedWork')}>Check Assigned Work</Button>
-          <Button variant="green" color="white" marginBottom="10px">Modify Service Status</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('checkAssignedWork')}>Assigned Work</Button>
           <Button variant="green" color="white" marginBottom="10px">Send Service Report</Button>
         </Flex>
       </Box>
@@ -2973,18 +3004,30 @@ const Technician = () => {
             <thead>
               <tr>
                 <th style={{textAlign: 'center'}}>Assigned Service ID</th>
+                <th style={{textAlign: 'center'}}>Service</th>
                 <th style={{textAlign: 'center'}}>Assigned Technician</th>
-                <th style={{textAlign: 'center'}}>Assigned Email</th>
-                <th style={{textAlign: 'center'}}>Assigned Technician Phone</th>
+                <th style={{textAlign: 'center'}}>Status</th>
+                <th style={{textAlign: 'center'}}>Customer Information</th>
               </tr>
             </thead>
             <tbody>
               {assignedServices.map(service => (
                 <tr key={service.assigned_service_id}>
                   <td style={{textAlign: 'center'}}>{service.assigned_service_id}</td>
-                  <td style={{textAlign: 'center'}}>{`${service.technician_first_name} ${service.technician_last_name}`}</td>
-                  <td style={{textAlign: 'center'}}>{service.technician_email}</td>
-                  <td style={{textAlign: 'center'}}>{service.technician_phone}</td>
+                  <td style={{textAlign: 'center'}}>{service.service_name}: {service.service_description}</td>
+                  <td style={{textAlign: 'center'}}>{`${service.technician_first_name} ${service.technician_last_name} (${service.technician_email})`}</td>
+                  <td style={{textAlign: 'center'}}>{service.status}</td>
+                  <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                    <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
+                      Accept
+                    </Button>
+                  </td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="red" onClick={() => handleDecline(service.service_request_id)}>
+                      Decline
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
