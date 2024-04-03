@@ -3013,7 +3013,29 @@ const Technician = () => {
         console.error('Error accepting service request:', error);
       });
   };
-  
+
+  // The function below is in case we also want the technician to accept the service and have the service go into the customers cart
+  // const acceptService = (serviceRequestId) =>{
+  //   const serviceRequest = serviceRequests.find(service => service.service_request_id === serviceRequestId);
+  //   const formData = {
+  //     customer_id: serviceRequest.customer_id,
+  //     item_price: serviceRequest.service_price,
+  //     item_image: 'https://ibb.co/b64Kdyh',
+  //     item_name: serviceRequest.service_name,
+  //     car_id: serviceRequest.car_id,
+  //     service_offered_id: serviceRequest.service_offered_id
+  //   }
+  //   axios.post('/add_to_cart', formData)
+  //     .then(response => {
+  //       // Handle success response
+  //       console.log('Service added to cart successfully');
+  //       // You may want to update the UI or perform any additional actions here
+  //     })
+  //     .catch(error => {
+  //       // Handle error response
+  //       console.error('Failed to add service to cart:', error);
+  //     });
+  // }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -3100,6 +3122,8 @@ const Technician = () => {
                   <td style={{textAlign: 'center'}}>{service.status}</td>
                   <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
+                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
                     <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
                       Accept
                     </Button>
