@@ -2174,11 +2174,34 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
+        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
       });
   };
+
+  const acceptService = (serviceRequestId) =>{
+    const serviceRequest = serviceRequests.find(request => request.service_request_id === serviceRequestId);
+    const formData = {
+      customer_id: serviceRequest.customer_id,
+      item_price: serviceRequest.service_price,
+      item_image: 'https://ibb.co/b64Kdyh',
+      item_name: serviceRequest.service_name,
+      car_id: serviceRequest.car_id,
+      service_offered_id: serviceRequest.service_offered_id
+    }
+    axios.post('/add_to_cart', formData)
+      .then(response => {
+        // Handle success response
+        console.log('Service added to cart successfully');
+        // You may want to update the UI or perform any additional actions here
+      })
+      .catch(error => {
+        // Handle error response
+        console.error('Failed to add service to cart:', error);
+      });
+  }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -2317,6 +2340,50 @@ const Manager = () => {
   const handleCreateTechnician = () => {
     setShowTechnicianForm(true);
   };
+
+  // this is the function to add the service to the users cart when the service is accepted by a manager
+  // const acceptService = e => {
+  //   e.preventDefault();
+  //   const formattedDate = `${selectedDate} ${selectedTime}:00`;
+
+  //   const formData = {
+  //     customer_ID: userData.customer_id,
+  //     service_offered: selectedService,
+  //     car_id: vinNumber,
+  //     proposed_datetime: formattedDate,
+  //   };
+    
+  //   fetch('http://localhost:5000/service-request', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(formData),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       setEditMessage('Submission went through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //       resetForm();
+  //     })
+  //     .catch(error => {
+  //       console.error('Error:', error);
+  //       setEditMessage('Submission did not go through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //     });
+
+  //   const resetForm = () => {
+  //     setSelectedService('');
+  //     setSelectedDate('');
+  //     setSelectedTime('');
+  //     setVinNumber('');
+  //   };
+  // };
 
   // ensures that when a button is clicked, only the relevant information of that button is shown
   const handleButtonClick = (section) => {
@@ -2537,7 +2604,7 @@ const Manager = () => {
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description} testing:{request.service_offered_id}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
@@ -2545,7 +2612,7 @@ const Manager = () => {
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    <Button colorScheme="green" onClick={() => handleAccept(request.service_request_id)}>
+                    <Button colorScheme="green" onClick={() => {{handleAccept(request.service_request_id); acceptService(request.service_request_id);}}} >
                       Accept
                     </Button>
                   </td>
@@ -2946,6 +3013,7 @@ const Technician = () => {
         console.error('Error accepting service request:', error);
       });
   };
+  
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
