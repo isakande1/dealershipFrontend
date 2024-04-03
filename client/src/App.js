@@ -263,18 +263,18 @@ const Homepage = () => {
 
   useEffect(() => {
     fetchCars(); // Fetch based on the current state
-  }, [currentPage, searchParams]); // Reacts to changes in currentPage and searchParams
+  }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
     let url = '/cars_details';
     let data;
   
     if (Object.keys(searchParams).length > 0) {
-      // If filters are applied, use a POST request
+      // POST request to endpoint if filters are applied
       const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
       data = response.data;
     } else {
-      // For fetching all cars, use a GET request
+      // GET request for getting all cars in the db
       const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
       data = response.data;
     }
@@ -286,9 +286,9 @@ const Homepage = () => {
   
     // Check if any cars were found and set the message accordingly
     if (data.cars.length === 0) {
-      setMessage("Sorry, no cars found."); // This message is shown when no cars match the criteria
+      setMessage("Sorry, no cars found.");  // if no cars found, show this
     } else {
-      setMessage(''); // Clear the message when cars are found
+      setMessage('');   // if cars found after error message, set error message to blank
     }
   };
 
@@ -297,17 +297,14 @@ const Homepage = () => {
   };
 
   const handleSearch = async (filters) => {
-    // Ensure currentPage is set to 1 when searching
+    // set the page to 1 when applying filters
     setCurrentPage(1);
     setSearchParams(filters);
-  
-    // Since useEffect listens to changes in searchParams and currentPage,
-    // the actual fetch operation will be triggered there.
   };
 
   const handleClear = () => {
-    setSearchParams({}); // Clearing search params to fetch all cars
-    setCurrentPage(1); // Resetting page to 1
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
   };
 
   const handleClickCart = () => {
@@ -319,10 +316,10 @@ const Homepage = () => {
 
   const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
 
-  // Calculate total number of pages based on filtered cars count
+  // get the total number of pages based on the amount of filtered cars found
   const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
 
-  // Split cars into rows for display
+  // splits the cars into appropriate rows (4 in this case)
   const rows = [];
   for (let i = 0; i < carsToDisplay.length; i += 4) {
     const row = carsToDisplay.slice(i, i + 4);
@@ -371,7 +368,7 @@ const Homepage = () => {
         {message}
       </Box>
       ) : (
-        // Only display cars if there's no message
+        // if no error message, display cars
         <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
           {rows.map((row, rowIndex) => (
             <Flex key={rowIndex} justifyContent="flex-start">
@@ -396,7 +393,7 @@ const Homepage = () => {
               variant="outline"
               ml={2}
               width="40px"
-              disabled={pageNumber + 1 === currentPage} // Disable button for current page
+              disabled={pageNumber + 1 === currentPage}
             >
               {pageNumber + 1}
             </Button>
