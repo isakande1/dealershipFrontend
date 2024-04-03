@@ -525,7 +525,9 @@ const SignedInHomepage = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' h='100vh' position='fixed' zIndex='-1' />
+      <Box bg='black' w='100%' h='100vh' position='fixed' zIndex='-1' /> {/* black background */}
+
+      {/* this will be the gradient box */}
       <Box
         bg='black'
         w='100%'
@@ -535,17 +537,19 @@ const SignedInHomepage = () => {
         borderBottomLeftRadius="xl"
         borderBottomRightRadius="xl"
       >
+        {/* this will be the header with the logo and login, signup, and cart buttons */}
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
-            <span>Logo Will Go Here</span>
+            <Text fontSize="3xl" fontWeight="bold">{`Welcome, ${userData?.first_name}`}</Text>
           </Box>
           <Flex>
-            <Button as={Link} to="/login" variant="link" color="white" marginRight="20px">Login/Signup</Button>
-            <Button variant="link" color="white" marginRight="10px" onClick={handleClickCart}>Cart</Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={handleSignOut}>Sign Out</Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={() => setShowDashboardOptions(!showDashboardOptions)}>Dashboard</Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={handleNavigateToCart}>Cart</Button>
           </Flex>
         </Flex>
-        <center><Text fontSize="3xl" fontWeight="bold">Home Page</Text></center>
-        <Box p={3} marginTop="-40px" marginLeft="85px">
+
+        <Box p={3} marginTop="10px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
