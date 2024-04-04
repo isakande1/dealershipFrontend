@@ -2654,6 +2654,7 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
+        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
@@ -2912,8 +2913,7 @@ const Manager = () => {
         // Handle error response
         console.error('Failed to add service to cart:', error);
       });
-  }
-
+  };
   return (
     <>
       {/* This will be the gradient box */}
