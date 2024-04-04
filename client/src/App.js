@@ -46,7 +46,7 @@ function App() {
           <Route path="/PastPurchase" element={<PastPurchase />} />
           <Route path="/OwnCar" element={<OwnCar />} />
           <Route path="/carDetails/*" element={<CarDetails />} />
-          <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
           <Route path="/Service" element={<CustomerSerivceAppointment />} />
           <Route path="/ServiceHistory" element={<ServiceHistory />} />
           <Route path="/carAccessories" element={<CarAccessories />} />
