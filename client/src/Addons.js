@@ -16,6 +16,7 @@ export default function Addons(){
     const {car_name} = location.state;
     const {car_image} = location.state;
     const {car_price} = location.state;
+    const {car_id} = location.state;
     const userData = location.state?.userData; 
     const customer_id =userData.customer_id;
     const [total, setTotal] = useState(car_price);
@@ -32,14 +33,14 @@ export default function Addons(){
     //fetch the service packages
     const fetchPackages = () => {
       axios.get('/ServicesPackage')
-          .then(response => {
-              console.log('services package cars:', response.data);
-              setAllpackagesInfos( response.data);
-          })
-          .catch(error => {
-              console.error('Error fetching service package:', error);
-          });
-  };
+        .then(response => {
+          console.log('services package cars:', response.data);
+          setAllpackagesInfos(response.data);
+           })
+        .catch(error => {
+          console.error('Error fetching service package:', error);
+        });
+    };
 
     useEffect(() => {
       console.log("usfhfg", userData);
@@ -47,13 +48,13 @@ export default function Addons(){
   }, []);
 
   //send the packages to add to a single end point that will had them to the cart and to subscribed dervices
-  const AddtoCartAndOwnedService = (customer_id, packages,userData ) => {
+  const AddtoCartAndOwnedService = (customer_id, packages,userData,car_id ) => {
     if(packages.length ===0){
       navigate('/Cart', { state: { userData } });
       return;
     }
     console.log("packages",packages);
-      axios.post('/addtoCartAndOwnedService', { customer_id , packages})
+      axios.post('/addtoCartAndOwnedService', { customer_id , packages, car_id})
         .then(()=> {
           navigate('/Cart', { state: { userData } }) ;
         })
@@ -218,7 +219,7 @@ export default function Addons(){
        { <Packages allpackagesInfos= {allpackagesInfos}/>}
         </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
-       <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData)}>
+       <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData, car_id)}>
        <Text>{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>

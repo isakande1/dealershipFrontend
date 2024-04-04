@@ -120,11 +120,37 @@ export default function CarDetails() {
 
     //end
 
+      
+    const handleMakeOffer= () =>{
+      const userData = location.state?.userData; 
+      if( typeof userData == "undefined"){
+        const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+        if (confirmed) {
+        // Redirect to login page
+        navigate('/login', { state: { previousUrl: '/makeOffer' , car_id : car_id} });
+        }
+        return;
+      }
+      navigate('/makeOffer', {
+           
+        state: {
+          userData: userData,
+          car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
+          car_image: carInfos.image0,
+          car_price: carInfos.price,
+          car_id: carInfos.car_id
+        },
+      });
+
+    };
+
     //component for the car description and the other options 
     const Options = () => {
         const location = useLocation();
         const userData = location.state?.userData; 
-        const navigate = useNavigate();   
+        const navigate = useNavigate();  
+  
+
         const handleAddToCart = async () => {
             //prompt user to log in
             // console.log("id" , userData.customer_id);
@@ -166,6 +192,7 @@ export default function CarDetails() {
                   car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
                   car_image: carInfos.image0,
                   car_price: carInfos.price,
+                  car_id: carInfos.car_id
                 },
               });
 
@@ -179,6 +206,7 @@ export default function CarDetails() {
             window.confirm('Car could not be added');
           }
         };
+
         const handleNavigateTestDrive = () => {
           if (userData && carInfos) {
             navigate('/carDetails/schedule-test-drive', {
@@ -231,7 +259,7 @@ export default function CarDetails() {
               <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A">
                 Financing
               </Button>
-              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A">
+              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" onClick={handleMakeOffer}>
                 Make an offer
               </Button>
               <Button
