@@ -103,7 +103,7 @@ const ContactPage = () => {
           <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
         </Text>
       </Box>
-      <Footer marginTop='-37px' />
+      <Footer marginTop='-30.5px' />
     </>
   )
 }
@@ -946,7 +946,7 @@ const OwnCar = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
       >
@@ -997,7 +997,7 @@ const OwnCar = () => {
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
               customerCars.map((car) => (
-                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md">
+                <Box key={car.car_id} bg="rgba(255, 255, 255, 0.6)" p={2} borderRadius="md" width="45%">
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
@@ -1926,12 +1926,12 @@ const handleNavigate = (path) => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick``} colorScheme="blue" ml="40%" marginTop="-20px">
+      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="30px" style={{marginLeft:"10px"}}> 
         Fetch Accessories
       </Button>
-      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
-      </Button>
+      </Button> */}
       {/* Add Accessory Modal */}
       <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
         <ModalOverlay />
