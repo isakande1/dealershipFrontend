@@ -1886,29 +1886,32 @@ const handleNavigate = (path) => {
           overflowY='scroll' // Enable vertical scrolling
         >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
-        Accessories
-      </Text>
-      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
-      <FormControl mx="auto">
-        <FormLabel>Category</FormLabel>
-        <Select
-          name="category"
-          defaultValue=""
-          onChange={handleSelectChange}
-          color="black"
-          
-        >
-          <option value="">Select a category...</option>
-          <option value="car-mat">Car Mat</option>
-          <option value="cover">Cover</option>
-          <option value="wiper">Wiper</option>
-          <option value="air-freshener">Air Freshener</option>
-          <option value="dash-cam">Dash Cam</option>
-        </Select>
-      </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
-        Fetch Accessories
-      </Button>
+    Accessories
+  </Text>
+  <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
+    <FormControl mx="auto">
+      <FormLabel>Category</FormLabel>
+      <Select
+        name="category"
+        defaultValue=""
+        onChange={handleSelectChange}
+        color="black" // Text color inside dropdown
+        bg="white" // Dropdown background color
+        border="none" // Remove border
+        borderRadius="md" // Add some border-radius
+        boxShadow="sm" // Add a slight shadow
+      >
+        <option value="">Select a category...</option>
+        <option value="car-mat">Car Mat</option>
+        <option value="cover">Cover</option>
+        <option value="wiper">Wiper</option>
+        <option value="air-freshener">Air Freshener</option>
+        <option value="dash-cam">Dash Cam</option>
+      </Select>
+    </FormControl>
+    <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
+      Fetch Accessories
+    </Button>
     </Box>
       {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
