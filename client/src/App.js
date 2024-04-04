@@ -2983,7 +2983,7 @@ const Manager = () => {
 
       { /* if the account is successfully created, display a success message to the user */}
       {accountCreationSuccess && (
-        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
+        <Box position="absolute" marginTop="500px" marginLeft="640px" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
           Technician account created successfully!
         </Box>
       )}
