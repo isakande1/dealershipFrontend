@@ -1873,12 +1873,15 @@ const handleNavigate = (path) => {
       <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
-          name="category"
-          defaultValue=""
-          onChange={handleSelectChange}
-          color="black"
-          
-        >
+        name="category"
+        defaultValue=""
+        onChange={handleSelectChange}
+        color="black" 
+        bg="white" 
+        border="none"
+        borderRadius="md" 
+        boxShadow="sm" 
+      >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
