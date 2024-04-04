@@ -2190,7 +2190,7 @@ const Manager = () => {
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
-      status: 'accepted'
+      status: 'Awaiting Customer Payment'
     };
   
     axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
@@ -2700,7 +2700,7 @@ const Manager = () => {
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description} testing:{request.service_offered_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
