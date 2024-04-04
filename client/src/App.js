@@ -899,14 +899,23 @@ const OwnCar = () => {
         </li>
       </ul>
     </nav>
-      <Box
-        bg='black'
-        w='100%'
-        color='white'
-        height='100vh'
-        bgGradient="linear(to-b, black, gray.600)"
-        p={4}
-      >
+    <Box
+          bgGradient="linear(to-b, black, gray.600)"
+          position='fixed'
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex='-1'
+        />
+        <Box
+          w='100%'
+          color='white'
+          p={1}
+          css={{ margin: 0, padding: 0 }}
+          height='100vh'
+          overflowY='scroll' // Enable vertical scrolling
+        >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Add Own Car</Text>
         </Flex>
@@ -1860,12 +1869,22 @@ const handleNavigate = (path) => {
       </ul>
     </nav>
     <Box
-      bg='black'
-      w='100%'
-      color='white'
-                
-      bgGradient="linear(to-b, black, gray.600)"
-      >
+          bgGradient="linear(to-b, black, gray.600)"
+          position='fixed'
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex='-1'
+        />
+        <Box
+          w='100%'
+          color='white'
+          p={1}
+          css={{ margin: 0, padding: 0 }}
+          height='100vh'
+          overflowY='scroll' // Enable vertical scrolling
+        >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
