@@ -62,7 +62,15 @@ const handleNavigate = (path) => {
   };
   return (
     <>
-    <nav className="navbar">
+    
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100vh'
+        bgGradient="linear(to-b, black, gray.600)"
+      >
+        <nav className="navbar">
       <ul className="nav-list">
       <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
@@ -106,13 +114,6 @@ const handleNavigate = (path) => {
         </li>
       </ul>
     </nav>
-      <Box
-        bg='black'
-        w='100%'
-        color='white'
-        height='100vh'
-        bgGradient="linear(to-b, black, gray.600)"
-      >
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
             <Text fontSize="3xl" fontWeight="bold">Schedule Test Drive</Text>
