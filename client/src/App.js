@@ -328,10 +328,6 @@ const Homepage = () => {
     rows.push(row);
   }
 
-  const headerHeight = 400; // Adjust this based on your actual header's height
-  const footerHeight = 100; // Adjust this based on your actual footer's height
-  const viewportHeight = window.innerHeight;
-  const minContentHeight = `${viewportHeight - headerHeight - footerHeight}px`;
 
   return (
     <>
@@ -2904,6 +2900,7 @@ const Manager = () => {
         w='100%'
         color='white'
         height='100vh'
+        position="fixed"
         bgGradient="linear(to-b, black, gray.600)"
       >
       {/* Will contain the greeting message for the manager and the signout button */}
@@ -3101,8 +3098,8 @@ const Manager = () => {
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px'}}><strong>Service Requests</strong></h1>
-          <Table striped bordered hover>
+          <h1 style={{paddingBottom:'30px', marginLeft:"40px", paddingTop:'80px'}}><strong>Service Requests</strong></h1>
+          <Table striped bordered style={{ marginLeft: '30px', marginRight: '0' }}>
             <thead>
               <tr>
                 <th style={{textAlign: 'center', width: '3%'}}>Service Request ID #</th>
@@ -3120,15 +3117,15 @@ const Manager = () => {
             <tbody>
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.status}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                  <td style={{textAlign: 'center', padding:'0px 0px 10px 0px'}}>{request.service_request_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.service_name}: {request.description}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.service_price}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.proposed_datetime}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.car_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.status}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.customer_username}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.customer_phone}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
                     <Button colorScheme="green" onClick={() => handleAccept(request.service_request_id)}>
                       Accept
                     </Button>
@@ -3172,10 +3169,10 @@ const Manager = () => {
         color="white"
         w="300px"
         h="600px"
-        position="fixed"
         left="0"
         top="0"
-        marginTop="90px"
+        marginTop="80px"
+        position="fixed"
         borderRadius="xl"
       >
         {/* options for the manager to choose from */}
@@ -3190,7 +3187,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')} sx={{ whiteSpace: 'normal', overflowWrap: 'break-word' }} >Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
