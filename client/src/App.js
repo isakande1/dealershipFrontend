@@ -355,8 +355,8 @@ const Homepage = () => {
             </span>
           </Box>
           <Flex>
-            <Button as={Link} to="/login" variant="link" color="white" marginRight="20px"><h3>Login/Signup</h3></Button>
-            <Button variant="link" color="white" marginRight="10px" onClick={handleClickCart}><h3>Cart</h3></Button>
+            <Button as={Link} to="/login" variant="link" color="white" marginRight="20px"><h4>Login/Signup</h4></Button>
+            <Button variant="link" color="white" marginRight="10px" onClick={handleClickCart}><h4>Cart</h4></Button>
           </Flex>
         </Flex>
         <br/>
