@@ -1873,15 +1873,12 @@ const handleNavigate = (path) => {
       <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
-        name="category"
-        defaultValue=""
-        onChange={handleSelectChange}
-        color="black" 
-        bg="white" 
-        border="none"
-        borderRadius="md" 
-        boxShadow="sm" 
-      >
+          name="category"
+          defaultValue=""
+          onChange={handleSelectChange}
+          color="black"
+          
+        >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
@@ -1940,37 +1937,35 @@ const handleNavigate = (path) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {accessories.length > 0 && (
-  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
-    <Thead>
-      <Tr>
-        <Th>Accessory ID</Th>
-        <Th>Name</Th>
-        <Th>Description</Th>
-        <Th>Price</Th>
-        <Th>Image</Th>
-        <Th>Action</Th>
-      </Tr>
-    </Thead>
-    <Tbody>
-      {accessories.map((accessory, index) => (
-        <Tr key={index}>
-          <Td>{accessory.accessoire_id}</Td>
-          <Td>{accessory.name}</Td>
-          <Td>{accessory.description}</Td>
-          <Td>{accessory.price}</Td>
-          {/* <Td>{accessory.image}</Td> */}
-          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-          <Td><Image src={accessory.image} alt="Large Image"/></Td>
-          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-        </Tr>
-      ))}
-    </Tbody>
-  </Table>
-)}
+      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+        <Thead>
+          <Tr>
+            <Th>Accessory ID</Th>
+            <Th>Name</Th>
+            <Th>Description</Th>
+            <Th>Price</Th>
+            <Th>Image</Th>
+            <Th>Action</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {accessories.map((accessory, index) => (
+            <Tr key={index}>
+              <Td>{accessory.accessoire_id}</Td>
+              <Td>{accessory.name}</Td>
+              <Td>{accessory.description}</Td>
+              <Td>{accessory.price}</Td>
+              {/* <Td>{accessory.image}</Td> */}
+              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+              <Td><Image src={accessory.image} alt="Large Image"/></Td>
+              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
     </Box>
     </>
   );
@@ -3642,5 +3637,5 @@ const Technician = () => {
 }
 
 
-
+// hope this works
 export default App;
