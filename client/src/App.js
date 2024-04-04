@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
+import MakeOffer from './makeOffer'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/Addons" element={<Addons/>} />
           <Route path="ContactPage" element={<ContactPage/>} />
           <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+          <Route path="makeOffer" element={<MakeOffer/>} />
           
         </Routes>
       </ChakraProvider>
@@ -123,13 +125,13 @@ const DropdownMenu = ({ title, options, selected, onSelect }) => {
     <Menu>
       <Box marginTop="15px" marginLeft="20px">
         <Text fontSize="lg" fontWeight="bold" color="white">{title}</Text>
-        <MenuButton as={Box} bg="lightgray" color="black" fontSize="lg" p={2} width="180px" height="30px">
+        <MenuButton as={Box} bg="lightgray" color="black" fontSize="lg" p={2} width="180px" height="30px" marginTop='-10px'>
           <Flex alignItems="center" marginTop="-3px">
-            <Box marginRight={2}>
+            <Box marginRight={2} marginTop='-5px'>
               <Icon as={FaChevronDown} />
             </Box>
             {selected && (
-              <Text position="absolute" marginLeft="22px" marginTop="-8px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{selected}</Text>
+              <Text position="absolute" marginLeft="25px" marginTop="12px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{selected}</Text>
             )}
           </Flex>
         </MenuButton>
@@ -175,6 +177,7 @@ const CarDisplayBox = ({ car }) => {
       color="white"
       bg="gray.700"
       onClick={handleCarDetailsClick}
+      padding="10px 0 0 0"     // padding for top of the box where image and text goes of each car
     >
       <img
         src={car.image}
@@ -183,8 +186,7 @@ const CarDisplayBox = ({ car }) => {
           display: "block",
           margin: "auto",
           width: '240px',
-          height: '275px',
-          marginTop: '100px',
+          height: '275px'
         }}
       />
       <Flex
@@ -196,6 +198,15 @@ const CarDisplayBox = ({ car }) => {
       >
         <Text>{car.year} {car.make} {car.model}</Text>
         <Text>${car.price}</Text>
+      </Flex>
+      <Flex
+        alignItems="center"
+        marginLeft="15px"
+        marginTop="10px"
+        marginRight="15px"
+      >
+        <Text fontWeight="bold" marginTop="-10px">Color:</Text>
+        <Text marginLeft="5px" marginTop="-10px">{car.color}</Text>
       </Flex>
     </Box>
   );
@@ -234,10 +245,10 @@ const FilterCarsSearch = ({ handleSearch }) => {
               "Silverado", "Sierra", "Accord", "Mustang", "Camaro", "Forester", "Model S", "X3", "Terrain", "Rav4", "Odyssey", "Fusion"]}selected={model} onSelect={setModel} clearSelection={clearSelection} />
       <DropdownMenu title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
       <DropdownMenu title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
-      <Button bg="lightgray" marginLeft="10px" marginTop="42px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
-        <Text align="center">Search</Text>
+      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
+        <Text align="center" marginTop="16px">Search</Text>
       </Button>
-      <Button bg="lightgray" marginLeft="10px" marginTop="42px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
+      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
     </Flex>
   );
 };
@@ -249,74 +260,79 @@ const Homepage = () => {
   const [allCars, setAllCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
+  const [message, setMessage] = useState('');
+  const [forceRender, setForceRender] = useState(false);
+  const carsPerPage = 12;
 
   useEffect(() => {
-      fetchCars();
-  }, [currentPage, searchParams]); // Include isCarsFiltered in the dependency array
-  
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); 
 
-  // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
-    
-    try {
-      const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch cars');
-      }
-      const data = await response.json();
-      if (filteredCars.length > 0) {
-        setTotalPages(Math.ceil(filteredCars.length / 6));
-      } else {
-        setTotalPages(data.total_pages);
-      }
-      setAllCars(data.cars);
-    } catch (error) {
-      console.error('Error fetching cars:', error.message);
-    } 
+    let url = '/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // POST request to endpoint if filters are applied
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      data = response.data;
+    } else {
+      // GET request for getting all cars in the db
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      setMessage("Sorry, no cars found.");  // if no cars found, show this
+    } else {
+      setMessage('');   // if cars found after error message, set error message to blank
+    }
   };
 
-  // component to handle clicking on a page number and seeing relevant cars on that page
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // component to handle searching for cars based on filters and applying appropriate cars to be displayed per page
-  const handleSearch = ({ make, model, color, budget }) => {
-    axios.post('/cars_details', { make, model, color, budget })
-      .then(response => {
-        console.log('Filtered cars:', response.data);
-        setFilteredCars(response.data);
-        setSearchParams({ make, model, color, budget });
-        setCurrentPage(1); // Reset currentPage when filters are applied
-      })
-      .catch(error => {
-        console.error('Error fetching filtered cars:', error);
-      });
+  const handleSearch = async (filters) => {
+    // set the page to 1 when applying filters
+    setCurrentPage(1);
+    setSearchParams(filters);
   };
 
-  // once user clicks clear, their filter selection will be cleared and they will automatically see all the cars
   const handleClear = () => {
-    setFilteredCars([]);
-    setSearchParams({});
-    setCurrentPage(1);
-    fetchCars();
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
   };
 
   const handleClickCart = () => {
-  const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-  if (confirmed) {
-  // Redirect to login page
-  window.location.href = '/login';
-}
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+      window.location.href = '/login';
+    }
   };
 
-  // produces the format of 2 rows and 3 columns per page to be displayed
-  const rows = [];
   const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
+  // get the total number of pages based on the amount of filtered cars found
+  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
+
+  // splits the cars into appropriate rows (4 in this case)
+  const rows = [];
   for (let i = 0; i < carsToDisplay.length; i += 4) {
     const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
   }
+
+  const headerHeight = 400; // Adjust this based on your actual header's height
+  const footerHeight = 100; // Adjust this based on your actual footer's height
+  const viewportHeight = window.innerHeight;
+  const minContentHeight = `${viewportHeight - headerHeight - footerHeight}px`;
 
   return (
     <>
@@ -340,7 +356,7 @@ const Homepage = () => {
           </Flex>
         </Flex>
         <center><Text fontSize="3xl" fontWeight="bold">Home Page</Text></center>
-        <Box p={4} marginTop="10px" marginLeft="85px">
+        <Box p={3} marginTop="-40px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
@@ -348,37 +364,51 @@ const Homepage = () => {
         </Box>
       </Box>
 
-      {/* handles both clicking the search button and filtering cars as well as clearing the filters selected */}
-      <Flex justifyContent="center" alignItems="center" position="relative" marginTop="-10px">
-        <Box width="1000px" height="100px" bg="purple.800" position="absolute" borderRadius="xl">
+      {/* Filter cars */}
+      <Flex justifyContent="center" alignItems="center" marginTop="-40px">
+        <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
 
-      {/* displays the car boxes in the proper format */}
-      <Flex flexDirection="column" alignItems="center" marginTop="20px" marginBottom="20px">
-        {rows.slice(0, 3).map((row, rowIndex) => (
-          <Flex key={rowIndex} justifyContent="flex-start">
-            {row.map((car, index) => (
-              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom={rowIndex === 1 && row.length < 4 && index === row.length - 1 ? 0 : "10px"}>
-                <CarDisplayBox car={car} />
-              </Box>
-            ))}
-          </Flex>
-        ))}
-      </Flex>
+      {message ? (
+      <Box textAlign="center" color="white" mt="20px">
+        {message}
+      </Box>
+      ) : (
+        // if no error message, display cars
+        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+          {rows.map((row, rowIndex) => (
+            <Flex key={rowIndex} justifyContent="flex-start">
+              {row.map((car, index) => (
+                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                  <CarDisplayBox car={car} />
+                </Box>
+              ))}
+            </Flex>
+          ))}
+        </Flex>
+      )}
 
-      {/* buttons for pagination */}
+      {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(totalPages).keys()].map((pageNumber) => (
-            <Button key={pageNumber + 1} color="white" onClick={() => handlePageClick(pageNumber + 1)} variant="outline" ml={2} width="40px">
+          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+            <Button
+              key={pageNumber + 1}
+              color="white"
+              onClick={() => handlePageClick(pageNumber + 1)}
+              variant="outline"
+              ml={2}
+              width="40px"
+              disabled={pageNumber + 1 === currentPage}
+            >
               {pageNumber + 1}
             </Button>
           ))}
         </Flex>
       </Box>
-      <Footer marginTop="40px"/>
+      <Footer marginTop='15px' />
     </>
   );
 };
@@ -394,7 +424,8 @@ const SignedInHomepage = () => {
   const [allCars, setAllCars] = useState([]);             // use state for updating car data
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
-  
+  const [message, setMessage] = useState('');
+  const carsPerPage = 12;
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -428,66 +459,71 @@ const SignedInHomepage = () => {
   const handleNavigateToAddownCar = () => {
     navigate('/OwnCar', { state: { userData } });
   };
-
-
   
   const handleNavigateToTestDrive = () => {
     navigate('/TestDriveHistory', { state: { userData } });
   };
 
   useEffect(() => {
-    fetchCars();
-  }, [currentPage, searchParams]);
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); 
 
-  // grab the relvant car information from the backend to display all the cars to the user
   const fetchCars = async () => {
-    try {
-      const response = await fetch(`/get_cars_to_display?page=${currentPage}&per_page=12`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch cars');
-      }
-      const data = await response.json();
-      if (filteredCars.length > 0) {
-        setTotalPages(Math.ceil(filteredCars.length / 6));
-      } else {
-        setTotalPages(data.total_pages);
-      }
-      setAllCars(data.cars);
-    } catch (error) {
-      console.error('Error fetching cars:', error.message);
+    let url = '/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // POST request to endpoint if filters are applied
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      data = response.data;
+    } else {
+      // GET request for getting all cars in the db
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      setMessage("Sorry, no cars found.");  // if no cars found, show this
+    } else {
+      setMessage('');   // if cars found after error message, set error message to blank
     }
   };
 
-  // component to handle clicking on a page number and seeing relevant cars on that page
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // component to handle searching for cars based on filters and applying appropriate cars to be displayed per page
-  const handleSearch = ({ make, model, color, budget }) => {
-    axios.post('/cars_details', { make, model, color, budget })
-      .then(response => {
-        console.log('Filtered cars:', response.data);
-        setFilteredCars(response.data);
-        setSearchParams({ make, model, color, budget });
-        setCurrentPage(1); // Reset currentPage when filters are applied
-      })
-      .catch(error => {
-        console.error('Error fetching filtered cars:', error);
-      });
-  };
-
-  // once user clicks clear, their filter selection will be cleared and they will automatically see all the cars
-  const handleClear = () => {
-    setFilteredCars([]); 
-    setSearchParams({}); 
+  const handleSearch = async (filters) => {
+    // set the page to 1 when applying filters
     setCurrentPage(1);
-    fetchCars(); 
+    setSearchParams(filters);
   };
 
-  // produces the format of 2 rows and 3 columns per page to be displayed
-  const rows = [];
+  const handleClear = () => {
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
+  };
+
+  const handleClickCart = () => {
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+      window.location.href = '/login';
+    }
+  };
+
   const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
+  // get the total number of pages based on the amount of filtered cars found
+  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
+
+  // splits the cars into appropriate rows (4 in this case)
+  const rows = [];
   for (let i = 0; i < carsToDisplay.length; i += 4) {
     const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
@@ -519,8 +555,7 @@ const SignedInHomepage = () => {
           </Flex>
         </Flex>
 
-        {/* the text that appears inside the gradient box */}
-        <Box p={4} marginTop="20px" marginLeft="85px">
+        <Box p={3} marginTop="-10px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
@@ -560,37 +595,51 @@ const SignedInHomepage = () => {
         </Box>
       )}
 
-      {/* handles both clicking the search button and filtering cars as well as clearing the filters selected */}
-      <Flex justifyContent="center" alignItems="center" position="relative" marginTop="-10px">
-        <Box width="1000px" height="100px" bg="purple.800" position="absolute" borderRadius="xl">
+      {/* Filter cars */}
+      <Flex justifyContent="center" alignItems="center" marginTop="-40px">
+        <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
 
-      {/* displays the car boxes in the proper format */}
-      <Flex flexDirection="column" alignItems="center" marginTop="20px" marginBottom="20px"> 
-        {rows.slice(0, 3).map((row, rowIndex) => (
-          <Flex key={rowIndex} justifyContent="flex-start">
-            {row.map((car, index) => (
-              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom={rowIndex === 1 && row.length < 4 && index === row.length - 1 ? 0 : "10px"}>
-                <CarDisplayBox car={car} />
-              </Box>
-            ))}
-          </Flex>
-        ))}
-      </Flex>
+      {message ? (
+      <Box textAlign="center" color="white" mt="20px">
+        {message}
+      </Box>
+      ) : (
+        // if no error message, display cars
+        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+          {rows.map((row, rowIndex) => (
+            <Flex key={rowIndex} justifyContent="flex-start">
+              {row.map((car, index) => (
+                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                  <CarDisplayBox car={car} />
+                </Box>
+              ))}
+            </Flex>
+          ))}
+        </Flex>
+      )}
 
-      {/* buttons for pagination */}
+      {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(totalPages).keys()].map((pageNumber) => (
-            <Button key={pageNumber + 1} color="white" onClick={() => handlePageClick(pageNumber + 1)} variant="outline" ml={2} width="40px">
+          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+            <Button
+              key={pageNumber + 1}
+              color="white"
+              onClick={() => handlePageClick(pageNumber + 1)}
+              variant="outline"
+              ml={2}
+              width="40px"
+              disabled={pageNumber + 1 === currentPage}
+            >
               {pageNumber + 1}
             </Button>
           ))}
         </Flex>
       </Box>
-      <Footer marginTop="40px"/>
+      <Footer marginTop='15px' />
     </>
   );
 };
@@ -892,6 +941,7 @@ const ServiceHistory = () => {
   );
 };
 
+
 const CustomerCart = () => {
   const location = useLocation();
   const userData = location.state?.userData;
@@ -1111,15 +1161,15 @@ const CustomerSerivceAppointment = () => {
         color='white'
         height='100vh'
         bgGradient="linear(to-b, black, gray.600)"
+        display="flex"
+        alignItems="center" 
+        justifyContent="center"
       >
-        <Flex justifyContent="space-between" alignItems="center" p={4}>
-          <Box>
-            <Text fontSize="3xl" fontWeight="bold">Schedule Service Appointment</Text>
-          </Box>
-        </Flex>
-
-        <Box mt={8} mx="auto" maxW="400px">
+        <Box mx="auto" maxW="400px">
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '10px' }}>
+            <Box>
+              <Text fontSize="lg" fontWeight="bold" color='black' marginTop='-20px'>Schedule Service Appointment</Text>
+            </Box>
             <form onSubmit={handleSubmit}>
               <label htmlFor="Service" style={{ color: 'black' }}>Service</label>
               <Select
@@ -1635,100 +1685,63 @@ const CustomerModifyInfo = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Flex direction="column" background="white" p={6} rounded="md" width="90%" maxWidth="500px" color="black">
-        <Flex justifyContent="space-between" alignItems="center" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold" color="black">Modify Personal Information</Text>
-          <Button variant="link" colorScheme="blue" onClick={handleSignOut}>Sign Out</Button>
-        </Flex>
-        <Text mb={4}>Client ID: {userData?.customer_id}</Text>
-        <form>
-          <FormControl mb={3}>
-            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input
-              id='first_name'
-              type='text'
-              name='first_name'
-              value={editedData.first_name}
-              onChange={handleInputChange}
-              disabled
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input
-              id='last_name'
-              type='text'
-              name='last_name'
-              value={editedData.last_name}
-              onChange={handleInputChange}
-              disabled
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
-            <Input
-              id='usernames'
-              type='text'
-              name='usernames'
-              value={editedData.usernames}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
-            <Input
-              id='email'
-              type='email'
-              name='email'
-              value={editedData.email}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
-            <Input
-              id='phone'
-              type='tel'
-              name='phone'
-              value={editedData.phone}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
-            <Input
-              id='Address'
-              type='text'
-              name='Address'
-              value={editedData.Address}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='password' color='black'>Password</FormLabel>
-            <Input
-              id='password'
-              type='password'
-              name='password'
-              value={editedData.password}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-          <Button colorScheme='blue' onClick={handleEdit}>
-            Edit
-          </Button>
-
-
-        </form>
+      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
+      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+        <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
+        <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>
       </Flex>
+
+      <Text mb={5} fontSize="md" color="gray.600">Client ID: {userData?.customer_id}</Text>
+
+      
+
+      <form>
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* First and Last Name */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
+            <Input id='first_name' type='text' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
+            <Input id='last_name' type='text' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+          </FormControl>
+        </Flex>
+
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* User Name and Email */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
+            <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
+            <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
+          </FormControl>
+        </Flex>
+
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* Phone and Address */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
+            <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
+            <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
+          </FormControl>
+        </Flex>
+
+        {/* Password (Kept alone due to sensitivity) */}
+        <FormControl mb={4}>
+          <FormLabel htmlFor='password' color='black'>Password</FormLabel>
+          <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
+        </FormControl>
+
+        {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
+        <Button colorScheme='blue' width="20%" onClick={handleEdit}>Save</Button>
+      </form>
+    </Flex>
     </Box>
   );
 };
@@ -2185,11 +2198,34 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
+        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
       });
   };
+
+  const acceptService = (serviceRequestId) =>{
+    const serviceRequest = serviceRequests.find(request => request.service_request_id === serviceRequestId);
+    const formData = {
+      customer_id: serviceRequest.customer_id,
+      item_price: serviceRequest.service_price,
+      item_image: 'https://ibb.co/b64Kdyh',
+      item_name: serviceRequest.service_name,
+      car_id: serviceRequest.car_id,
+      service_offered_id: serviceRequest.service_offered_id
+    }
+    axios.post('/add_to_cart', formData)
+      .then(response => {
+        // Handle success response
+        console.log('Service added to cart successfully');
+        // You may want to update the UI or perform any additional actions here
+      })
+      .catch(error => {
+        // Handle error response
+        console.error('Failed to add service to cart:', error);
+      });
+  }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -2363,6 +2399,50 @@ const Manager = () => {
   const handleCreateTechnician = () => {
     setShowTechnicianForm(true);
   };
+
+  // this is the function to add the service to the users cart when the service is accepted by a manager
+  // const acceptService = e => {
+  //   e.preventDefault();
+  //   const formattedDate = `${selectedDate} ${selectedTime}:00`;
+
+  //   const formData = {
+  //     customer_ID: userData.customer_id,
+  //     service_offered: selectedService,
+  //     car_id: vinNumber,
+  //     proposed_datetime: formattedDate,
+  //   };
+    
+  //   fetch('http://localhost:5000/service-request', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(formData),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       setEditMessage('Submission went through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //       resetForm();
+  //     })
+  //     .catch(error => {
+  //       console.error('Error:', error);
+  //       setEditMessage('Submission did not go through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //     });
+
+  //   const resetForm = () => {
+  //     setSelectedService('');
+  //     setSelectedDate('');
+  //     setSelectedTime('');
+  //     setVinNumber('');
+  //   };
+  // };
 
   // ensures that when a button is clicked, only the relevant information of that button is shown
   const handleButtonClick = (section) => {
@@ -2620,7 +2700,7 @@ const Manager = () => {
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description} testing:{request.service_offered_id}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
@@ -2628,7 +2708,7 @@ const Manager = () => {
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    <Button colorScheme="green" onClick={() => handleAccept(request.service_request_id)}>
+                    <Button colorScheme="green" onClick={() => {{handleAccept(request.service_request_id); acceptService(request.service_request_id);}}} >
                       Accept
                     </Button>
                   </td>
@@ -3029,6 +3109,29 @@ const Technician = () => {
         console.error('Error accepting service request:', error);
       });
   };
+
+  // The function below is in case we also want the technician to accept the service and have the service go into the customers cart
+  // const acceptService = (serviceRequestId) =>{
+  //   const serviceRequest = serviceRequests.find(service => service.service_request_id === serviceRequestId);
+  //   const formData = {
+  //     customer_id: serviceRequest.customer_id,
+  //     item_price: serviceRequest.service_price,
+  //     item_image: 'https://ibb.co/b64Kdyh',
+  //     item_name: serviceRequest.service_name,
+  //     car_id: serviceRequest.car_id,
+  //     service_offered_id: serviceRequest.service_offered_id
+  //   }
+  //   axios.post('/add_to_cart', formData)
+  //     .then(response => {
+  //       // Handle success response
+  //       console.log('Service added to cart successfully');
+  //       // You may want to update the UI or perform any additional actions here
+  //     })
+  //     .catch(error => {
+  //       // Handle error response
+  //       console.error('Failed to add service to cart:', error);
+  //     });
+  // }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -3115,6 +3218,8 @@ const Technician = () => {
                   <td style={{textAlign: 'center'}}>{service.status}</td>
                   <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
+                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
                     <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
                       Accept
                     </Button>

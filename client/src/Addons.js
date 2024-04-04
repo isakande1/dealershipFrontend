@@ -33,14 +33,14 @@ export default function Addons(){
     //fetch the service packages
     const fetchPackages = () => {
       axios.get('/ServicesPackage')
-          .then(response => {
-              console.log('services package cars:', response.data);
-              setAllpackagesInfos( response.data);
-          })
-          .catch(error => {
-              console.error('Error fetching service package:', error);
-          });
-  };
+        .then(response => {
+          console.log('services package cars:', response.data);
+          setAllpackagesInfos(response.data);
+           })
+        .catch(error => {
+          console.error('Error fetching service package:', error);
+        });
+    };
 
     useEffect(() => {
       console.log("usfhfg", userData);
