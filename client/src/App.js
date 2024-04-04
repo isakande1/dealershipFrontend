@@ -646,6 +646,7 @@ const SignedInHomepage = () => {
 
 const TestDriveHistory = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userData = location.state?.userData;
   const [driveHistory, setDriveHistory] = useState([]);
 
@@ -666,8 +667,56 @@ const TestDriveHistory = () => {
     fetchTestDriveHistory();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -800,8 +849,56 @@ const OwnCar = () => {
       });
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -894,8 +991,58 @@ const ServiceHistory = () => {
     fetchServiceHistory();
   }, [userData]);
 
+  const navigate = useNavigate();  
+
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+          <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -950,6 +1097,7 @@ const CustomerCart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();  
 
   useEffect(() => {
     fetchCartItems(userData?.customer_id);
@@ -1005,8 +1153,59 @@ const CustomerCart = () => {
     return  service_package_id ? { marginLeft:"30px"} : {};
 };
 
+const handleNavigate = (path) => {
+  navigate(path, { state: { userData } });
+};
+
+
   return (
+  <>
+ 
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -1048,6 +1247,7 @@ const CustomerCart = () => {
         </ModalContent>
       </Modal>
     </Box>
+    </>
   );
 };
 //CustomerSerivceAppointment
@@ -1153,8 +1353,56 @@ const CustomerSerivceAppointment = () => {
     };
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+           Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -1258,8 +1506,56 @@ const PastPurchase = () => {
     fetchItemsSold();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive Status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -1511,8 +1807,58 @@ const CarAccessories = () => {
     handleAddToCart();
   }, [cartData]);
 
+  const navigate = useNavigate();  
+
+const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
 
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1527,12 +1873,15 @@ const CarAccessories = () => {
       <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
-          name="category"
-          defaultValue=""
-          onChange={handleSelectChange}
-          color="black"
-          
-        >
+        name="category"
+        defaultValue=""
+        onChange={handleSelectChange}
+        color="black" 
+        bg="white" 
+        border="none"
+        borderRadius="md" 
+        boxShadow="sm" 
+      >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
@@ -1591,36 +1940,39 @@ const CarAccessories = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
-        <Thead>
-          <Tr>
-            <Th>Accessory ID</Th>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Price</Th>
-            <Th>Image</Th>
-            <Th>Action</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {accessories.map((accessory, index) => (
-            <Tr key={index}>
-              <Td>{accessory.accessoire_id}</Td>
-              <Td>{accessory.name}</Td>
-              <Td>{accessory.description}</Td>
-              <Td>{accessory.price}</Td>
-              {/* <Td>{accessory.image}</Td> */}
-              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-              <Td><Image src={accessory.image} alt="Large Image"/></Td>
-              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      {accessories.length > 0 && (
+  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+    <Thead>
+      <Tr>
+        <Th>Accessory ID</Th>
+        <Th>Name</Th>
+        <Th>Description</Th>
+        <Th>Price</Th>
+        <Th>Image</Th>
+        <Th>Action</Th>
+      </Tr>
+    </Thead>
+    <Tbody>
+      {accessories.map((accessory, index) => (
+        <Tr key={index}>
+          <Td>{accessory.accessoire_id}</Td>
+          <Td>{accessory.name}</Td>
+          <Td>{accessory.description}</Td>
+          <Td>{accessory.price}</Td>
+          {/* <Td>{accessory.image}</Td> */}
+          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+          <Td><Image src={accessory.image} alt="Large Image"/></Td>
+          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+        </Tr>
+      ))}
+    </Tbody>
+  </Table>
+)}
     </Box>
+    </>
   );
 };
 
@@ -1673,7 +2025,56 @@ const CustomerModifyInfo = () => {
     }
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>  
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1700,11 +2101,11 @@ const CustomerModifyInfo = () => {
           {/* First and Last Name */}
           <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
             <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input id='first_name' type='text' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+            <Input id='first_name' type='text' name='first_name' color='red' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
           <FormControl pl={{ base: 0, sm: 2 }} flex="1">
             <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input id='last_name' type='text' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+            <Input id='last_name' type='text' name='last_name' color='red' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
         </Flex>
 
@@ -1743,6 +2144,7 @@ const CustomerModifyInfo = () => {
       </form>
     </Flex>
     </Box>
+    </>
   );
 };
 
@@ -1757,7 +2159,6 @@ const Login = () => {
     setShowCreateCustomerForm(!showCreateCustomerForm);
     setShowCreateUserForm(false); // Hide the create user form if visible
   };
-
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -1776,34 +2177,27 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
-//Go back to the previous page if exist
-        // if(window.history.length > 1){
-        //  navigate(-1);
-        // }
-//End 
-       const previousUrl = location.state?.previousUrl;
-       const car_id = location.state?.car_id;
-        previousUrl ? navigate(previousUrl, {state :{ car_id : car_id, userData: data}}) : navigate('/homepage', { state: { userData: data } });
-        
-      } else {
+        const previousUrl = location.state?.previousUrl;
+        const car_id = location.state?.car_id;
+        previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
 
+        // Reset form state and collapse sign-up form
+        setShowCreateCustomerForm(false);
+        setShowCreateUserForm(false);
+      } else {
         console.error('Login failed:', data.error);
         setEditMessage('Login failed');
         setTimeout(() => {
           setEditMessage(null);
         }, 4000);
-
       }
     } catch (error) {
       console.error('Error:', error);
-
     }
   };
 
   const handleCreateCustomerSubmit = async (event) => {
     event.preventDefault();
-
-
 
     const confirmed = window.confirm('Are you sure you want to create this customer?');
 
@@ -1812,9 +2206,9 @@ const Login = () => {
       setTimeout(() => {
         setEditMessage(null);
       }, 2000);
-      return; 
+      return;
     }
-    
+
     const formData = new FormData(event.target);
     const customerData = Object.fromEntries(formData.entries());
 
@@ -1834,6 +2228,9 @@ const Login = () => {
         setTimeout(() => {
           setEditMessage(null);
         }, 2000);
+        // Reset form state and collapse sign-up form
+        setShowCreateCustomerForm(false);
+        setShowCreateUserForm(false);
       } else {
         console.error('Failed to add customer');
         setEditMessage('Customer was not created successfully');
@@ -1851,20 +2248,20 @@ const Login = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '100vh', /* Set the minimum height of the div to 100% of the viewport height */
-      background: "linear-gradient(0deg, #222, #000)", /* Set the background color of the whole page to black */
+      minHeight: '100vh',
+      background: "linear-gradient(0deg, #222, #000)",
     }}>
       <div className="form-div" style={{
-        width: '80%', // Set the width of the div to be very wide
-        maxWidth: '800px', // Set a maximum width for the div
+        width: '80%',
+        maxWidth: '800px',
         padding: '20px',
         border: '1px none black',
         borderRadius: '35px',
-        backgroundColor: 'rgba(255, 255, 255, 0.15)', /* Set the background color of the div to white */
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', // Center content horizontally
-        gap: '20px', // Add gap between child elements
+        alignItems: 'center',
+        gap: '20px',
       }}>
         <form className="login-form" onSubmit={handleLoginSubmit}>
           <h2 className="form-title">Login</h2>
@@ -1878,7 +2275,6 @@ const Login = () => {
           </div>
           <button className="login-button" type="submit">Login</button>
           {EditMessage && <p> {EditMessage}</p>}
-
         </form>
         <Button as={Link} to="/Roles_login" style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }} marginLeft="600px">Adminstration login</Button>
         <button onClick={handleCreateCustomerClick} style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }}>
@@ -1886,8 +2282,6 @@ const Login = () => {
         </button>
         {showCreateCustomerForm && (
           <form className="create-customer-form" onSubmit={handleCreateCustomerSubmit}>
-
-
             <div className="form-group">
               <label htmlFor="first_name">First Name:</label>
               <input type="text" id="first_name" name="first_name" required />
@@ -1919,9 +2313,7 @@ const Login = () => {
             <button type="submit" style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }}>Submit</button>
             {EditMessage && <p>{EditMessage}</p>}
           </form>
-
         )}
-
       </div>
       <div className='circle-top-left'></div>
       <div className='circle-bottom-right'></div>
@@ -2190,7 +2582,7 @@ const Manager = () => {
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
-      status: 'accepted'
+      status: 'Awaiting Customer Payment'
     };
   
     axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
@@ -2700,7 +3092,7 @@ const Manager = () => {
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_request_id}</td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description} testing:{request.service_offered_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_name}: {request.description}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.service_price}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.proposed_datetime}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.car_id}</td>
@@ -3239,33 +3631,6 @@ const Technician = () => {
   );
 }
 
-function NavBar() {
-  return (
-    <Navbar expand="lg" className="bg-color">
-      <Container color='red'>
-        <img src={logo} href='/homepage' alt="" width="4%" height="4%" className="d-inline-block align-top me-2"/>
-        <Navbar.Brand href="/homepage">Velocity Motors</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/homepage">Home</Nav.Link>
-            {/* <Nav.Link href="/Cart">Cart</Nav.Link>
-            <NavDropdown title="Dashboard" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown> */}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-}
+
 
 export default App;

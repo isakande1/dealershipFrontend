@@ -180,3 +180,36 @@ button:hover {
 .bg-color {
   background-color: #d3d3d3 !important; /* Change background color to red */
 }
+
+
+.navbar {
+  background-color: #333;
+  padding: 10px;
+}
+
+.nav-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  display: inline;
+  margin-right: 20px;
+}
+
+.nav-button {
+  background-color: transparent; /* Set the background to transparent initially */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #fff; /* Change background color on hover */
+  color: #333; /* Change text color on hover */
+  box-shadow: 0 0 0 3px #333; /* Add a box shadow on hover */
+}

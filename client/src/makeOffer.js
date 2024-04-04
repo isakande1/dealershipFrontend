@@ -9,7 +9,7 @@ import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 
 export default function MakeOffer(){
-const [ isOfferSent, SetIsOfferSent] = useState(false);
+const [ isOfferSent, SetIsOfferSent] = useState(null);
 const location = useLocation();
 const {car_name} = location.state;
 const {car_image} = location.state;
@@ -23,13 +23,15 @@ const [offerValue, setOfferValue] = useState("")
         axios.post('/makeOffer',{customer_id, car_id, offer})
             .then(response => {
                 console.log('offer response:', response.data);
+                SetIsOfferSent(true)
                
             })
             .catch(error => {
+                SetIsOfferSent(false)
                 console.error('Error fetching service package:', error);
             });
     };
-
+console.log(isOfferSent);
     return(
         <Flex minH="100vh" minW="100vh" bg='black' bgGradient="linear(to-b, black, gray.600)" justifyContent="center" alignItems="center" >
         <Grid  bg="rgba(128, 128, 128, 0.15)" color="white" w="900px" h="400px" borderRadius="md" gridTemplateColumns="1fr 1fr">
@@ -39,8 +41,10 @@ const [offerValue, setOfferValue] = useState("")
              <Text> Price: ${car_price}</Text>
             </Box>
             <Flex  justifyContent="center" alignItems="center" flexDirection="column"> 
-            <Input type="number" placeholder="Enter your offer" w="60%" onChange={(e)=>setOfferValue(e.target.value)} />
-            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" onClick={sendOffer(customer_id,car_id,offerValue)}> Send Offer </Button>
+            {isOfferSent === true ? <Text fontSize="sm" color="green">Offer sent sucessfully ! </Text> 
+            :isOfferSent === false ? <Text fontSize="sm" color="red">Something went wrong, please try again! </Text> : null }
+            <Input type="number" placeholder="Enter your offer" w="60%" onChange={(e)=>{setOfferValue(e.target.value); SetIsOfferSent(null)}} />
+            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" onClick={()=>{sendOffer(customer_id,car_id,offerValue)}}> Send Offer </Button>
             </Flex>
          </Grid>
          </Flex>
