@@ -1940,35 +1940,37 @@ const handleNavigate = (path) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
-        <Thead>
-          <Tr>
-            <Th>Accessory ID</Th>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Price</Th>
-            <Th>Image</Th>
-            <Th>Action</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {accessories.map((accessory, index) => (
-            <Tr key={index}>
-              <Td>{accessory.accessoire_id}</Td>
-              <Td>{accessory.name}</Td>
-              <Td>{accessory.description}</Td>
-              <Td>{accessory.price}</Td>
-              {/* <Td>{accessory.image}</Td> */}
-              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-              <Td><Image src={accessory.image} alt="Large Image"/></Td>
-              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      {accessories.length > 0 && (
+  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+    <Thead>
+      <Tr>
+        <Th>Accessory ID</Th>
+        <Th>Name</Th>
+        <Th>Description</Th>
+        <Th>Price</Th>
+        <Th>Image</Th>
+        <Th>Action</Th>
+      </Tr>
+    </Thead>
+    <Tbody>
+      {accessories.map((accessory, index) => (
+        <Tr key={index}>
+          <Td>{accessory.accessoire_id}</Td>
+          <Td>{accessory.name}</Td>
+          <Td>{accessory.description}</Td>
+          <Td>{accessory.price}</Td>
+          {/* <Td>{accessory.image}</Td> */}
+          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+          <Td><Image src={accessory.image} alt="Large Image"/></Td>
+          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+        </Tr>
+      ))}
+    </Tbody>
+  </Table>
+)}
     </Box>
     </>
   );
