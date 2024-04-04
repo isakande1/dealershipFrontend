@@ -8,7 +8,7 @@ import {
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 import TestDriveForm from './TestDriveForm';
-//import './App.css';
+import './App.css';
 
 
 export default function CarDetails() {
@@ -77,9 +77,58 @@ export default function CarDetails() {
 
     //Component to layout the images of the car
     const CarImagesLayout = () => {
-     
+
+      const userData = location.state?.userData; 
+
+      const handleNavigate = (path) => {
+        navigate(path, { state: { userData } });
+      };
         return (
             <Grid placeItems="center" bg="gray.700">
+              <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+      </ul>
+    </nav>
                 <Box w="80%" h="550px" /*transform="translateY(-25%)"*/>
                     <Image
                         overflow="hidden"

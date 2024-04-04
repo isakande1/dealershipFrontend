@@ -261,6 +261,7 @@ const Homepage = () => {
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
+  const [forceRender, setForceRender] = useState(false);
   const carsPerPage = 12;
 
   useEffect(() => {
@@ -328,6 +329,11 @@ const Homepage = () => {
     rows.push(row);
   }
 
+  const headerHeight = 400; // Adjust this based on your actual header's height
+  const footerHeight = 100; // Adjust this based on your actual footer's height
+  const viewportHeight = window.innerHeight;
+  const minContentHeight = `${viewportHeight - headerHeight - footerHeight}px`;
+
   return (
     <>
       <Box bg='black' w='100%' h='100vh' position='fixed' zIndex='-1' />
@@ -359,7 +365,7 @@ const Homepage = () => {
       </Box>
 
       {/* Filter cars */}
-      <Flex justifyContent="center" alignItems="center" marginTop="-10px">
+      <Flex justifyContent="center" alignItems="center" marginTop="-40px">
         <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
@@ -549,7 +555,7 @@ const SignedInHomepage = () => {
           </Flex>
         </Flex>
 
-        <Box p={3} marginTop="10px" marginLeft="85px">
+        <Box p={3} marginTop="-10px" marginLeft="85px">
           <Text fontSize="3xl" fontWeight="bold">Your one stop</Text>
           <Text fontSize="3xl" fontWeight="bold">for New Cars,</Text>
           <Text fontSize="3xl" fontWeight="bold">Service,</Text>
@@ -590,7 +596,7 @@ const SignedInHomepage = () => {
       )}
 
       {/* Filter cars */}
-      <Flex justifyContent="center" alignItems="center" marginTop="-10px">
+      <Flex justifyContent="center" alignItems="center" marginTop="-40px">
         <Box width="1000px" height="100px" bg="purple.800" borderRadius="xl">
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
@@ -640,6 +646,7 @@ const SignedInHomepage = () => {
 
 const TestDriveHistory = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userData = location.state?.userData;
   const [driveHistory, setDriveHistory] = useState([]);
 
@@ -660,8 +667,56 @@ const TestDriveHistory = () => {
     fetchTestDriveHistory();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -794,8 +849,56 @@ const OwnCar = () => {
       });
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -888,8 +991,58 @@ const ServiceHistory = () => {
     fetchServiceHistory();
   }, [userData]);
 
+  const navigate = useNavigate();  
+
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+          <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -944,6 +1097,7 @@ const CustomerCart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();  
 
   useEffect(() => {
     fetchCartItems(userData?.customer_id);
@@ -999,8 +1153,59 @@ const CustomerCart = () => {
     return  service_package_id ? { marginLeft:"30px"} : {};
 };
 
+const handleNavigate = (path) => {
+  navigate(path, { state: { userData } });
+};
+
+
   return (
+  <>
+ 
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -1042,6 +1247,7 @@ const CustomerCart = () => {
         </ModalContent>
       </Modal>
     </Box>
+    </>
   );
 };
 //CustomerSerivceAppointment
@@ -1147,23 +1353,71 @@ const CustomerSerivceAppointment = () => {
     };
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+           Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
         color='white'
         height='100vh'
         bgGradient="linear(to-b, black, gray.600)"
+        display="flex"
+        alignItems="center" 
+        justifyContent="center"
       >
-        <Flex justifyContent="space-between" alignItems="center" p={4}>
-          <Box>
-            <Text fontSize="3xl" fontWeight="bold">Schedule Service Appointment</Text>
-          </Box>
-        </Flex>
-
-        <Box mt={8} mx="auto" maxW="400px">
+        <Box mx="auto" maxW="400px">
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '10px' }}>
+            <Box>
+              <Text fontSize="lg" fontWeight="bold" color='black' marginTop='-20px'>Schedule Service Appointment</Text>
+            </Box>
             <form onSubmit={handleSubmit}>
               <label htmlFor="Service" style={{ color: 'black' }}>Service</label>
               <Select
@@ -1252,8 +1506,56 @@ const PastPurchase = () => {
     fetchItemsSold();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive Status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -1485,10 +1787,16 @@ const CarAccessories = () => {
             }),
           });
   
-          const data = await response.json();
-          console.log("Backend response:", data);
-  
-          // Handle successful response (e.g., update UI, show confirmation message)
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Accessory added to cart successfully:", data);
+            alert("Accessory added to cart successfully");
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error adding accessory to cart:', response.statusText);
+            alert("Error adding accessory to cart");
+            // Handle the error, show an error message to the user, etc.
+        }
         } catch (error) {
           console.error('Error adding accessory:', error);
           // Handle errors (e.g., display error message to user)
@@ -1499,8 +1807,58 @@ const CarAccessories = () => {
     handleAddToCart();
   }, [cartData]);
 
+  const navigate = useNavigate();  
+
+const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
 
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1511,14 +1869,19 @@ const CarAccessories = () => {
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
-      <FormControl mx="auto" my={4} w="max-content">
+      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
+      <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
-          name="category"
-          defaultValue=""
-          onChange={handleSelectChange}
-          colorScheme="red"
-        >
+        name="category"
+        defaultValue=""
+        onChange={handleSelectChange}
+        color="black" 
+        bg="white" 
+        border="none"
+        borderRadius="md" 
+        boxShadow="sm" 
+      >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
@@ -1527,12 +1890,13 @@ const CarAccessories = () => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
         Fetch Accessories
       </Button>
-      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+    </Box>
+      {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
-      </Button>
+      </Button> */}
       {/* Add Accessory Modal */}
       <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
         <ModalOverlay />
@@ -1576,34 +1940,39 @@ const CarAccessories = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Table variant="striped" colorScheme="blue" mx="auto" w="max-content">
-        <Thead>
-          <Tr>
-            <Th>Accessory ID</Th>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Price</Th>
-            <Th>Image</Th>
-            <Th>Action</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {accessories.map((accessory, index) => (
-            <Tr key={index}>
-              <Td>{accessory.accessoire_id}</Td>
-              <Td>{accessory.name}</Td>
-              <Td>{accessory.description}</Td>
-              <Td>{accessory.price}</Td>
-              <Td>{accessory.image}</Td>
-              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td>
-              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      {accessories.length > 0 && (
+  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+    <Thead>
+      <Tr>
+        <Th>Accessory ID</Th>
+        <Th>Name</Th>
+        <Th>Description</Th>
+        <Th>Price</Th>
+        <Th>Image</Th>
+        <Th>Action</Th>
+      </Tr>
+    </Thead>
+    <Tbody>
+      {accessories.map((accessory, index) => (
+        <Tr key={index}>
+          <Td>{accessory.accessoire_id}</Td>
+          <Td>{accessory.name}</Td>
+          <Td>{accessory.description}</Td>
+          <Td>{accessory.price}</Td>
+          {/* <Td>{accessory.image}</Td> */}
+          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+          <Td><Image src={accessory.image} alt="Large Image"/></Td>
+          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+        </Tr>
+      ))}
+    </Tbody>
+  </Table>
+)}
     </Box>
+    </>
   );
 };
 
@@ -1656,7 +2025,56 @@ const CustomerModifyInfo = () => {
     }
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>  
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1668,101 +2086,65 @@ const CustomerModifyInfo = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Flex direction="column" background="white" p={6} rounded="md" width="90%" maxWidth="500px" color="black">
-        <Flex justifyContent="space-between" alignItems="center" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold" color="black">Modify Personal Information</Text>
-          <Button variant="link" colorScheme="blue" onClick={handleSignOut}>Sign Out</Button>
-        </Flex>
-        <Text mb={4}>Client ID: {userData?.customer_id}</Text>
-        <form>
-          <FormControl mb={3}>
-            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input
-              id='first_name'
-              type='text'
-              name='first_name'
-              value={editedData.first_name}
-              onChange={handleInputChange}
-              disabled
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input
-              id='last_name'
-              type='text'
-              name='last_name'
-              value={editedData.last_name}
-              onChange={handleInputChange}
-              disabled
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
-            <Input
-              id='usernames'
-              type='text'
-              name='usernames'
-              value={editedData.usernames}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
-            <Input
-              id='email'
-              type='email'
-              name='email'
-              value={editedData.email}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
-            <Input
-              id='phone'
-              type='tel'
-              name='phone'
-              value={editedData.phone}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
-            <Input
-              id='Address'
-              type='text'
-              name='Address'
-              value={editedData.Address}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          <FormControl mb={3}>
-            <FormLabel htmlFor='password' color='black'>Password</FormLabel>
-            <Input
-              id='password'
-              type='password'
-              name='password'
-              value={editedData.password}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-
-          {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-          <Button colorScheme='blue' onClick={handleEdit}>
-            Edit
-          </Button>
-
-
-        </form>
+      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
+      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+        <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
+        <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>
       </Flex>
+
+      <Text mb={5} fontSize="md" color="gray.600">Client ID: {userData?.customer_id}</Text>
+
+      
+
+      <form>
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* First and Last Name */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
+            <Input id='first_name' type='text' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
+            <Input id='last_name' type='text' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+          </FormControl>
+        </Flex>
+
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* User Name and Email */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
+            <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
+            <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
+          </FormControl>
+        </Flex>
+
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          {/* Phone and Address */}
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
+            <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
+          </FormControl>
+          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
+            <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
+          </FormControl>
+        </Flex>
+
+        {/* Password (Kept alone due to sensitivity) */}
+        <FormControl mb={4}>
+          <FormLabel htmlFor='password' color='black'>Password</FormLabel>
+          <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
+        </FormControl>
+
+        {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
+        <Button colorScheme='blue' width="20%" onClick={handleEdit}>Save</Button>
+      </form>
+    </Flex>
     </Box>
+    </>
   );
 };
 
@@ -2182,13 +2564,26 @@ const Manager = () => {
     username: '',
     phone: '',
     password: '',
-    manager_id: userData.manager_id
+    manager_id: userData?.manager
   });
   const [removeCarFormData, setRemoveCarFormData] = useState({
     car_id: ''
   });
   const [serviceRequests, setServiceRequests] = useState([]);
   const [error, setError] = useState(null);
+  const [accessoryData, setAccessoryData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: "",
+    category: "",
+  });
+  const [showAddMiscellaneous, setShowAddMiscellaneous] = useState(false);
+  const [accessoryID, setAccessoryID] = useState({
+    accessoire_id: '',
+  });
+  const [message, setMessage] = useState('');
+
   useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
@@ -2197,7 +2592,7 @@ const Manager = () => {
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
-      status: 'accepted'
+      status: 'Awaiting Customer Payment'
     };
   
     axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
@@ -2205,11 +2600,34 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
+        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
       });
   };
+
+  const acceptService = (serviceRequestId) =>{
+    const serviceRequest = serviceRequests.find(request => request.service_request_id === serviceRequestId);
+    const formData = {
+      customer_id: serviceRequest.customer_id,
+      item_price: serviceRequest.service_price,
+      item_image: 'https://ibb.co/b64Kdyh',
+      item_name: serviceRequest.service_name,
+      car_id: serviceRequest.car_id,
+      service_offered_id: serviceRequest.service_offered_id
+    }
+    axios.post('/add_to_cart', formData)
+      .then(response => {
+        // Handle success response
+        console.log('Service added to cart successfully');
+        // You may want to update the UI or perform any additional actions here
+      })
+      .catch(error => {
+        // Handle error response
+        console.error('Failed to add service to cart:', error);
+      });
+  }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -2302,27 +2720,62 @@ const Manager = () => {
 
   const handleSubmitMiscellaneousForm = async (event) => {
     event.preventDefault();
-    const carId = parseInt(removeCarFormData.car_id);
-    if (isNaN(carId)) {
-      setError('Car ID must be an integer');
+    const accessory_ID = parseInt(accessoryID.accessoire_id);
+    if (isNaN(accessory_ID)) {
+      setError('Accessory ID must be an integer');
       return;
     }
-    console.log("the car id is", removeCarFormData.car_id);
+    console.log("the accessory id is", accessory_ID);
     try {
-        const response = await fetch(`http://localhost:5000`, {
+        const response = await fetch(`http://localhost:5000/deleteAccessoryManager`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(removeCarFormData), // Sending formData in the request body
+            body: JSON.stringify({ accessoryID }), // Sending formData in the request body
         });
         
         if (response.ok) {
             const data = await response.json();
-            console.log("Car removed successfully:", data);
+            console.log("Accessory removed successfully:", data);
+            alert("Accessory removed successfully");
             // Optionally, you can update the UI or show a success message here
         } else {
-            console.error('Error removing car:', response.statusText);
+            console.error('Error removing Accessory:', response.statusText);
+            // Handle the error, show an error message to the user, etc.
+        }
+    } catch (error) {
+        console.error('Error sending data:', error);
+        // Handle network errors, display error message, etc.
+    }
+    // Reset error state
+    setError(null);
+  };
+
+  const handleAddMiscellaneous = async (event) => {
+    event.preventDefault();
+    console.log("hello");
+    console.log("the car id is", accessoryData.name);
+    console.log("the car id is", accessoryData.description);
+    console.log("the car id is", accessoryData.price);
+    console.log("the car id is", accessoryData.image);
+    console.log("the car id is", accessoryData.category);
+    try {
+        const response = await fetch(`http://localhost:5000/addAccessory`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessoryData }), // Sending formData in the request body
+        });
+   
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Accessory added successfully:", data);
+            alert("Accessory added successfully");
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error adding accessory:', response.statusText);
             // Handle the error, show an error message to the user, etc.
         }
     } catch (error) {
@@ -2349,6 +2802,50 @@ const Manager = () => {
     setShowTechnicianForm(true);
   };
 
+  // this is the function to add the service to the users cart when the service is accepted by a manager
+  // const acceptService = e => {
+  //   e.preventDefault();
+  //   const formattedDate = `${selectedDate} ${selectedTime}:00`;
+
+  //   const formData = {
+  //     customer_ID: userData.customer_id,
+  //     service_offered: selectedService,
+  //     car_id: vinNumber,
+  //     proposed_datetime: formattedDate,
+  //   };
+    
+  //   fetch('http://localhost:5000/service-request', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(formData),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       setEditMessage('Submission went through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //       resetForm();
+  //     })
+  //     .catch(error => {
+  //       console.error('Error:', error);
+  //       setEditMessage('Submission did not go through');
+  //       setTimeout(() => {
+  //         setEditMessage(null);
+  //       }, 4000);
+  //     });
+
+  //   const resetForm = () => {
+  //     setSelectedService('');
+  //     setSelectedDate('');
+  //     setSelectedTime('');
+  //     setVinNumber('');
+  //   };
+  // };
+
   // ensures that when a button is clicked, only the relevant information of that button is shown
   const handleButtonClick = (section) => {
     switch (section) {
@@ -2358,6 +2855,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -2365,6 +2863,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -2372,6 +2871,7 @@ const Manager = () => {
         setShowRemoveCars(true);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -2379,6 +2879,7 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -2386,6 +2887,15 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(true);
+        setShowAddMiscellaneous(false);
+        break;
+      case 'addMiscellaneous':
+        setShowServiceRequests(false);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(true);
         break;
       default:
         break;
@@ -2487,62 +2997,86 @@ const Manager = () => {
         </Box>
       )}
 
-      {showRemoveMiscellaneous && (
-              <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-                <Flex flexDirection="row" justifyContent="space-between">
-              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+      {/* this is for adding stuff too the accessory database */}
+      {showAddMiscellaneous && (
+              <form onSubmit={handleAddMiscellaneous} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
-                  <FormLabel color="white">Accessory Name</FormLabel>
+                  <FormLabel color="white">Name</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.firstName}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
+                    value={accessoryData.name}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, name: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="lastName" isRequired marginBottom="20px">
-                  <FormLabel>description</FormLabel>
+                <FormControl id="Description" isRequired marginBottom="20px">
+                  <FormLabel>Description</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.lastName}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
+                    value={accessoryData.description}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, description: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="email" isRequired marginBottom="20px">
-                  <FormLabel>price</FormLabel>
+                <FormControl id="price" isRequired marginBottom="20px">
+                  <FormLabel>Price</FormLabel>
                   <Input
-                    type="email"
-                    value={technicianFormData.email}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
+                    type="text"
+                    value={accessoryData.price}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, price: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
               <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
-                <FormControl id="username" isRequired marginBottom="20px">
-                  <FormLabel>image</FormLabel>
+                <FormControl id="image" isRequired marginBottom="20px">
+                  <FormLabel>Image</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.username}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
+                    value={accessoryData.image}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, image: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="phone" isRequired marginBottom="20px">
-                  <FormLabel>category</FormLabel>
+                <FormControl id="category" isRequired marginBottom="20px">
+                  <FormLabel>Category</FormLabel>
                   <Input
-                    type="number"
-                    value={technicianFormData.phone}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
+                    type="text"
+                    value={accessoryData.category}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, category: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
             </Flex>
               {error && <div style={{ color: 'red' }}>{error}</div>}
-              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
+              <Button type="submit" colorScheme="green" marginTop="10px">Add Accessory</Button>
             </form>
+          )}
+      
+      {showRemoveMiscellaneous && (
+              <div>
+                <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+                  <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                  <FormControl id="firstName" isRequired marginBottom="20px">
+                    <FormLabel color="white">Accessory ID</FormLabel>
+                    <Input
+                      type="text"
+                      value={accessoryID.accessoire_id}
+                      onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
+                      color="white"
+                    />
+                  </FormControl>
+                </Flex>
+                            </Flex>
+                {error && <div style={{ color: 'red' }}>{error}</div>}
+                <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
+                            </form>
+                {message && <p>{message}</p>}
+              </div>
           )}
     
       { /* if the account is successfully created, display a success message to the user */}
@@ -2576,7 +3110,7 @@ const Manager = () => {
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    <Button colorScheme="green" onClick={() => handleAccept(request.service_request_id)}>
+                    <Button colorScheme="green" onClick={() => {{handleAccept(request.service_request_id); acceptService(request.service_request_id);}}} >
                       Accept
                     </Button>
                   </td>
@@ -2636,7 +3170,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Miscellaneous Car Products</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
@@ -2977,6 +3511,29 @@ const Technician = () => {
         console.error('Error accepting service request:', error);
       });
   };
+
+  // The function below is in case we also want the technician to accept the service and have the service go into the customers cart
+  // const acceptService = (serviceRequestId) =>{
+  //   const serviceRequest = serviceRequests.find(service => service.service_request_id === serviceRequestId);
+  //   const formData = {
+  //     customer_id: serviceRequest.customer_id,
+  //     item_price: serviceRequest.service_price,
+  //     item_image: 'https://ibb.co/b64Kdyh',
+  //     item_name: serviceRequest.service_name,
+  //     car_id: serviceRequest.car_id,
+  //     service_offered_id: serviceRequest.service_offered_id
+  //   }
+  //   axios.post('/add_to_cart', formData)
+  //     .then(response => {
+  //       // Handle success response
+  //       console.log('Service added to cart successfully');
+  //       // You may want to update the UI or perform any additional actions here
+  //     })
+  //     .catch(error => {
+  //       // Handle error response
+  //       console.error('Failed to add service to cart:', error);
+  //     });
+  // }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -3063,6 +3620,8 @@ const Technician = () => {
                   <td style={{textAlign: 'center'}}>{service.status}</td>
                   <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
+                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
+                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
                     <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
                       Accept
                     </Button>
@@ -3082,33 +3641,6 @@ const Technician = () => {
   );
 }
 
-function NavBar() {
-  return (
-    <Navbar expand="lg" className="bg-color">
-      <Container color='red'>
-        <img src={logo} href='/homepage' alt="" width="4%" height="4%" className="d-inline-block align-top me-2"/>
-        <Navbar.Brand href="/homepage">Velocity Motors</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/homepage">Home</Nav.Link>
-            {/* <Nav.Link href="/Cart">Cart</Nav.Link>
-            <NavDropdown title="Dashboard" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown> */}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-}
+
 
 export default App;
