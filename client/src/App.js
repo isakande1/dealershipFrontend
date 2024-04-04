@@ -341,7 +341,7 @@ const Homepage = () => {
         bg='black'
         w='100%'
         color='white'
-        height="800px"
+        height="650px"
         bgGradient="linear(to-b, black, gray.600)"
         borderBottomLeftRadius="xl"
         borderBottomRightRadius="xl"
@@ -566,7 +566,7 @@ const SignedInHomepage = () => {
         bg='black'
         w='100%'
         color='white'
-        height="800px"
+        height="650px"
         bgGradient="linear(to-b, black, gray.600)"
         borderBottomLeftRadius="xl"
         borderBottomRightRadius="xl"
@@ -1934,7 +1934,7 @@ const CarAccessories = () => {
       bgGradient="linear(to-b, black, gray.600)"
       p={1}
       >
-      <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center" /*my={4}*/>
         Accessories
       </Text>
       <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'25%' }}>
