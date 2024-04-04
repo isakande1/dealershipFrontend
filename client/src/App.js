@@ -1929,12 +1929,12 @@ const CarAccessories = () => {
       bg='black'
       w='100%'
       color='white'
-      height='100vh'
+      height='100%'
       css={{ margin: 0, padding: 0 }}
       bgGradient="linear(to-b, black, gray.600)"
       p={1}
       >
-      <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center" p="4">
         Accessories
       </Text>
       <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'25%' }}>
@@ -2035,7 +2035,7 @@ const CarAccessories = () => {
         }}/></Td>
           <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
           {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td>
+          <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td>
           {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
         </Tr>
       ))}
