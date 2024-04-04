@@ -1910,7 +1910,7 @@ const handleNavigate = (path) => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="blue" ml="40%" marginTop="-20px">
+      <Button onClick={handleButtonClick``} colorScheme="blue" ml="40%" marginTop="-20px">
         Fetch Accessories
       </Button>
       <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
