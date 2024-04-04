@@ -1915,14 +1915,22 @@ const CarAccessories = () => {
       </ul>
     </nav>
     <Box
-      bg='black'
-      w='100%'
-      color='white'
-      height='100%'
-      css={{ margin: 0, padding: 0 }}
-      bgGradient="linear(to-b, black, gray.600)"
-      p={1}
-      >
+          bgGradient="linear(to-b, black, gray.600)"
+          position='fixed'
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex='-1'
+        />
+        <Box
+          w='100%'
+          color='white'
+          p={1}
+          css={{ margin: 0, padding: 0 }}
+          height='100vh'
+          overflowY='scroll' // Enable vertical scrolling
+        >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center">
         Accessories
       </Text>
@@ -3514,7 +3522,7 @@ const Technician = () => {
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
-      status: 'accepted'
+      status: 'Awaiting Customer Payment'
     };
   
     axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
