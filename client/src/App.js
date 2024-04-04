@@ -646,6 +646,7 @@ const SignedInHomepage = () => {
 
 const TestDriveHistory = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userData = location.state?.userData;
   const [driveHistory, setDriveHistory] = useState([]);
 
@@ -666,8 +667,56 @@ const TestDriveHistory = () => {
     fetchTestDriveHistory();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -800,8 +849,56 @@ const OwnCar = () => {
       });
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -894,8 +991,58 @@ const ServiceHistory = () => {
     fetchServiceHistory();
   }, [userData]);
 
+  const navigate = useNavigate();  
+
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+          <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -950,6 +1097,7 @@ const CustomerCart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();  
 
   useEffect(() => {
     fetchCartItems(userData?.customer_id);
@@ -1005,7 +1153,57 @@ const CustomerCart = () => {
     return  service_package_id ? { marginLeft:"30px"} : {};
 };
 
+const handleNavigate = (path) => {
+  navigate(path, { state: { userData } });
+};
+
+
   return (
+  <>
+  <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
@@ -1048,6 +1246,7 @@ const CustomerCart = () => {
         </ModalContent>
       </Modal>
     </Box>
+    </>
   );
 };
 //CustomerSerivceAppointment
@@ -1153,8 +1352,56 @@ const CustomerSerivceAppointment = () => {
     };
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+           Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -1258,8 +1505,56 @@ const PastPurchase = () => {
     fetchItemsSold();
   }, [userData]);
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive Status
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
@@ -1511,8 +1806,58 @@ const CarAccessories = () => {
     handleAddToCart();
   }, [cartData]);
 
+  const navigate = useNavigate();  
+
+const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
 
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1621,6 +1966,7 @@ const CarAccessories = () => {
         </Tbody>
       </Table>
     </Box>
+    </>
   );
 };
 
@@ -1673,7 +2019,56 @@ const CustomerModifyInfo = () => {
     }
   };
 
+  const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
+
   return (
+    <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li>  
+      </ul>
+    </nav>
     <Box
       bg='black'
       w='100%'
@@ -1743,6 +2138,7 @@ const CustomerModifyInfo = () => {
       </form>
     </Flex>
     </Box>
+    </>
   );
 };
 
@@ -3239,33 +3635,6 @@ const Technician = () => {
   );
 }
 
-function NavBar() {
-  return (
-    <Navbar expand="lg" className="bg-color">
-      <Container color='red'>
-        <img src={logo} href='/homepage' alt="" width="4%" height="4%" className="d-inline-block align-top me-2"/>
-        <Navbar.Brand href="/homepage">Velocity Motors</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/homepage">Home</Nav.Link>
-            {/* <Nav.Link href="/Cart">Cart</Nav.Link>
-            <NavDropdown title="Dashboard" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown> */}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-}
+
 
 export default App;

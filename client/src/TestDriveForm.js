@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
-
+import './App.css';
 
 
 
@@ -55,8 +55,57 @@ export default function TestDriveForm() {
     setDate('');
   };
 
+  const navigate = useNavigate();  
+
+const handleNavigate = (path) => {
+    navigate(path, { state: { userData } });
+  };
   return (
     <>
+    <nav className="navbar">
+      <ul className="nav-list">
+      <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+           Sheducle Service 
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Own Car
+          </button>
+        </li>
+      </ul>
+    </nav>
       <Box
         bg='black'
         w='100%'
