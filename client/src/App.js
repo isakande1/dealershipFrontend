@@ -1654,6 +1654,7 @@ const CarAccessories = () => {
   const userData = location.state?.userData;
   const [accessories, setAccessories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
   const [showAddAccessoryModal, setShowAddAccessoryModal] = useState(false);
   const [accessoryData, setAccessoryData] = useState({
     name: "",
@@ -1774,6 +1775,12 @@ const CarAccessories = () => {
   };
 
   const handleButtonClick = () => {
+    // Check if a category is selected
+    if (!selectedCategory) {
+      console.error('Please select a category');
+      return;
+    }
+    // Fetch accessories based on selected category
     fetchAccessories(selectedCategory);
   };
 
@@ -1846,8 +1853,23 @@ const CarAccessories = () => {
 
   const navigate = useNavigate();  
 
-const handleNavigate = (path) => {
+  const handleNavigate = (path) => {
     navigate(path, { state: { userData } });
+  };
+
+  useEffect(() => {
+    // Fetch categories from backend when component mounts
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/categories');
+      const data = await response.json();
+      setCategories(data); // Set categories state with fetched data
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
   return (
@@ -1901,12 +1923,15 @@ const handleNavigate = (path) => {
       w='100%'
       color='white'
       height='100vh'
+      css={{ margin: 0, padding: 0 }}
       bgGradient="linear(to-b, black, gray.600)"
+      p={1}
       >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center">
         Accessories
       </Text>
-      <FormControl mx="auto" my={4} w="max-content">
+      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'25%' }}>
+      <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
         name="category"
@@ -1918,12 +1943,10 @@ const handleNavigate = (path) => {
         borderRadius="md" 
         boxShadow="sm" 
       >
-          <option value="">Select a category...</option>
-          <option value="car-mat">Car Mat</option>
-          <option value="cover">Cover</option>
-          <option value="wiper">Wiper</option>
-          <option value="air-freshener">Air Freshener</option>
-          <option value="dash-cam">Dash Cam</option>
+        <option value="">Select a category...</option>
+        {categories.map((category, index) => (
+          <option key={index} value={category.value}>{category.label}</option>
+        ))}
         </Select>
       </FormControl>
       <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="30px" style={{marginLeft:"10px"}}> 
@@ -1996,10 +2019,15 @@ const handleNavigate = (path) => {
           <Td>{accessory.price}</Td>
           {/* <Td>{accessory.image}</Td> */}
           {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-          <Td><Image src={accessory.image} alt="Large Image"/></Td>
+          <Td><Image src={accessory.image} alt="Large Image" style={{
+          display: "block",
+          margin: "auto",
+          width: '100px',
+          height: '100px'
+        }}/></Td>
           <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
           {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td>
           {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
         </Tr>
       ))}
@@ -2596,6 +2624,23 @@ const Manager = () => {
   });
   const [serviceRequests, setServiceRequests] = useState([]);
   const [error, setError] = useState(null);
+  const [accessoryData, setAccessoryData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: "",
+    category: "",
+  });
+  const [showAddMiscellaneous, setShowAddMiscellaneous] = useState(false);
+  const [accessoryID, setAccessoryID] = useState({
+    accessoire_id: '',
+  });
+  const [message, setMessage] = useState('');
+  // humza on bottom
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [accessories, setAccessories] = useState([]);
+
   useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
@@ -2799,6 +2844,57 @@ const Manager = () => {
     }
   };
 
+  // humza on bottom
+  const handleSelectChange = (event) => {
+    setSelectedCategory(event.target.value);  
+  };
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const handleFetchAccClick = () => {
+    // Check if a category is selected
+    if (!selectedCategory) {
+      console.error('Please select a category');
+      return;
+    }
+    // Fetch accessories based on selected category
+    fetchAccessories(selectedCategory);
+  };
+
+  useEffect(() => {
+    // Fetch categories from backend when component mounts
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/categories');
+      const data = await response.json();
+      setCategories(data); // Set categories state with fetched data
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchAccessories = async (category) => {
+    try {
+      const response = await fetch(`http://localhost:5000/accessories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      setAccessories(data);
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+    }
+  };
+
   return (
     <>
       {/* This will be the gradient box */}
@@ -2951,6 +3047,55 @@ const Manager = () => {
               <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
             </form>
           )}
+      
+      {showRemoveMiscellaneous && (
+        <div>
+          <form onSubmit={fetchAccessories} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+            <FormControl mx="auto" my={4} w="max-content">
+              <FormLabel>Category</FormLabel>
+              <Select
+                name="category"
+                defaultValue=""
+                onChange={handleSelectChange}
+                color="white"
+              >
+                <option value="">Select a category...</option>
+                {categories.map((category) => (
+                  <option key={category.value} value={category.value}>{category.label}</option>
+                ))}
+              </Select>
+            </FormControl>
+            {error && <div style={{ color: 'red' }}>{error}</div>}
+            <Button onClick={handleFetchAccClick} type="submit" colorScheme="green" marginTop="10px">Fetch Accessories</Button>
+          </form>
+          {message && <p>{message}</p>}
+          <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+            <Thead>
+              <Tr>
+                <Th>Accessory ID</Th>
+                <Th>Name</Th>
+                <Th>Description</Th>
+                <Th>Price</Th>
+                <Th>Action</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {accessories.map((accessory, index) => (
+                <Tr key={index}>
+                  <Td>{accessory.accessoire_id}</Td>
+                  <Td>{accessory.name}</Td>
+                  <Td>{accessory.description}</Td>
+                  <Td>{accessory.price}</Td>
+                  {/* <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td> */}
+                  {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+                  <Td><Button>Delete</Button></Td>
+                  {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </div>
+      )}
     
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
