@@ -1809,7 +1809,7 @@ const CarAccessories = () => {
 
   const navigate = useNavigate();  
 
-const handleNavigate = (path) => {
+  const handleNavigate = (path) => {
     navigate(path, { state: { userData } });
   };
 
@@ -1869,16 +1869,18 @@ const handleNavigate = (path) => {
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
-      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
-      <FormControl mx="auto">
+      <FormControl mx="auto" my={4} w="max-content">
         <FormLabel>Category</FormLabel>
         <Select
-          name="category"
-          defaultValue=""
-          onChange={handleSelectChange}
-          color="black"
-          
-        >
+        name="category"
+        defaultValue=""
+        onChange={handleSelectChange}
+        color="black" 
+        bg="white" 
+        border="none"
+        borderRadius="md" 
+        boxShadow="sm" 
+      >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
@@ -1887,13 +1889,12 @@ const handleNavigate = (path) => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
+      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Fetch Accessories
       </Button>
-    </Box>
-      {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
-      </Button> */}
+      </Button>
       {/* Add Accessory Modal */}
       <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
         <ModalOverlay />
@@ -1937,35 +1938,37 @@ const handleNavigate = (path) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
-        <Thead>
-          <Tr>
-            <Th>Accessory ID</Th>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Price</Th>
-            <Th>Image</Th>
-            <Th>Action</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {accessories.map((accessory, index) => (
-            <Tr key={index}>
-              <Td>{accessory.accessoire_id}</Td>
-              <Td>{accessory.name}</Td>
-              <Td>{accessory.description}</Td>
-              <Td>{accessory.price}</Td>
-              {/* <Td>{accessory.image}</Td> */}
-              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-              <Td><Image src={accessory.image} alt="Large Image"/></Td>
-              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      {accessories.length > 0 && (
+  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+    <Thead>
+      <Tr>
+        <Th>Accessory ID</Th>
+        <Th>Name</Th>
+        <Th>Description</Th>
+        <Th>Price</Th>
+        <Th>Image</Th>
+        <Th>Action</Th>
+      </Tr>
+    </Thead>
+    <Tbody>
+      {accessories.map((accessory, index) => (
+        <Tr key={index}>
+          <Td>{accessory.accessoire_id}</Td>
+          <Td>{accessory.name}</Td>
+          <Td>{accessory.description}</Td>
+          <Td>{accessory.price}</Td>
+          {/* <Td>{accessory.image}</Td> */}
+          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+          <Td><Image src={accessory.image} alt="Large Image"/></Td>
+          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+        </Tr>
+      ))}
+    </Tbody>
+  </Table>
+)}
     </Box>
     </>
   );
@@ -3637,5 +3640,5 @@ const Technician = () => {
 }
 
 
-// hope this works
+// hope this
 export default App;
