@@ -2101,11 +2101,11 @@ const CustomerModifyInfo = () => {
           {/* First and Last Name */}
           <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
             <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input id='first_name' type='text' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+            <Input id='first_name' type='text' name='first_name' color='red' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
           <FormControl pl={{ base: 0, sm: 2 }} flex="1">
             <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input id='last_name' type='text' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+            <Input id='last_name' type='text' name='last_name' color='red' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
         </Flex>
 
