@@ -103,7 +103,7 @@ const ContactPage = () => {
           <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
         </Text>
       </Box>
-      <Footer marginTop='-37px' />
+      <Footer marginTop='-30.5px' />
     </>
   )
 }
@@ -261,7 +261,6 @@ const Homepage = () => {
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
-  const [forceRender, setForceRender] = useState(false);
   const carsPerPage = 12;
 
   useEffect(() => {
@@ -731,7 +730,7 @@ const TestDriveHistory = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -913,7 +912,7 @@ const OwnCar = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -938,7 +937,7 @@ const OwnCar = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -947,7 +946,7 @@ const OwnCar = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
       >
@@ -998,7 +997,7 @@ const OwnCar = () => {
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
               customerCars.map((car) => (
-                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md">
+                <Box key={car.car_id} bg="rgba(255, 255, 255, 0.6)" p={2} borderRadius="md" width="45%">
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
@@ -1052,7 +1051,7 @@ const ServiceHistory = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1081,7 +1080,7 @@ const ServiceHistory = () => {
           </button>
           <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
         </li>
@@ -1220,7 +1219,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1245,7 +1244,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -1442,7 +1441,7 @@ const CustomerSerivceAppointment = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-           Test Drive status
+           Test Drive Status
           </button>
         </li>
       </ul>
@@ -1570,7 +1569,7 @@ const PastPurchase = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1838,16 +1837,10 @@ const CarAccessories = () => {
             }),
           });
   
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Accessory added to cart successfully:", data);
-            alert("Accessory added to cart successfully");
-            // Optionally, you can update the UI or show a success message here
-        } else {
-            console.error('Error adding accessory to cart:', response.statusText);
-            alert("Error adding accessory to cart");
-            // Handle the error, show an error message to the user, etc.
-        }
+          const data = await response.json();
+          console.log("Backend response:", data);
+  
+          // Handle successful response (e.g., update UI, show confirmation message)
         } catch (error) {
           console.error('Error adding accessory:', error);
           // Handle errors (e.g., display error message to user)
@@ -1895,7 +1888,7 @@ const CarAccessories = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1920,7 +1913,7 @@ const CarAccessories = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -1934,7 +1927,7 @@ const CarAccessories = () => {
       bgGradient="linear(to-b, black, gray.600)"
       p={1}
       >
-      <Text fontSize="3xl" fontWeight="bold" textAlign="center" p="4">
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center">
         Accessories
       </Text>
       <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'25%' }}>
@@ -2116,7 +2109,7 @@ const CustomerModifyInfo = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -2141,7 +2134,7 @@ const CustomerModifyInfo = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>  
       </ul>
@@ -2248,11 +2241,11 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
-        const previousUrl = location.state?.previousUrl;
-        const car_id = location.state?.car_id;
+       const previousUrl = location.state?.previousUrl;
+       const car_id = location.state?.car_id;
         previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
-
-        // Reset form state and collapse sign-up form
+        
+// Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
       } else {
@@ -2277,9 +2270,9 @@ const Login = () => {
       setTimeout(() => {
         setEditMessage(null);
       }, 2000);
-      return;
+      return; 
     }
-
+    
     const formData = new FormData(event.target);
     const customerData = Object.fromEntries(formData.entries());
 
@@ -2299,7 +2292,7 @@ const Login = () => {
         setTimeout(() => {
           setEditMessage(null);
         }, 2000);
-        // Reset form state and collapse sign-up form
+// Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
       } else {
@@ -2625,7 +2618,7 @@ const Manager = () => {
     username: '',
     phone: '',
     password: '',
-    manager_id: userData?.manager
+    manager_id: userData.manager_id
   });
   const [removeCarFormData, setRemoveCarFormData] = useState({
     car_id: ''
@@ -2657,7 +2650,7 @@ const Manager = () => {
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
-      status: 'Awaiting Customer Payment'
+      status: 'accepted'
     };
   
     axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
@@ -2665,34 +2658,11 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
-        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
       });
   };
-
-  const acceptService = (serviceRequestId) =>{
-    const serviceRequest = serviceRequests.find(request => request.service_request_id === serviceRequestId);
-    const formData = {
-      customer_id: serviceRequest.customer_id,
-      item_price: serviceRequest.service_price,
-      item_image: 'https://ibb.co/b64Kdyh',
-      item_name: serviceRequest.service_name,
-      car_id: serviceRequest.car_id,
-      service_offered_id: serviceRequest.service_offered_id
-    }
-    axios.post('/add_to_cart', formData)
-      .then(response => {
-        // Handle success response
-        console.log('Service added to cart successfully');
-        // You may want to update the UI or perform any additional actions here
-      })
-      .catch(error => {
-        // Handle error response
-        console.error('Failed to add service to cart:', error);
-      });
-  }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -2785,62 +2755,27 @@ const Manager = () => {
 
   const handleSubmitMiscellaneousForm = async (event) => {
     event.preventDefault();
-    const accessory_ID = parseInt(accessoryID.accessoire_id);
-    if (isNaN(accessory_ID)) {
-      setError('Accessory ID must be an integer');
+    const carId = parseInt(removeCarFormData.car_id);
+    if (isNaN(carId)) {
+      setError('Car ID must be an integer');
       return;
     }
-    console.log("the accessory id is", accessory_ID);
+    console.log("the car id is", removeCarFormData.car_id);
     try {
-        const response = await fetch(`http://localhost:5000/deleteAccessoryManager`, {
+        const response = await fetch(`http://localhost:5000`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ accessoryID }), // Sending formData in the request body
+            body: JSON.stringify(removeCarFormData), // Sending formData in the request body
         });
         
         if (response.ok) {
             const data = await response.json();
-            console.log("Accessory removed successfully:", data);
-            alert("Accessory removed successfully");
+            console.log("Car removed successfully:", data);
             // Optionally, you can update the UI or show a success message here
         } else {
-            console.error('Error removing Accessory:', response.statusText);
-            // Handle the error, show an error message to the user, etc.
-        }
-    } catch (error) {
-        console.error('Error sending data:', error);
-        // Handle network errors, display error message, etc.
-    }
-    // Reset error state
-    setError(null);
-  };
-
-  const handleAddMiscellaneous = async (event) => {
-    event.preventDefault();
-    console.log("hello");
-    console.log("the car id is", accessoryData.name);
-    console.log("the car id is", accessoryData.description);
-    console.log("the car id is", accessoryData.price);
-    console.log("the car id is", accessoryData.image);
-    console.log("the car id is", accessoryData.category);
-    try {
-        const response = await fetch(`http://localhost:5000/addAccessory`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ accessoryData }), // Sending formData in the request body
-        });
-   
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Accessory added successfully:", data);
-            alert("Accessory added successfully");
-            // Optionally, you can update the UI or show a success message here
-        } else {
-            console.error('Error adding accessory:', response.statusText);
+            console.error('Error removing car:', response.statusText);
             // Handle the error, show an error message to the user, etc.
         }
     } catch (error) {
@@ -2867,50 +2802,6 @@ const Manager = () => {
     setShowTechnicianForm(true);
   };
 
-  // this is the function to add the service to the users cart when the service is accepted by a manager
-  // const acceptService = e => {
-  //   e.preventDefault();
-  //   const formattedDate = `${selectedDate} ${selectedTime}:00`;
-
-  //   const formData = {
-  //     customer_ID: userData.customer_id,
-  //     service_offered: selectedService,
-  //     car_id: vinNumber,
-  //     proposed_datetime: formattedDate,
-  //   };
-    
-  //   fetch('http://localhost:5000/service-request', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(formData),
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log(data);
-  //       setEditMessage('Submission went through');
-  //       setTimeout(() => {
-  //         setEditMessage(null);
-  //       }, 4000);
-  //       resetForm();
-  //     })
-  //     .catch(error => {
-  //       console.error('Error:', error);
-  //       setEditMessage('Submission did not go through');
-  //       setTimeout(() => {
-  //         setEditMessage(null);
-  //       }, 4000);
-  //     });
-
-  //   const resetForm = () => {
-  //     setSelectedService('');
-  //     setSelectedDate('');
-  //     setSelectedTime('');
-  //     setVinNumber('');
-  //   };
-  // };
-
   // ensures that when a button is clicked, only the relevant information of that button is shown
   const handleButtonClick = (section) => {
     switch (section) {
@@ -2920,7 +2811,6 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
-        setShowAddMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -2928,7 +2818,6 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
-        setShowAddMiscellaneous(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -2936,7 +2825,6 @@ const Manager = () => {
         setShowRemoveCars(true);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
-        setShowAddMiscellaneous(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -2944,7 +2832,6 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
-        setShowAddMiscellaneous(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -2952,15 +2839,6 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(true);
-        setShowAddMiscellaneous(false);
-        break;
-      case 'addMiscellaneous':
-        setShowServiceRequests(false);
-        setShowTechnicianForm(false);
-        setShowAddCars(false);
-        setShowRemoveCars(false);
-        setShowRemoveMiscellaneous(false);
-        setShowAddMiscellaneous(true);
         break;
       default:
         break;
@@ -3113,62 +2991,61 @@ const Manager = () => {
         </Box>
       )}
 
-      {/* this is for adding stuff too the accessory database */}
-      {showAddMiscellaneous && (
-              <form onSubmit={handleAddMiscellaneous} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-              <Flex flexDirection="row" justifyContent="space-between">
-                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+      {showRemoveMiscellaneous && (
+              <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+                <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
-                  <FormLabel color="white">Name</FormLabel>
+                  <FormLabel color="white">Accessory Name</FormLabel>
                   <Input
                     type="text"
-                    value={accessoryData.name}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, name: e.target.value })}
+                    value={technicianFormData.firstName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="Description" isRequired marginBottom="20px">
-                  <FormLabel>Description</FormLabel>
+                <FormControl id="lastName" isRequired marginBottom="20px">
+                  <FormLabel>description</FormLabel>
                   <Input
                     type="text"
-                    value={accessoryData.description}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, description: e.target.value })}
+                    value={technicianFormData.lastName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="price" isRequired marginBottom="20px">
-                  <FormLabel>Price</FormLabel>
+                <FormControl id="email" isRequired marginBottom="20px">
+                  <FormLabel>price</FormLabel>
                   <Input
-                    type="text"
-                    value={accessoryData.price}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, price: e.target.value })}
+                    type="email"
+                    value={technicianFormData.email}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
               <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
-                <FormControl id="image" isRequired marginBottom="20px">
-                  <FormLabel>Image</FormLabel>
+                <FormControl id="username" isRequired marginBottom="20px">
+                  <FormLabel>image</FormLabel>
                   <Input
                     type="text"
-                    value={accessoryData.image}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, image: e.target.value })}
+                    value={technicianFormData.username}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="category" isRequired marginBottom="20px">
-                  <FormLabel>Category</FormLabel>
+                <FormControl id="phone" isRequired marginBottom="20px">
+                  <FormLabel>category</FormLabel>
                   <Input
-                    type="text"
-                    value={accessoryData.category}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, category: e.target.value })}
+                    type="number"
+                    value={technicianFormData.phone}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
             </Flex>
               {error && <div style={{ color: 'red' }}>{error}</div>}
-              <Button type="submit" colorScheme="green" marginTop="10px">Add Accessory</Button>
+              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
             </form>
           )}
       
@@ -3252,7 +3129,7 @@ const Manager = () => {
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_username}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>{request.customer_phone}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    <Button colorScheme="green" onClick={() => {{handleAccept(request.service_request_id); acceptService(request.service_request_id);}}} >
+                    <Button colorScheme="green" onClick={() => handleAccept(request.service_request_id)}>
                       Accept
                     </Button>
                   </td>
@@ -3312,7 +3189,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
@@ -3653,29 +3530,6 @@ const Technician = () => {
         console.error('Error accepting service request:', error);
       });
   };
-
-  // The function below is in case we also want the technician to accept the service and have the service go into the customers cart
-  // const acceptService = (serviceRequestId) =>{
-  //   const serviceRequest = serviceRequests.find(service => service.service_request_id === serviceRequestId);
-  //   const formData = {
-  //     customer_id: serviceRequest.customer_id,
-  //     item_price: serviceRequest.service_price,
-  //     item_image: 'https://ibb.co/b64Kdyh',
-  //     item_name: serviceRequest.service_name,
-  //     car_id: serviceRequest.car_id,
-  //     service_offered_id: serviceRequest.service_offered_id
-  //   }
-  //   axios.post('/add_to_cart', formData)
-  //     .then(response => {
-  //       // Handle success response
-  //       console.log('Service added to cart successfully');
-  //       // You may want to update the UI or perform any additional actions here
-  //     })
-  //     .catch(error => {
-  //       // Handle error response
-  //       console.error('Failed to add service to cart:', error);
-  //     });
-  // }
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -3762,8 +3616,6 @@ const Technician = () => {
                   <td style={{textAlign: 'center'}}>{service.status}</td>
                   <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
-                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
                     <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
                       Accept
                     </Button>
@@ -3782,7 +3634,5 @@ const Technician = () => {
     </>
   );
 }
-
-
 
 export default App;
