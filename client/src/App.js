@@ -1809,7 +1809,7 @@ const CarAccessories = () => {
 
   const navigate = useNavigate();  
 
-  const handleNavigate = (path) => {
+const handleNavigate = (path) => {
     navigate(path, { state: { userData } });
   };
 
@@ -1863,24 +1863,22 @@ const CarAccessories = () => {
       bg='black'
       w='100%'
       color='white'
-      height='100vh'
+                
       bgGradient="linear(to-b, black, gray.600)"
       >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
-      <FormControl mx="auto" my={4} w="max-content">
+      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
+      <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
-        name="category"
-        defaultValue=""
-        onChange={handleSelectChange}
-        color="black" 
-        bg="white" 
-        border="none"
-        borderRadius="md" 
-        boxShadow="sm" 
-      >
+          name="category"
+          defaultValue=""
+          onChange={handleSelectChange}
+          color="black"
+          
+        >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
           <option value="cover">Cover</option>
@@ -1889,12 +1887,13 @@ const CarAccessories = () => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
         Fetch Accessories
       </Button>
-      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+    </Box>
+      {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
-      </Button>
+      </Button> */}
       {/* Add Accessory Modal */}
       <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
         <ModalOverlay />
@@ -1938,37 +1937,35 @@ const CarAccessories = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {accessories.length > 0 && (
-  <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
-    <Thead>
-      <Tr>
-        <Th>Accessory ID</Th>
-        <Th>Name</Th>
-        <Th>Description</Th>
-        <Th>Price</Th>
-        <Th>Image</Th>
-        <Th>Action</Th>
-      </Tr>
-    </Thead>
-    <Tbody>
-      {accessories.map((accessory, index) => (
-        <Tr key={index}>
-          <Td>{accessory.accessoire_id}</Td>
-          <Td>{accessory.name}</Td>
-          <Td>{accessory.description}</Td>
-          <Td>{accessory.price}</Td>
-          {/* <Td>{accessory.image}</Td> */}
-          {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-          <Td><Image src={accessory.image} alt="Large Image"/></Td>
-          <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
-          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-          {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
-        </Tr>
-      ))}
-    </Tbody>
-  </Table>
-)}
+      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
+        <Thead>
+          <Tr>
+            <Th>Accessory ID</Th>
+            <Th>Name</Th>
+            <Th>Description</Th>
+            <Th>Price</Th>
+            <Th>Image</Th>
+            <Th>Action</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {accessories.map((accessory, index) => (
+            <Tr key={index}>
+              <Td>{accessory.accessoire_id}</Td>
+              <Td>{accessory.name}</Td>
+              <Td>{accessory.description}</Td>
+              <Td>{accessory.price}</Td>
+              {/* <Td>{accessory.image}</Td> */}
+              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+              <Td><Image src={accessory.image} alt="Large Image"/></Td>
+              <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
+              {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
     </Box>
     </>
   );
@@ -2099,11 +2096,11 @@ const CustomerModifyInfo = () => {
           {/* First and Last Name */}
           <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
             <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input id='first_name' type='text' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+            <Input id='first_name' type='text'  color='red' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
           <FormControl pl={{ base: 0, sm: 2 }} flex="1">
             <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input id='last_name' type='text' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+            <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
         </Flex>
 
@@ -3640,5 +3637,5 @@ const Technician = () => {
 }
 
 
-// hope this
+// hope this works
 export default App;
