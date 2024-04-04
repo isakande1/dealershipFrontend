@@ -2671,7 +2671,6 @@ const Manager = () => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
         fetchServiceRequests();
-        acceptService();
       })
       .catch(error => {
         console.error('Error accepting service request:', error);
@@ -2910,27 +2909,6 @@ const Manager = () => {
     }
   };
 
-  const acceptService = (serviceRequestId) =>{
-    const serviceRequest = serviceRequests.find(request => request.service_request_id === serviceRequestId);
-    const formData = {
-      customer_id: serviceRequest.customer_id,
-      item_price: serviceRequest.service_price,
-      item_image: 'https://ibb.co/b64Kdyh',
-      item_name: serviceRequest.service_name,
-      car_id: serviceRequest.car_id,
-      service_offered_id: serviceRequest.service_offered_id
-    }
-    axios.post('/add_to_cart', formData)
-      .then(response => {
-        // Handle success response
-        console.log('Service added to cart successfully');
-        // You may want to update the UI or perform any additional actions here
-      })
-      .catch(error => {
-        // Handle error response
-        console.error('Failed to add service to cart:', error);
-      });
-  };
   return (
     <>
       {/* This will be the gradient box */}
