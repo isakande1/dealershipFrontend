@@ -2585,12 +2585,12 @@ const HandleAddCars = ({managerId}) => {
 };
 
 return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: "300px", marginTop: "-375px"}}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position:'fixed', marginLeft: "650px", marginTop: "250px"}}>
       <div>
           <Text fontWeight="bold" color="white" fontSize="4xl">Select a file to add cars</Text>
           <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"30px", marginLeft: "90px" }} />
-          {successMessage && <p style={{ color: 'green',  marginLeft: '60px', marginTop: '10px' }}>{successMessage}</p>}
-          {errorMessage && <p style={{ color: 'red', marginLeft: '20px', marginTop: '10px' }}>{errorMessage}</p>}
+          {successMessage && <p style={{ color: 'green',  marginLeft: '90px', marginTop: '10px' }}>{successMessage}</p>}
+          {errorMessage && <p style={{ color: 'red', marginLeft: '90px', marginTop: '10px' }}>{errorMessage}</p>}
       </div>
     </div>
   );
@@ -2899,7 +2899,7 @@ const Manager = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        minHeight='100vh'
         position="fixed"
         bgGradient="linear(to-b, black, gray.600)"
       >
@@ -3098,8 +3098,8 @@ const Manager = () => {
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'30px', marginLeft:"40px", paddingTop:'80px'}}><strong>Service Requests</strong></h1>
-          <Table striped bordered style={{ marginLeft: '30px', marginRight: '0' }}>
+          <h1 style={{paddingBottom:'20px', paddingTop:'30px', marginLeft:'40px'}}><strong>Service Requests</strong></h1>
+          <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px'}}>
             <thead>
               <tr>
                 <th style={{textAlign: 'center', width: '3%'}}>Service Request ID #</th>
@@ -3117,7 +3117,7 @@ const Manager = () => {
             <tbody>
               {serviceRequests.map(request => (
                 <tr key={request.service_request_id}>
-                  <td style={{textAlign: 'center', padding:'0px 0px 10px 0px'}}>{request.service_request_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.service_request_id}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.service_name}: {request.description}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.service_price}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.proposed_datetime}</td>
@@ -3169,14 +3169,14 @@ const Manager = () => {
         color="white"
         w="300px"
         h="600px"
+        position="fixed"
         left="0"
         top="0"
-        marginTop="80px"
-        position="fixed"
+        marginTop="90px"
         borderRadius="xl"
       >
         {/* options for the manager to choose from */}
-        <Flex flexDirection="column" alignItems="flex-start" p={4}>
+        <Flex position="fixed" flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageServiceRequests')}>Service Appointment Requests</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Assign Technicians</Button>
@@ -3187,7 +3187,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')} sx={{ whiteSpace: 'normal', overflowWrap: 'break-word' }} >Remove Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous') }>Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
