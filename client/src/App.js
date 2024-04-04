@@ -2177,7 +2177,6 @@ const Login = () => {
     setShowCreateUserForm(false); // Hide the create user form if visible
   };
 
-
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
 
@@ -2195,34 +2194,27 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
-//Go back to the previous page if exist
-        // if(window.history.length > 1){
-        //  navigate(-1);
-        // }
-//End 
-       const previousUrl = location.state?.previousUrl;
-       const car_id = location.state?.car_id;
-        previousUrl ? navigate(previousUrl, {state :{ car_id : car_id, userData: data}}) : navigate('/homepage', { state: { userData: data } });
-        
-      } else {
+        const previousUrl = location.state?.previousUrl;
+        const car_id = location.state?.car_id;
+        previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
 
+        // Reset form state and collapse sign-up form
+        setShowCreateCustomerForm(false);
+        setShowCreateUserForm(false);
+      } else {
         console.error('Login failed:', data.error);
         setEditMessage('Login failed');
         setTimeout(() => {
           setEditMessage(null);
         }, 4000);
-
       }
     } catch (error) {
       console.error('Error:', error);
-
     }
   };
 
   const handleCreateCustomerSubmit = async (event) => {
     event.preventDefault();
-
-
 
     const confirmed = window.confirm('Are you sure you want to create this customer?');
 
@@ -2231,9 +2223,9 @@ const Login = () => {
       setTimeout(() => {
         setEditMessage(null);
       }, 2000);
-      return; 
+      return;
     }
-    
+
     const formData = new FormData(event.target);
     const customerData = Object.fromEntries(formData.entries());
 
@@ -2253,6 +2245,9 @@ const Login = () => {
         setTimeout(() => {
           setEditMessage(null);
         }, 2000);
+        // Reset form state and collapse sign-up form
+        setShowCreateCustomerForm(false);
+        setShowCreateUserForm(false);
       } else {
         console.error('Failed to add customer');
         setEditMessage('Customer was not created successfully');
@@ -2270,20 +2265,20 @@ const Login = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '100vh', /* Set the minimum height of the div to 100% of the viewport height */
-      background: "linear-gradient(0deg, #222, #000)", /* Set the background color of the whole page to black */
+      minHeight: '100vh',
+      background: "linear-gradient(0deg, #222, #000)",
     }}>
       <div className="form-div" style={{
-        width: '80%', // Set the width of the div to be very wide
-        maxWidth: '800px', // Set a maximum width for the div
+        width: '80%',
+        maxWidth: '800px',
         padding: '20px',
         border: '1px none black',
         borderRadius: '35px',
-        backgroundColor: 'rgba(255, 255, 255, 0.15)', /* Set the background color of the div to white */
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', // Center content horizontally
-        gap: '20px', // Add gap between child elements
+        alignItems: 'center',
+        gap: '20px',
       }}>
         <form className="login-form" onSubmit={handleLoginSubmit}>
           <h2 className="form-title">Login</h2>
@@ -2297,7 +2292,6 @@ const Login = () => {
           </div>
           <button className="login-button" type="submit">Login</button>
           {EditMessage && <p> {EditMessage}</p>}
-
         </form>
         <Button as={Link} to="/Roles_login" style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }} marginLeft="600px">Adminstration login</Button>
         <button onClick={handleCreateCustomerClick} style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }}>
@@ -2305,8 +2299,6 @@ const Login = () => {
         </button>
         {showCreateCustomerForm && (
           <form className="create-customer-form" onSubmit={handleCreateCustomerSubmit}>
-
-
             <div className="form-group">
               <label htmlFor="first_name">First Name:</label>
               <input type="text" id="first_name" name="first_name" required />
@@ -2338,15 +2330,14 @@ const Login = () => {
             <button type="submit" style={{ padding: '10px 20px', backgroundColor: 'black', color: '#fff', border: '1px solid black', borderRadius: '3px', cursor: 'pointer' }}>Submit</button>
             {EditMessage && <p>{EditMessage}</p>}
           </form>
-
         )}
-
       </div>
       <div className='circle-top-left'></div>
       <div className='circle-bottom-right'></div>
     </div>
   );
 };
+
 
 const Roles_login = () => {
 
