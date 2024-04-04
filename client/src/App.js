@@ -1441,10 +1441,16 @@ const CarAccessories = () => {
             }),
           });
   
-          const data = await response.json();
-          console.log("Backend response:", data);
-  
-          // Handle successful response (e.g., update UI, show confirmation message)
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Accessory added to cart successfully:", data);
+            alert("Accessory added to cart successfully");
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error adding accessory to cart:', response.statusText);
+            alert("Error adding accessory to cart");
+            // Handle the error, show an error message to the user, etc.
+        }
         } catch (error) {
           console.error('Error adding accessory:', error);
           // Handle errors (e.g., display error message to user)
@@ -1467,13 +1473,15 @@ const CarAccessories = () => {
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
         Accessories
       </Text>
-      <FormControl mx="auto" my={4} w="max-content">
+      <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
+      <FormControl mx="auto">
         <FormLabel>Category</FormLabel>
         <Select
           name="category"
           defaultValue=""
           onChange={handleSelectChange}
-          colorScheme="red"
+          color="black"
+          
         >
           <option value="">Select a category...</option>
           <option value="car-mat">Car Mat</option>
@@ -1483,12 +1491,13 @@ const CarAccessories = () => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
         Fetch Accessories
       </Button>
-      <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
+    </Box>
+      {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
-      </Button>
+      </Button> */}
       {/* Add Accessory Modal */}
       <Modal isOpen={showAddAccessoryModal} onClose={handleAddAccessoryModalClose}>
         <ModalOverlay />
@@ -1532,7 +1541,7 @@ const CarAccessories = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Table variant="striped" colorScheme="blue" mx="auto" w="max-content">
+      <Table variant="default" colorScheme="blue" mx="auto" w="max-content">
         <Thead>
           <Tr>
             <Th>Accessory ID</Th>
@@ -1550,10 +1559,12 @@ const CarAccessories = () => {
               <Td>{accessory.name}</Td>
               <Td>{accessory.description}</Td>
               <Td>{accessory.price}</Td>
-              <Td>{accessory.image}</Td>
+              {/* <Td>{accessory.image}</Td> */}
+              {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
+              <Td><Image src={accessory.image} alt="Large Image"/></Td>
               <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
               {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
-              <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td>
+              {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
               {/* assuming you got to this page through manager_login <Td>{userData?.manager_id && (<Button>Delete</Button>)}</Td> */}
             </Tr>
           ))}
@@ -2138,13 +2149,26 @@ const Manager = () => {
     username: '',
     phone: '',
     password: '',
-    manager_id: userData.manager_id
+    manager_id: userData?.manager
   });
   const [removeCarFormData, setRemoveCarFormData] = useState({
     car_id: ''
   });
   const [serviceRequests, setServiceRequests] = useState([]);
   const [error, setError] = useState(null);
+  const [accessoryData, setAccessoryData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: "",
+    category: "",
+  });
+  const [showAddMiscellaneous, setShowAddMiscellaneous] = useState(false);
+  const [accessoryID, setAccessoryID] = useState({
+    accessoire_id: '',
+  });
+  const [message, setMessage] = useState('');
+
   useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
@@ -2258,27 +2282,62 @@ const Manager = () => {
 
   const handleSubmitMiscellaneousForm = async (event) => {
     event.preventDefault();
-    const carId = parseInt(removeCarFormData.car_id);
-    if (isNaN(carId)) {
-      setError('Car ID must be an integer');
+    const accessory_ID = parseInt(accessoryID.accessoire_id);
+    if (isNaN(accessory_ID)) {
+      setError('Accessory ID must be an integer');
       return;
     }
-    console.log("the car id is", removeCarFormData.car_id);
+    console.log("the accessory id is", accessory_ID);
     try {
-        const response = await fetch(`http://localhost:5000`, {
+        const response = await fetch(`http://localhost:5000/deleteAccessoryManager`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(removeCarFormData), // Sending formData in the request body
+            body: JSON.stringify({ accessoryID }), // Sending formData in the request body
         });
         
         if (response.ok) {
             const data = await response.json();
-            console.log("Car removed successfully:", data);
+            console.log("Accessory removed successfully:", data);
+            alert("Accessory removed successfully");
             // Optionally, you can update the UI or show a success message here
         } else {
-            console.error('Error removing car:', response.statusText);
+            console.error('Error removing Accessory:', response.statusText);
+            // Handle the error, show an error message to the user, etc.
+        }
+    } catch (error) {
+        console.error('Error sending data:', error);
+        // Handle network errors, display error message, etc.
+    }
+    // Reset error state
+    setError(null);
+  };
+
+  const handleAddMiscellaneous = async (event) => {
+    event.preventDefault();
+    console.log("hello");
+    console.log("the car id is", accessoryData.name);
+    console.log("the car id is", accessoryData.description);
+    console.log("the car id is", accessoryData.price);
+    console.log("the car id is", accessoryData.image);
+    console.log("the car id is", accessoryData.category);
+    try {
+        const response = await fetch(`http://localhost:5000/addAccessory`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessoryData }), // Sending formData in the request body
+        });
+   
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Accessory added successfully:", data);
+            alert("Accessory added successfully");
+            // Optionally, you can update the UI or show a success message here
+        } else {
+            console.error('Error adding accessory:', response.statusText);
             // Handle the error, show an error message to the user, etc.
         }
     } catch (error) {
@@ -2314,6 +2373,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -2321,6 +2381,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -2328,6 +2389,7 @@ const Manager = () => {
         setShowRemoveCars(true);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -2335,6 +2397,7 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -2342,6 +2405,15 @@ const Manager = () => {
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(true);
+        setShowAddMiscellaneous(false);
+        break;
+      case 'addMiscellaneous':
+        setShowServiceRequests(false);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(true);
         break;
       default:
         break;
@@ -2443,62 +2515,86 @@ const Manager = () => {
         </Box>
       )}
 
-      {showRemoveMiscellaneous && (
-              <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-                <Flex flexDirection="row" justifyContent="space-between">
-              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+      {/* this is for adding stuff too the accessory database */}
+      {showAddMiscellaneous && (
+              <form onSubmit={handleAddMiscellaneous} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
-                  <FormLabel color="white">Accessory Name</FormLabel>
+                  <FormLabel color="white">Name</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.firstName}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
+                    value={accessoryData.name}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, name: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="lastName" isRequired marginBottom="20px">
-                  <FormLabel>description</FormLabel>
+                <FormControl id="Description" isRequired marginBottom="20px">
+                  <FormLabel>Description</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.lastName}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
+                    value={accessoryData.description}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, description: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="email" isRequired marginBottom="20px">
-                  <FormLabel>price</FormLabel>
+                <FormControl id="price" isRequired marginBottom="20px">
+                  <FormLabel>Price</FormLabel>
                   <Input
-                    type="email"
-                    value={technicianFormData.email}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
+                    type="text"
+                    value={accessoryData.price}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, price: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
               <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
-                <FormControl id="username" isRequired marginBottom="20px">
-                  <FormLabel>image</FormLabel>
+                <FormControl id="image" isRequired marginBottom="20px">
+                  <FormLabel>Image</FormLabel>
                   <Input
                     type="text"
-                    value={technicianFormData.username}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
+                    value={accessoryData.image}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, image: e.target.value })}
                     color="white"
                   />
                 </FormControl>
-                <FormControl id="phone" isRequired marginBottom="20px">
-                  <FormLabel>category</FormLabel>
+                <FormControl id="category" isRequired marginBottom="20px">
+                  <FormLabel>Category</FormLabel>
                   <Input
-                    type="number"
-                    value={technicianFormData.phone}
-                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
+                    type="text"
+                    value={accessoryData.category}
+                    onChange={(e) => setAccessoryData({ ...accessoryData, category: e.target.value })}
                     color="white"
                   />
                 </FormControl>
               </Flex>
             </Flex>
               {error && <div style={{ color: 'red' }}>{error}</div>}
-              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
+              <Button type="submit" colorScheme="green" marginTop="10px">Add Accessory</Button>
             </form>
+          )}
+      
+      {showRemoveMiscellaneous && (
+              <div>
+                <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+                  <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                  <FormControl id="firstName" isRequired marginBottom="20px">
+                    <FormLabel color="white">Accessory ID</FormLabel>
+                    <Input
+                      type="text"
+                      value={accessoryID.accessoire_id}
+                      onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
+                      color="white"
+                    />
+                  </FormControl>
+                </Flex>
+                            </Flex>
+                {error && <div style={{ color: 'red' }}>{error}</div>}
+                <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
+                            </form>
+                {message && <p>{message}</p>}
+              </div>
           )}
     
       { /* if the account is successfully created, display a success message to the user */}
@@ -2592,7 +2688,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Add Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Miscellaneous Car Products</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
         </Flex>
       </Box>
