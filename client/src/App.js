@@ -374,7 +374,7 @@ const Homepage = () => {
           <Text fontSize="5xl" fontWeight="bold">Service,</Text>
           <Text fontSize="5xl" fontWeight="bold">& Accessories</Text>
         </Box>
-        <Box marginTop="-400px" marginLeft="55%" width="300px" height="300px" >
+        <Box marginTop="-400px" marginLeft="50%" width="300px" height="300px" >
           <svg xmlns="http://www.w3.org/2000/svg" width="735px" height="500px" fill="none" viewBox="0 0 1170 769">
             <path fill="url(#e)" d="M520 113c126.749-126.75 332.251-126.75 459 0 126.75 126.75 126.75 332.251 0 459-126.749 126.75-332.251 126.75-459 0-126.75-126.749-126.75-332.25 0-459Zm421.638 421.638c106.112-106.115 106.112-278.161 0-384.275-106.115-106.115-278.161-106.115-384.276 0-106.114 106.114-106.114 278.16 0 384.275 106.115 106.115 278.161 106.115 384.276 0Z"/>
             <path fill="url(#f)" d="M0 0h1230v769H0V0Z"/>
