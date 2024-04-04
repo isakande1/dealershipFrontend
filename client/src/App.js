@@ -686,7 +686,7 @@ const TestDriveHistory = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -868,7 +868,7 @@ const OwnCar = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -893,7 +893,7 @@ const OwnCar = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -1007,7 +1007,7 @@ const ServiceHistory = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1036,7 +1036,7 @@ const ServiceHistory = () => {
           </button>
           <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
         </li>
@@ -1175,7 +1175,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1200,7 +1200,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -1397,7 +1397,7 @@ const CustomerSerivceAppointment = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-           Test Drive status
+           Test Drive Status
           </button>
         </li>
       </ul>
@@ -1525,7 +1525,7 @@ const PastPurchase = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1822,7 +1822,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -1847,7 +1847,7 @@ const handleNavigate = (path) => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>
       </ul>
@@ -1859,7 +1859,7 @@ const handleNavigate = (path) => {
       height='100vh'
       bgGradient="linear(to-b, black, gray.600)"
       >
-      <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center">
         Accessories
       </Text>
       <FormControl mx="auto" my={4} w="max-content">
@@ -1882,7 +1882,7 @@ const handleNavigate = (path) => {
           <option value="dash-cam">Dash Cam</option>
         </Select>
       </FormControl>
-      <Button onClick={handleButtonClick} colorScheme="blue" mx="auto" mt={4} mb={8}>
+      <Button onClick={handleButtonClick} colorScheme="blue" ml="40%" marginTop="-20px">
         Fetch Accessories
       </Button>
       <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
@@ -2036,7 +2036,7 @@ const CustomerModifyInfo = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
+           Schedule Service 
           </button>
         </li>
         <li className="nav-item">
@@ -2061,7 +2061,7 @@ const CustomerModifyInfo = () => {
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
+            Test Drive Status
           </button>
         </li>  
       </ul>
@@ -2168,11 +2168,11 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
-        const previousUrl = location.state?.previousUrl;
-        const car_id = location.state?.car_id;
+       const previousUrl = location.state?.previousUrl;
+       const car_id = location.state?.car_id;
         previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
-
-        // Reset form state and collapse sign-up form
+        
+// Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
       } else {
@@ -2197,9 +2197,9 @@ const Login = () => {
       setTimeout(() => {
         setEditMessage(null);
       }, 2000);
-      return;
+      return; 
     }
-
+    
     const formData = new FormData(event.target);
     const customerData = Object.fromEntries(formData.entries());
 
@@ -2219,7 +2219,7 @@ const Login = () => {
         setTimeout(() => {
           setEditMessage(null);
         }, 2000);
-        // Reset form state and collapse sign-up form
+// Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
       } else {
@@ -3444,7 +3444,5 @@ const Technician = () => {
     </>
   );
 }
-
-
 
 export default App;
