@@ -1952,6 +1952,7 @@ const CarAccessories = () => {
       <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="30px" style={{marginLeft:"10px"}}> 
         Fetch Accessories
       </Button>
+    </Box>
       {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
       </Button> */}
