@@ -3097,7 +3097,7 @@ const Manager = () => {
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
           <h1 style={{paddingBottom:'10px'}}><strong>Service Requests</strong></h1>
-          <Table striped bordered hover>
+          <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px'}}>
             <thead>
               <tr>
                 <th style={{textAlign: 'center', width: '3%'}}>Service Request ID #</th>
