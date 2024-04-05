@@ -231,7 +231,7 @@ export default function CarDetails() {
                 item_image: carInfos.image0,
               }),
             });
-      
+        
             if (response.ok) {
               //window.confirm('Car added successfully');
               //NAvigate to the next page 
@@ -246,7 +246,23 @@ export default function CarDetails() {
                   car_id: carInfos.car_id
                 },
               });
-
+ //Take customer to cart if the car is already in his cart
+            }else    if(response.status === 409){
+              const confirmed = window.confirm('Car already in the cart. Checkout insead?')
+              if (confirmed) {
+              // Redirect to cart
+              navigate('/Cart', {
+               
+                state: {
+                  userData: userData,
+                  car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
+                  car_image: carInfos.image0,
+                  car_price: carInfos.price,
+                  car_id: carInfos.car_id
+                },
+              });
+              }
+              
             } else {
               
               throw new Error('Error adding car');
