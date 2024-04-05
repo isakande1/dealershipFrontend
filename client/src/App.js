@@ -2616,6 +2616,7 @@ const Manager = () => {
   const [showRemoveCars, setShowRemoveCars] = useState(false);
   const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
+  const [showTestDriveRequests, setShowTestDriveRequests] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -2630,6 +2631,7 @@ const Manager = () => {
     car_id: ''
   });
   const [serviceRequests, setServiceRequests] = useState([]);
+  const [testDriveRequests, setTestDriveRequests] = useState([]);
   const [error, setError] = useState(null);
   const [accessoryData, setAccessoryData] = useState({
     name: "",
@@ -2647,8 +2649,10 @@ const Manager = () => {
   useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
+    } else if (showTestDriveRequests) {
+      fetchTestDriveRequests();
     }
-  }, [showServiceRequests]);
+  }, [showServiceRequests, showTestDriveRequests]);
 
   const handleAccept = (serviceRequestId) => {
     const updatedRequest = {
@@ -2689,7 +2693,7 @@ const Manager = () => {
         alert('Failed to add service to cart');
         console.error('Failed to add service to cart:', error);
       });
-  }
+  };
   
   const handleDecline = (serviceRequestId) => {
     const updatedRequest = {
@@ -2707,10 +2711,53 @@ const Manager = () => {
       });
   };
 
+  
   const fetchServiceRequests = () => {
     axios.get('/show_customer_service_requests/')
+    .then(response => {
+      setServiceRequests(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching service requests:', error);
+    });
+  };
+  
+  const handleTestDriveAccept = (appointment_id) => {
+    const updatedRequest = {
+      status: 'accepted'
+    };
+  
+    axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+      .then(response => {
+        // Update UI if necessary
+        console.log('Service request accepted:', response.data);
+        fetchTestDriveRequests();
+      })
+      .catch(error => {
+        console.error('Error accepting service request:', error);
+      });
+  };
+
+  const handleTestDriveDecline = (appointment_id) => {
+      const updatedRequest = {
+        status: 'declined'
+      };
+    
+      axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
         .then(response => {
-          setServiceRequests(response.data);
+          // Update UI if necessary
+          console.log('Service request declined:', response.data);
+          fetchTestDriveRequests();
+        })
+        .catch(error => {
+          console.error('Error declining service request:', error);
+        });
+  };
+  
+  const fetchTestDriveRequests = () => {
+    axios.get('/show_test_drive_appointments')
+        .then(response => {
+          setTestDriveRequests(response.data);
         })
         .catch(error => {
           console.error('Error fetching service requests:', error);
@@ -2915,12 +2962,14 @@ const Manager = () => {
         setShowTechnicianForm(true);
         setShowAddCars(false);
         setShowRemoveCars(false);
+        setShowTestDriveRequests(false);
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
+        setShowTestDriveRequests(false);
         setShowTechnicianForm(false);
         setShowRemoveCars(false);
         setShowServiceRequests(false);
@@ -2929,6 +2978,7 @@ const Manager = () => {
         break;
       case 'removeCars':
         setShowAddCars(false);
+        setShowTestDriveRequests(false);
         setShowTechnicianForm(false);
         setShowRemoveCars(true);
         setShowServiceRequests(false);
@@ -2938,6 +2988,7 @@ const Manager = () => {
       case 'manageServiceRequests':
         setShowServiceRequests(true);
         setShowTechnicianForm(false);
+        setShowTestDriveRequests(false);
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
@@ -2946,6 +2997,7 @@ const Manager = () => {
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
         setShowTechnicianForm(false);
+        setShowTestDriveRequests(false);
         setShowAddCars(false);
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(true);
@@ -2956,8 +3008,18 @@ const Manager = () => {
         setShowTechnicianForm(false);
         setShowAddCars(false);
         setShowRemoveCars(false);
+        setShowTestDriveRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(true);
+        break;
+      case 'manageTestDriveRequests':
+        setShowServiceRequests(false);
+        setShowTestDriveRequests(true);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       default:
         break;
@@ -3189,6 +3251,48 @@ const Manager = () => {
         </Box>
       )}
 
+      {showTestDriveRequests && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          <h1 style={{paddingBottom:'10px', paddingTop:'80px', marginLeft:'40px'}}><strong>Test Drive Requests</strong></h1>
+          <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px', marginTop:"20px"}}>
+            <thead>
+              <tr>
+                <th style={{textAlign: 'center', width: '3%'}}>Appointment ID #</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Proposed Date and Time</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Car ID#</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Status</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Requested by</th>
+                <th style={{textAlign: 'center', width: '9%'}}>Customer Phone</th>
+                <th style={{textAlign: 'center', width: '2%'}}></th>
+                <th style={{textAlign: 'center', width: '2%'}}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {testDriveRequests.map(request => (
+                <tr key={request.appointment_id}>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.appointment_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.appointment_date}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.car_id}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.status}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.first_name} {request.last_name}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>{request.phone}</td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="green" onClick={() => {handleTestDriveAccept(request.appointment_id)}} >
+                      Accept
+                    </Button>
+                  </td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="red" onClick={() => handleTestDriveDecline(request.appointment_id)}>
+                      Decline
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Box>
+      )}
+
     {showRemoveCars && (
             <form onSubmit={handleSubmitRemoveCarForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
               <Flex flexDirection="row" justifyContent="space-between">
@@ -3229,7 +3333,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Assign Technicians</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Test Drive Appointments</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageTestDriveRequests')}>Test Drive Requests</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
