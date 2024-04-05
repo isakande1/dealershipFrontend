@@ -2721,7 +2721,7 @@ const Manager = () => {
       console.error('Error fetching service requests:', error);
     });
   };
-  
+
   const handleTestDriveAccept = (appointment_id) => {
     const updatedRequest = {
       status: 'accepted'
@@ -3257,7 +3257,7 @@ const Manager = () => {
           <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px', marginTop:"20px"}}>
             <thead>
               <tr>
-                <th style={{textAlign: 'center', width: '3%'}}>Appointment ID #</th>
+                <th style={{textAlign: 'center', width: '3%'}}>Appointment ID</th>
                 <th style={{textAlign: 'center', width: '9%'}}>Proposed Date and Time</th>
                 <th style={{textAlign: 'center', width: '9%'}}>Car ID#</th>
                 <th style={{textAlign: 'center', width: '9%'}}>Status</th>
