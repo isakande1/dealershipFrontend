@@ -2680,11 +2680,13 @@ const Manager = () => {
     axios.post('/add_to_cart', formData)
       .then(response => {
         // Handle success response
+        alert('Service successfully added to cart');
         console.log('Service added to cart successfully');
         // You may want to update the UI or perform any additional actions here
       })
       .catch(error => {
         // Handle error response
+        alert('Failed to add service to cart');
         console.error('Failed to add service to cart:', error);
       });
   }
