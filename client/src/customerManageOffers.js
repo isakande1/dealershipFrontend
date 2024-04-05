@@ -7,3 +7,11 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
+
+export default function ManageOffers(){
+    const storedData = sessionStorage?.getItem('data');
+    const parsedData = JSON.parse(storedData);
+    const customer_id = parsedData?.['customer_id']
+    console.log(customer_id)
+
+};

@@ -20,12 +20,14 @@ import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
+import ManageOffers from './customerManageOffers';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
+
 //import CarAccessories from './carAccessories';
 // npm install react-bootstrap bootstrap
 
@@ -57,6 +59,9 @@ function App() {
           <Route path="ContactPage" element={<ContactPage/>} />
           <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
           <Route path="makeOffer" element={<MakeOffer/>} />
+          <Route path="//customerManageOffers" element={<ManageOffers/>} />
+
+          
           
         </Routes>
       </ChakraProvider>
@@ -457,6 +462,7 @@ const SignedInHomepage = () => {
   const carsPerPage = 12;
 
   const handleSignOut = () => {
+    sessionStorage.clear(); //clear the data in the session when sign out
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
   };
@@ -566,7 +572,6 @@ const SignedInHomepage = () => {
         bg='black'
         w='100%'
         color='white'
-        height="800px"
         height="650px"
         bgGradient="linear(to-b, black, gray.600)"
         borderBottomLeftRadius="xl"
@@ -634,7 +639,7 @@ const SignedInHomepage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
-            <Button variant="ghost" color="white" marginBottom="10px">Manage Offers</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
           </Flex>
         </Box>
       )}
@@ -2044,6 +2049,7 @@ const CustomerModifyInfo = () => {
   const [EditMessage, setEditMessage] = useState('');
 
   const handleSignOut = () => {
+    sessionStorage.clear(); //remove data in session
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
   };
@@ -2238,10 +2244,12 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
+        //Navigate to carDetails after log in
         const previousUrl = location.state?.previousUrl;
         const car_id = location.state?.car_id;
         previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
-
+        // Storing the data object as a string
+        sessionStorage.setItem('data', JSON.stringify(data));
         // Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
@@ -3222,7 +3230,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Test Drive Appointments</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Manage Offers</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Miscellaneous Car Products</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
         </Flex>
