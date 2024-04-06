@@ -12,7 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen } from 'react-icons/fa';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -2595,14 +2595,15 @@ const HandleAddCars = ({managerId}) => {
 };
 
 return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: "300px", marginTop: "-375px"}}>
-      <div>
-          <Text fontWeight="bold" color="white" fontSize="4xl">Select a file to add cars</Text>
-          <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"30px", marginLeft: "90px" }} />
-          {successMessage && <p style={{ color: 'green',  marginLeft: '60px', marginTop: '10px' }}>{successMessage}</p>}
-          {errorMessage && <p style={{ color: 'red', marginLeft: '20px', marginTop: '10px' }}>{errorMessage}</p>}
-      </div>
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position:"fixed", marginLeft:'700px', marginTop:'275px'}}>
+    <div>
+      <Text fontWeight="bold" color="white" fontSize="5xl" style={{ marginLeft: '-350px', marginTop:'-200px' }}>Select a file to add cars</Text>
+      <FaFolderOpen size="12em" style={{ marginLeft: '110px', color:'white', marginTop:'80px' }} />
+      <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"10px", marginLeft: "90px" }} />
+      {successMessage && <p style={{ color: 'green',  marginLeft: '90px', marginTop: '20px' }}>{successMessage}</p>}
+      {errorMessage && <p style={{ color: 'lightred', marginLeft: '90px', marginTop: '20px' }}>{errorMessage}</p>}
     </div>
+  </div>
   );
 };
 
@@ -3050,74 +3051,77 @@ const Manager = () => {
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
-        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-              <FormControl id="firstName" isRequired marginBottom="20px">
-                <FormLabel color="white">First Name</FormLabel>
-                <Input
-                  type="text"
-                  value={technicianFormData.firstName}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
-              <FormControl id="lastName" isRequired marginBottom="20px">
-                <FormLabel>Last Name</FormLabel>
-                <Input
-                  type="text"
-                  value={technicianFormData.lastName}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
-              <FormControl id="email" isRequired marginBottom="20px">
-                <FormLabel>Email</FormLabel>
-                <Input
-                  type="email"
-                  value={technicianFormData.email}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
+        <div>
+          <Text fontSize="5xl" color="white" style={{  position:'absolute', marginTop:"80px", fontWeight:'bold', marginLeft:'350px' }}>Add Technicians</Text>
+          <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '200px', left: '550px' }}>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                <FormControl id="firstName" isRequired marginBottom="20px">
+                  <FormLabel color="white">First Name</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.firstName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, firstName: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="lastName" isRequired marginBottom="20px">
+                  <FormLabel>Last Name</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.lastName}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, lastName: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="email" isRequired marginBottom="20px">
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={technicianFormData.email}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, email: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+              </Flex>
+              <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+                <FormControl id="username" isRequired marginBottom="20px">
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    type="text"
+                    value={technicianFormData.username}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="phone" isRequired marginBottom="20px">
+                  <FormLabel>Phone</FormLabel>
+                  <Input
+                    type="number"
+                    value={technicianFormData.phone}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+                <FormControl id="password" isRequired marginBottom="20px">
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={technicianFormData.password}
+                    onChange={(e) => setTechnicianFormData({ ...technicianFormData, password: e.target.value })}
+                    color="white"
+                  />
+                </FormControl>
+              </Flex>
             </Flex>
-            <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
-              <FormControl id="username" isRequired marginBottom="20px">
-                <FormLabel>Username</FormLabel>
-                <Input
-                  type="text"
-                  value={technicianFormData.username}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, username: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
-              <FormControl id="phone" isRequired marginBottom="20px">
-                <FormLabel>Phone</FormLabel>
-                <Input
-                  type="number"
-                  value={technicianFormData.phone}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, phone: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
-              <FormControl id="password" isRequired marginBottom="20px">
-                <FormLabel>Password</FormLabel>
-                <Input
-                  type="password"
-                  value={technicianFormData.password}
-                  onChange={(e) => setTechnicianFormData({ ...technicianFormData, password: e.target.value })}
-                  color="white"
-                />
-              </FormControl>
-            </Flex>
-          </Flex>
-          <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
-        </form>
+            <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
+          </form>
+        </div>
       )}
 
       { /* if the account is successfully created, display a success message to the user */}
       {accountCreationSuccess && (
-        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
+        <Box position="absolute" top="550px" left="45%" transform="translate(-50%, -50%)" color="lightgreen" p="4" borderRadius="md">
           Technician account created successfully!
         </Box>
       )}
@@ -3207,7 +3211,7 @@ const Manager = () => {
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px', paddingTop:'80px', marginLeft:'40px'}}><strong>Service Requests</strong></h1>
+          <h1 style={{fontSize:'48px', paddingBottom:'30px', paddingTop:'88px', marginLeft:'72px'}}><strong>Service Requests</strong></h1>
           <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px', marginTop:"20px"}}>
             <thead>
               <tr>
