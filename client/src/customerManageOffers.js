@@ -89,9 +89,7 @@ return(
         <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("rejected")}}>Rejected</Button>
         </Flex>
         <Flex justifyContent="space-between" flexDirection="row"> 
-            {fetchedData.map((data,index)=>(
-             <offerBox key={index} data={data} />
-            ))}
+        {fetchedData ? (fetchedData.map((data, index) => ( <offerBox key={index} data={data} /> ))) : (<Text>No {category} offers</Text> )}
         </Flex>
     </Grid>
     </Box>
