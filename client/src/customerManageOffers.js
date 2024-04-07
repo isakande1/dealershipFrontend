@@ -16,18 +16,20 @@ export default function ManageOffers(){
     const [category, setCategory] = useState("pending");
     const [status, setStatus] = useState("pending");
     console.log(customer_id)
-
+   
+    const fetchOffers =()=>{
+    axios.post('/fetchOffers',{customer_id,category} )
+    .then( (response) =>{
+        setFetchedData(response.data);
+        console.log("data fetched", response.data)
+    }
+    )
+    .catch(error=>{
+        console.log("error message", error)
+       // window.confirm('Something wrong happened, please try again !');
+    });
+} 
     useEffect(()=>{
-        const fetchOffers =()=>{
-            axios.post('/fetchOffers',{customer_id,category} )
-            .then( (response) =>{
-                setFetchedData(response.data);
-            }
-            )
-            .catch(error=>{
-               // window.confirm('Something wrong happened, please try again !');
-            });
-        } 
         fetchOffers();
 }, [category,status]);
 
@@ -56,17 +58,20 @@ const buttonStyleOfferBox={
 const highlight = (category, status) => {
     return category=== status ? { border: "2px solid white" } : {};
 };
+console.log("data fetched", fetchedData)
 
-const offerBox = (data) =>{
+const OfferBox = (data) =>{
+    // console.log("data smalle fetched", data)
+    return(
   <Grid gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="md" h = "400px" w = "80%">
      <Box h ="95%">
-    <Image overflow="hidden" w="100%" h="100%" alt="car" objectFit='cover' src={data.car_image}/>
+    <Image overflow="hidden" w="100%" h="100%" alt="car" objectFit='cover' src={data.data.car_image}/>
     </Box>
     <Grid gridTemplateRows="5fr 1fr"> 
         <Box>
-            <Text>"Car: "{`${data.make} ${data.model} ${data.year}`} </Text>
-            <Text> "Price: $" {data.price}</Text>
-            <Text> "Offer: $"{data.offer_price}</Text>
+            <Text>"Car: "{`${data.data.make} ${data.data.model} ${data.data.year}`} </Text>
+            <Text> "Price: $" {data.data.car_price}</Text>
+            <Text> "Offer: $"{data.data.offer_price}</Text>
          </Box>
          <Flex flexDir="column" justifyContent="space-between">
             <Button sx={buttonStyleOfferBox} onClick={()=>{}} >Accept </Button>
@@ -75,6 +80,7 @@ const offerBox = (data) =>{
          </Flex>
     </Grid>
  </Grid>
+    );
 }
 
 
@@ -89,7 +95,7 @@ return(
         <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("rejected")}}>Rejected</Button>
         </Flex>
         <Flex justifyContent="space-between" flexDirection="row"> 
-        {fetchedData ? (fetchedData.map((data, index) => ( <offerBox key={index} data={data} /> ))) : (<Text>No {category} offers</Text> )}
+        {fetchedData ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text>No {category} offers</Text> )}
         </Flex>
     </Grid>
     </Box>
