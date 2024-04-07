@@ -53,7 +53,8 @@ const buttonStyle = {
 const buttonStyleOfferBox={
     variant:"light",
      w:"100px",
-     bg:"#44337A"
+     bg:"#44337A",
+    
 }
 const highlight = (category, status) => {
     return category=== status ? { border: "2px solid white" } : {};
@@ -63,21 +64,21 @@ console.log("data fetched", fetchedData)
 const OfferBox = (data) =>{
     // console.log("data smalle fetched", data)
     return(
-  <Grid gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="md" h = "400px" w = "80%">
-     <Box h ="95%">
+  <Grid    gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="lg" h = "150px" w = "80%" marginBottom="20px">
+     <Box h ="150px" w="200px">
     <Image overflow="hidden" w="100%" h="100%" alt="car" objectFit='cover' src={data.data.car_image}/>
     </Box>
-    <Grid gridTemplateRows="5fr 1fr"> 
+    <Grid gridTemplateRows="100px 1fr"> 
         <Box>
-            <Text>"Car: "{`${data.data.make} ${data.data.model} ${data.data.year}`} </Text>
-            <Text> "Price: $" {data.data.car_price}</Text>
-            <Text> "Offer: $"{data.data.offer_price}</Text>
+            <Text margin="0">Car: {`${data.data.make} ${data.data.model} ${data.data.year}`} </Text>
+            <Text margin="0"> Price: ${data.data.car_price}</Text>
+            <Text margin="0"> Offer: ${data.data.offer_price}</Text>
          </Box>
-         <Flex flexDir="column" justifyContent="space-between">
+         {category === "pending" && (<Flex flexDirection="row" justifyContent="25px">
             <Button sx={buttonStyleOfferBox} onClick={()=>{}} >Accept </Button>
-            <Button sx={buttonStyleOfferBox} onClick={()=>{}} >Decline </Button>
-            <Button sx={buttonStyleOfferBox} onClick={()=>{}} >Counter </Button>
-         </Flex>
+            <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{}} >Decline </Button>
+            <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{}} >Counter </Button>
+         </Flex>)}
     </Grid>
  </Grid>
     );
@@ -86,16 +87,16 @@ const OfferBox = (data) =>{
 
 return(
      
-    <Box bg='black' bgGradient="linear(to-b, black, gray.600)" minH="100vh" minW="100vh" >
-     <Heading color="white" paddingTop="20px"fontFamily= "cursive"> Manage all offers  </Heading> 
-    <Grid gridAutoColumns="1fr 4fr"> 
-        <Flex bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="400px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
+    <Box bg='black' bgGradient="linear(to-b, black, gray.600)" minH="100vh" minW="100vh" position="relative">
+     <Heading position="fixed" color="white" paddingTop="20px"fontFamily= "cursive"> Manage all offers  </Heading> 
+    <Grid > 
+        <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="400px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
         <Button sx={{...buttonStyle,...highlight("pending",category)}}   onClick={()=>{setCategory("pending")}}>Pending</Button>
         <Button sx={{...buttonStyle,...highlight("accepted",category)}} onClick={()=>{setCategory("accepted")}}>Accepted</Button>
         <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("rejected")}}>Rejected</Button>
         </Flex>
-        <Flex justifyContent="space-between" flexDirection="row"> 
-        {fetchedData ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text>No {category} offers</Text> )}
+        <Flex marginLeft="350px"  flexDirection="column" marginTop="90px" overflowy="auto" w="70%"> 
+        {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text margin= "100px" color="white">You do not have any {category} offers</Text> )}
         </Flex>
     </Grid>
     </Box>
