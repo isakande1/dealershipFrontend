@@ -213,3 +213,40 @@ button:hover {
   color: #333; /* Change text color on hover */
   box-shadow: 0 0 0 3px #333; /* Add a box shadow on hover */
 }
+
+#finAppBg {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  background-image: linear-gradient(#000, #777);
+  padding-bottom: 50px;
+}
+
+#finAppFormContainer {
+  width: 40%;
+  margin: -6% auto 0;
+  padding: 0.25% 0;
+  background-color: #ffffff52;
+  border-radius: 50px;
+}
+
+/*#financeForm > input {
+  width: 90%;
+}*/
+
+#financeForm {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+#financeTitle {
+  color: #080072;
+}
+
+#financeSubmit {
+  width: 120px;
+  height: 50px;
+  background-color: #0056b3;
+  border-radius: 15px;
+}

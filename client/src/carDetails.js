@@ -8,6 +8,7 @@ import {
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 import TestDriveForm from './TestDriveForm';
+import FinanceApp from './financeApp';
 import './App.css';
 
 
@@ -283,6 +284,20 @@ export default function CarDetails() {
             console.error('userData or carInfos is undefined.');
           }
         };
+
+        const handleFinance = () => {
+          console.log("HIT");
+          if (userData && carInfos) {
+            navigate('/carDetails/financeApplication', {
+              state: { userData, carInfos},
+            });
+            console.log(userData);
+            console.log(carInfos);
+          } else {
+            console.error('userData or carInfos is undefined.');
+          }
+        }
+        
         return (
           <Grid bg="black" templateColumns="1fr 1fr" justifyItems="center">
             <Box>
@@ -323,7 +338,7 @@ export default function CarDetails() {
               >
                 Schedule test drive 
               </Button>
-              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A">
+              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" onClick={handleFinance}>
                 Financing
               </Button>
               <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" onClick={handleMakeOffer}>
@@ -352,8 +367,9 @@ export default function CarDetails() {
           <CarImagesLayout />
             <Options />
       <Routes>
-      <Route path="/carDetails/*" element={<CarDetails />} />
-        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+        <Route path="/carDetails/*" element={<CarDetails />} />
+        <Route path="/carDetails/schedule-test-drive/" element={<TestDriveForm />} />
+        <Route path="/carDetails/financeApplication/" element={<FinanceApp />} />
       </Routes>
     </Grid>
 
