@@ -7,6 +7,11 @@ export default function FinanceApp () {
     const { userData, carInfos } = location.state;
 
     console.log(userData.first_name + " " + userData.last_name);
+
+    const sendFinanceApp = (e) => {
+        e.preventDefault();
+        console.log("HIT");
+    };
     
     return (
         <div id="finAppBg">
@@ -21,10 +26,13 @@ export default function FinanceApp () {
               </svg>
             </span>
             <div id="finAppFormContainer">
-                <form id="financeForm" action="/submit_finance_application" method="post">
+                <form id="financeForm" onSubmit={sendFinanceApp}>
                     <center><h2 id="financeTitle">Finance Application</h2></center>
                     <label for="full_name">Full Name:</label><br />
                     <input type="text" id="full_name" name="full_name" value={`${userData.first_name} ${userData.last_name}`} /><br /><br />
+
+                    <label for="customer_id">Customer ID:</label><br />
+                    <input type="text" id="customer_id" name="customer_id" value={`${userData.customer_id}`} /><br /><br />
 
                     <label for="annual_income">Annual Income:</label><br />
                     <input type="text" id="annual_income" name="annual_income" /><br /><br />
