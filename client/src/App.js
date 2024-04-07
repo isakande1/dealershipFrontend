@@ -18,6 +18,7 @@ import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
+import FinanceApp from './financeApp';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
@@ -60,6 +61,7 @@ function App() {
           <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
           <Route path="makeOffer" element={<MakeOffer/>} />
           <Route path="//customerManageOffers" element={<ManageOffers/>} />
+          <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
 
           
           

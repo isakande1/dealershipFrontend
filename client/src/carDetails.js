@@ -288,7 +288,7 @@ export default function CarDetails() {
         const handleFinance = () => {
           console.log("HIT");
           if (userData && carInfos) {
-            navigate('/carsDetails/financeApplication', {
+            navigate('/carDetails/financeApplication', {
               state: { userData, carInfos},
             });
             console.log(userData);
@@ -368,8 +368,8 @@ export default function CarDetails() {
             <Options />
       <Routes>
         <Route path="/carDetails/*" element={<CarDetails />} />
-        <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
-        <Route path="/carDetails/financeApplication" element={<FinanceApp />} />
+        <Route path="/carDetails/schedule-test-drive/" element={<TestDriveForm />} />
+        <Route path="/carDetails/financeApplication/" element={<FinanceApp />} />
       </Routes>
     </Grid>
 
