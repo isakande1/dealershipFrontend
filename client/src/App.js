@@ -22,6 +22,7 @@ import FinanceApp from './financeApp';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
+import ManageOffersManager from './managerManageOffers';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -60,7 +61,8 @@ function App() {
           <Route path="ContactPage" element={<ContactPage/>} />
           <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
           <Route path="makeOffer" element={<MakeOffer/>} />
-          <Route path="//customerManageOffers" element={<ManageOffers/>} />
+          <Route path="/customerManageOffers" element={<ManageOffers/>} />
+          <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
           <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
 
           

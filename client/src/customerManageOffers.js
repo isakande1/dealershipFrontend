@@ -15,6 +15,7 @@ export default function ManageOffers(){
     const [fetchedData,setFetchedData] = useState([]);
     const [category, setCategory] = useState("pending");
     const [status, setStatus] = useState(false);
+    const navigate = useNavigate();
     // console.log(customer_id)
    
     const fetchOffers =()=>{
@@ -54,6 +55,24 @@ const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=
             //window.confirm('Something wrong happened when trying to accept/decline, please try again !');
         });
 } ;
+
+const handleCounterOffer= (data) =>{
+    console.log("data  "  , data);
+    navigate('/makeOffer', {
+         
+      state: {
+        customer_id: data.data.customer_id,
+        car_name: ` ${data.data.make} ${data.data.model} ${data.data.year}`,
+        car_image: data.data.car_image,
+        car_price: data.data.car_price,
+        car_id: data.data.car_id
+      },
+    });
+
+  };
+
+
+
 const buttonStyle = {
     marginBottom :"10px",
      h:"80px",
@@ -88,7 +107,7 @@ const OfferBox = (data) =>{
          {category === "pending" && (<Flex flexDirection="row" justifyContent="25px">
             <Button sx={buttonStyleOfferBox} onClick={()=>{acceptOffer(data.data.customer_id,data.data.offer_id,data.data.car_id,data.data.offer_price,`${data.data.make} ${data.data.model}`,data.data.car_image)}} >Accept </Button>
             <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{rejectOffer(data.data.offer_id)}} >Decline </Button>
-            <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{}} >Counter </Button>
+            <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{handleCounterOffer(data)}} >Counter </Button>
          </Flex>)}
     </Grid>
  </Grid>

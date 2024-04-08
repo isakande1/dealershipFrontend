@@ -15,10 +15,9 @@ const {car_name} = location.state;
 const {car_image} = location.state;
 const {car_price} = location.state;
 const {car_id} = location.state;
-const userData = location.state?.userData; 
-const customer_id =userData.customer_id;
+const customer_id =location.state?.customer_id; 
 const [offerValue, setOfferValue] = useState("")
-
+ console.log(car_image);
     const sendOffer = (customer_id, car_id, offer) => {
         axios.post('/makeOffer',{customer_id, car_id, offer})
             .then(response => {
