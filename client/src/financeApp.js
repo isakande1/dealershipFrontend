@@ -1,16 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
 
 export default function FinanceApp () {
     const location = useLocation();
     const { userData, carInfos } = location.state;
+    const [error, setError] = useState('');
+    const [ income, setIncome ] = useState('');
+    const [ creditScore, setCreditScore ] = useState('');
 
     console.log(userData.first_name + " " + userData.last_name);
 
-    const sendFinanceApp = (e) => {
+    const sendFinanceApp = async (e) => {
         e.preventDefault();
         console.log("HIT");
+
+        const formData = {
+            full_name: `${userData.first_name} ${userData.last_name}`,  
+            customer_id: userData.customer_id, 
+            annual_income: income,
+            make: carInfos.make,
+            model: carInfos.model,
+            car_year: carInfos.year,
+            purchase_price: carInfos.price,
+            vin: carInfos.car_id,
+            credit_score: creditScore
+        };
+
+        try {
+            const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData);
+            console.log(response.data['message']); 
+      
+            if (response.status === 201) {
+              console.log("Form successfully sent!!")
+            } else {
+              setError('Failed to schedule test drive.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
+        console.log(formData);
     };
     
     return (
@@ -35,7 +66,7 @@ export default function FinanceApp () {
                     <input type="text" id="customer_id" name="customer_id" value={`${userData.customer_id}`} /><br /><br />
 
                     <label for="annual_income">Annual Income:</label><br />
-                    <input type="text" id="annual_income" name="annual_income" /><br /><br />
+                    <input type="text" id="annual_income" name="annual_income" value={income} onChange={(e) => setIncome(e.target.value)} /><br /><br />
 
                     <label for="vehicle_make_and_model">Vehicle Make and Model:</label><br />
                     <input type="text" id="vehicle_make_and_model" name="vehicle_make_and_model" value={`${carInfos.make} ${carInfos.model}`} /><br /><br />
@@ -50,7 +81,7 @@ export default function FinanceApp () {
                     <input type="text" id="vin_number" name="vin_number" value={`${carInfos.car_id}`} /><br /><br />
 
                     <label for="credit_history">Credit Score:</label><br />
-                    <input type="text" id="credit_history" name="credit_history" /><br /><br />
+                    <input type="text" id="credit_history" name="credit_history" value={creditScore} onChange={(e) => setCreditScore(e.target.value)} /><br /><br />
 
                     <center id="finButtonDiv">
                         <input id="financeSubmit" type="submit" value="Submit" />
