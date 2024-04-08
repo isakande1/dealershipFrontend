@@ -14,35 +14,46 @@ export default function ManageOffers(){
     const customer_id = parsedData?.['customer_id'];
     const [fetchedData,setFetchedData] = useState([]);
     const [category, setCategory] = useState("pending");
-    const [status, setStatus] = useState("pending");
-    console.log(customer_id)
+    const [status, setStatus] = useState(false);
+    // console.log(customer_id)
    
     const fetchOffers =()=>{
     axios.post('/fetchOffers',{customer_id,category} )
     .then( (response) =>{
         setFetchedData(response.data);
-        console.log("data fetched", response.data)
+        // console.log("data fetched", response.data)
     }
     )
     .catch(error=>{
         console.log("error message", error)
-       // window.confirm('Something wrong happened, please try again !');
+       window.confirm('Something went wrong, please try again !');
     });
 } 
     useEffect(()=>{
         fetchOffers();
 }, [category,status]);
 
-const acceptDeline =(status)=>{
-    axios.post('/fetchOffers',{status} )
+const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=>{
+    axios.post('/acceptOffer',{customer_id,offer_id,car_id,offer_price,car_name,car_image} )
     .then( (response) =>{
-        setStatus(status);
+        setStatus((prev)=>!prev);
     }
     )
     .catch(error=>{
-        //window.confirm('Something wrong happened when trying to accept/decline, please try again !');
+        window.confirm('Something went wrong, please try again !');
     });
-} 
+};
+    const rejectOffer =(offer_id)=>{
+        console.log("data smalle fetched", offer_id)
+        axios.post('/rejectOffer',{offer_id} )
+        .then( (response) =>{
+            setStatus((prev)=>!prev);
+        }
+        )
+        .catch(error=>{
+            //window.confirm('Something wrong happened when trying to accept/decline, please try again !');
+        });
+} ;
 const buttonStyle = {
     marginBottom :"10px",
      h:"80px",
@@ -62,7 +73,7 @@ const highlight = (category, status) => {
 console.log("data fetched", fetchedData)
 
 const OfferBox = (data) =>{
-    // console.log("data smalle fetched", data)
+    // console.log("data smalle fetched", data.data.offer_id)
     return(
   <Grid    gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="lg" h = "150px" w = "80%" marginBottom="20px">
      <Box h ="150px" w="200px">
@@ -75,8 +86,8 @@ const OfferBox = (data) =>{
             <Text margin="0"> Offer: ${data.data.offer_price}</Text>
          </Box>
          {category === "pending" && (<Flex flexDirection="row" justifyContent="25px">
-            <Button sx={buttonStyleOfferBox} onClick={()=>{}} >Accept </Button>
-            <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{}} >Decline </Button>
+            <Button sx={buttonStyleOfferBox} onClick={()=>{acceptOffer(data.data.customer_id,data.data.offer_id,data.data.car_id,data.data.offer_price,`${data.data.make} ${data.data.model}`,data.data.car_image)}} >Accept </Button>
+            <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{rejectOffer(data.data.offer_id)}} >Decline </Button>
             <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{}} >Counter </Button>
          </Flex>)}
     </Grid>
@@ -93,7 +104,7 @@ return(
         <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="400px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
         <Button sx={{...buttonStyle,...highlight("pending",category)}}   onClick={()=>{setCategory("pending")}}>Pending</Button>
         <Button sx={{...buttonStyle,...highlight("accepted",category)}} onClick={()=>{setCategory("accepted")}}>Accepted</Button>
-        <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("rejected")}}>Rejected</Button>
+        <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("declined")}}>Declined</Button>
         </Flex>
         <Flex marginLeft="350px"  flexDirection="column" marginTop="90px" overflowy="auto" w="70%"> 
         {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text margin= "100px" color="white">You do not have any {category} offers</Text> )}
