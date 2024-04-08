@@ -24,7 +24,7 @@ export default function CarDetails() {
     useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`/getCarInfos?car_id=${car_id}`);
+                const response = await fetch(`http://localhost:5000/getCarInfos?car_id=${car_id}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch the car detail');
                 }

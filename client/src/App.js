@@ -276,7 +276,7 @@ const Homepage = () => {
   }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
-    let url = '/cars_details';
+    let url = 'http://localhost:5000/cars_details';
     let data;
   
     if (Object.keys(searchParams).length > 0) {
@@ -506,7 +506,7 @@ const SignedInHomepage = () => {
   }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
-    let url = '/cars_details';
+    let url = 'http://localhost:5000/cars_details';
     let data;
   
     if (Object.keys(searchParams).length > 0) {
