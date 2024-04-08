@@ -104,10 +104,10 @@ const OfferBox = (data) =>{
             <Text margin="0"> Price: ${data.data.car_price}</Text>
             <Text margin="0"> Offer: ${data.data.offer_price}</Text>
          </Box>
-         {category === "pending" && (<Flex flexDirection="row" justifyContent="25px">
+         {category === "countered" && (<Flex flexDirection="row" justifyContent="25px">
             <Button sx={buttonStyleOfferBox} onClick={()=>{acceptOffer(data.data.customer_id,data.data.offer_id,data.data.car_id,data.data.offer_price,`${data.data.make} ${data.data.model}`,data.data.car_image)}} >Accept </Button>
             <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{rejectOffer(data.data.offer_id)}} >Decline </Button>
-            <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{handleCounterOffer(data)}} >Counter </Button>
+            <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{handleCounterOffer(data)}} >Counter  </Button>
          </Flex>)}
     </Grid>
  </Grid>
@@ -122,6 +122,7 @@ return(
     <Grid > 
         <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="400px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
         <Button sx={{...buttonStyle,...highlight("pending",category)}}   onClick={()=>{setCategory("pending")}}>Pending</Button>
+        <Button sx={{...buttonStyle,...highlight("countered",category)}}   onClick={()=>{setCategory("countered")}}>Counter Offers</Button>
         <Button sx={{...buttonStyle,...highlight("accepted",category)}} onClick={()=>{setCategory("accepted")}}>Accepted</Button>
         <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("declined")}}>Declined</Button>
         </Flex>
