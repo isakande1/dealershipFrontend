@@ -14,6 +14,7 @@ export default function ManageOffers(){
     const customer_id = parsedData?.['customer_id'];
     const [fetchedData,setFetchedData] = useState([]);
     const [category, setCategory] = useState("pending");
+    const [message,setMessage]= useState("Pending offers");
     const [status, setStatus] = useState(false);
     const navigate = useNavigate();
     // console.log(customer_id)
@@ -27,7 +28,7 @@ export default function ManageOffers(){
     )
     .catch(error=>{
         console.log("error message", error)
-       window.confirm('Something went wrong, please try again !');
+    //    window.confirm('Something went wrong, please try again !');
     });
 } 
     useEffect(()=>{
@@ -61,6 +62,7 @@ const handleCounterOffer= (data) =>{
     navigate('/makeOffer', {
          
       state: {
+        status: "customerCountered",
         customer_id: data.data.customer_id,
         car_name: ` ${data.data.make} ${data.data.model} ${data.data.year}`,
         car_image: data.data.car_image,
@@ -78,13 +80,16 @@ const buttonStyle = {
      h:"80px",
     variant:"light",
     w:"100%" ,
-    bg:"#44337A" 
+    bg:"#44337A",
+    fontWeight: "bold",
+    color:"white"
 }
 const buttonStyleOfferBox={
     variant:"light",
      w:"100px",
      bg:"#44337A",
-    
+     fontWeight: "bold",
+    color:"white"
 }
 const highlight = (category, status) => {
     return category=== status ? { border: "2px solid white" } : {};
@@ -104,7 +109,7 @@ const OfferBox = (data) =>{
             <Text margin="0"> Price: ${data.data.car_price}</Text>
             <Text margin="0"> Offer: ${data.data.offer_price}</Text>
          </Box>
-         {category === "countered" && (<Flex flexDirection="row" justifyContent="25px">
+         {category === "managerCountered" && (<Flex flexDirection="row" justifyContent="25px">
             <Button sx={buttonStyleOfferBox} onClick={()=>{acceptOffer(data.data.customer_id,data.data.offer_id,data.data.car_id,data.data.offer_price,`${data.data.make} ${data.data.model}`,data.data.car_image)}} >Accept </Button>
             <Button sx={buttonStyleOfferBox}  ml="10px" onClick={()=>{rejectOffer(data.data.offer_id)}} >Decline </Button>
             <Button sx={buttonStyleOfferBox} ml="10px" onClick={()=>{handleCounterOffer(data)}} >Counter  </Button>
@@ -120,14 +125,15 @@ return(
     <Box bg='black' bgGradient="linear(to-b, black, gray.600)" minH="100vh" minW="100vh" position="relative">
      <Heading position="fixed" color="white" paddingTop="20px"fontFamily= "cursive"> Manage all offers  </Heading> 
     <Grid > 
-        <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="400px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
-        <Button sx={{...buttonStyle,...highlight("pending",category)}}   onClick={()=>{setCategory("pending")}}>Pending</Button>
-        <Button sx={{...buttonStyle,...highlight("countered",category)}}   onClick={()=>{setCategory("countered")}}>Counter Offers</Button>
-        <Button sx={{...buttonStyle,...highlight("accepted",category)}} onClick={()=>{setCategory("accepted")}}>Accepted</Button>
-        <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("declined")}}>Declined</Button>
+        <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="500px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
+        <Button sx={{...buttonStyle,...highlight(" pending",category)}}   onClick={()=>{setCategory("pending"); setMessage("Pending offers")}}>Pending offers</Button>
+        <Button sx={{...buttonStyle,...highlight(" pending",category)}}   onClick={()=>{setCategory("customerCountered"); setMessage("Pending counter offers")}}>Pending counter offers</Button>
+        <Button sx={{...buttonStyle,...highlight("managerCountered",category)}}   onClick={()=>{setCategory("managerCountered"); setMessage("Received counter offers")}}>Received counter offers</Button>
+        <Button sx={{...buttonStyle,...highlight("accepted",category)}} onClick={()=>{setCategory("accepted");setMessage("Accepted offers")}}>Accepted offers</Button>
+        <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("declined");setMessage("Declined offers")}}>Declined offers</Button>
         </Flex>
         <Flex marginLeft="350px"  flexDirection="column" marginTop="90px" overflowy="auto" w="70%"> 
-        {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text margin= "100px" color="white">You do not have any {category} offers</Text> )}
+        {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text margin= "100px" color="white">No active {message} </Text> )}
         </Flex>
     </Grid>
     </Box>

@@ -186,6 +186,7 @@ export default function CarDetails() {
       navigate('/makeOffer', {
            
         state: {
+          status:"pending",
           customer_id: userData.customer_id,
           car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
           car_image: carInfos.image0,

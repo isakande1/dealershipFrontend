@@ -15,11 +15,12 @@ const {car_name} = location.state;
 const {car_image} = location.state;
 const {car_price} = location.state;
 const {car_id} = location.state;
+const {status} = location.state;
 const customer_id =location.state?.customer_id; 
 const [offerValue, setOfferValue] = useState("")
  console.log(car_image);
-    const sendOffer = (customer_id, car_id, offer) => {
-        axios.post('/makeOffer',{customer_id, car_id, offer})
+    const sendOffer = (customer_id, car_id, offer,status) => {
+        axios.post('/makeOffer',{customer_id, car_id, offer,status})
             .then(response => {
                 console.log('offer response:', response.data);
                 SetIsOfferSent(true)
@@ -43,7 +44,7 @@ const [offerValue, setOfferValue] = useState("")
             {isOfferSent === true ? <Text fontSize="sm" color="green">Offer sent sucessfully ! </Text> 
             :isOfferSent === false ? <Text fontSize="sm" color="red">Something went wrong, please try again! </Text> : null }
             <Input type="number" placeholder="Enter your offer" w="60%" onChange={(e)=>{setOfferValue(e.target.value); SetIsOfferSent(null)}} />
-            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" onClick={()=>{sendOffer(customer_id,car_id,offerValue)}}> Send Offer </Button>
+            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" onClick={()=>{sendOffer(customer_id,car_id,offerValue,status)}}> Send Offer </Button>
             </Flex>
          </Grid>
          </Flex>
