@@ -2586,10 +2586,10 @@ const HandleAddCars = ({managerId}) => {
     .then(response => {
       if (response.ok) {
         console.log('Cars added successfully');
-        setSuccessMessage('Cars added successfully!');
+        alert('Cars added successfully!');
       } else {
         console.error('Failed to add cars:', response.statusText);
-        setErrorMessage('Failed to add cars. Please try again.');
+        alert('Failed to add cars. Please try again.');
       }
     })
     .catch(error => {
@@ -2604,8 +2604,6 @@ return (
       <Text fontWeight="bold" color="white" fontSize="5xl" style={{ marginLeft: '-350px', marginTop:'-200px' }}>Select a file to add cars</Text>
       <FaFolderOpen size="12em" style={{ marginLeft: '110px', color:'white', marginTop:'80px' }} />
       <input justifyContent="center" type="file" onChange={handleFileInputChange} style={{ color: 'white', marginTop:"10px", marginLeft: "90px" }} />
-      {successMessage && <p style={{ color: 'green',  marginLeft: '90px', marginTop: '20px' }}>{successMessage}</p>}
-      {errorMessage && <p style={{ color: 'lightred', marginLeft: '90px', marginTop: '20px' }}>{errorMessage}</p>}
     </div>
   </div>
   );
@@ -2622,7 +2620,6 @@ const Manager = () => {
   const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [showTestDriveRequests, setShowTestDriveRequests] = useState(false);
-  const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
     lastName: '',  
@@ -2778,25 +2775,20 @@ const Manager = () => {
     };
   
     axios.post('/add_technician', formData)
-      .then(response => {
-        console.log('Technician added successfully');
-        setTechnicianFormData({  // Reset all form fields to blank
-          firstName: '',  
-          lastName: '',  
-          email: '',
-          username: '',
-          phone: '',
-          password: ''
-        });
-        setAccountCreationSuccess(true); // Set account creation success state to true
+    .then(response => {
+      console.log('Technician added successfully');
+      alert('Technician added successfully'); // Display success alert
 
-        setTimeout(() => {
-          setAccountCreationSuccess(false); // Hide the success message after 3 seconds
-        }, 3000);
-      })
-      .catch(error => {
-        console.error('Error adding technician:', error);
+      // Reset all form fields to blank
+      setTechnicianFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        username: '',
+        phone: '',
+        password: ''
       });
+    });
   };
 
   const handleSubmitRemoveCarForm = async (event) => {
@@ -3121,13 +3113,6 @@ const Manager = () => {
             <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
           </form>
         </div>
-      )}
-
-      { /* if the account is successfully created, display a success message to the user */}
-      {accountCreationSuccess && (
-        <Box position="absolute" top="550px" left="45%" transform="translate(-50%, -50%)" color="lightgreen" p="4" borderRadius="md">
-          Technician account created successfully!
-        </Box>
       )}
 
       {/* this is for adding stuff too the accessory database */}
