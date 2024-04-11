@@ -36,15 +36,15 @@ const [offerValue, setOfferValue] = useState("")
         <Flex minH="100vh" minW="100vh" bg='black' bgGradient="linear(to-b, black, gray.600)" justifyContent="center" alignItems="center" >
         <Grid  bg="rgba(128, 128, 128, 0.15)" color="white" w="900px" h="400px" borderRadius="md" gridTemplateColumns="1fr 1fr">
             <Box>
-                <Text> {car_name} </Text> 
+                <Text fontFamily="sans-serif"> {car_name} </Text> 
              <Image     overflow="hidden" w="100%" h="80" alt="car" objectFit='cover' src={car_image}/>
-             <Text> Price: ${car_price}</Text>
+             <Text fontFamily="sans-serif"> Price: ${car_price}</Text>
             </Box>
             <Flex  justifyContent="center" alignItems="center" flexDirection="column"> 
             {isOfferSent === true ? <Text fontSize="sm" color="green">Offer sent sucessfully ! </Text> 
             :isOfferSent === false ? <Text fontSize="sm" color="red">Something went wrong, please try again! </Text> : null }
             <Input type="number" placeholder="Enter your offer" w="60%" onChange={(e)=>{setOfferValue(e.target.value); SetIsOfferSent(null)}} />
-            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" onClick={()=>{sendOffer(customer_id,car_id,offerValue,status)}}> Send Offer </Button>
+            <Button variant="light" bg="#44337A" marginTop="10px" marginLeft="-90px" fontFamily="sans-serif" onClick={()=>{sendOffer(customer_id,car_id,offerValue,status)}}> Send Offer </Button>
             </Flex>
          </Grid>
          </Flex>
