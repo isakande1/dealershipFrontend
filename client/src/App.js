@@ -39,39 +39,46 @@ function App() {
     // this will be used to navigate to different pages in our website
     <div>
     {/* <NavBar/> */}
-    <Router>
-      <ChakraProvider>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/Roles_login" element={<Roles_login />} />
-          <Route path="/homepage" element={<SignedInHomepage />} />
-          <Route path="/tech" element={<Technician />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/manager" element={<Manager />} />
-          <Route path="/ModifyInfo" element={<CustomerModifyInfo />} />
-          <Route path="/Cart" element={<CustomerCart/>} />
-          <Route path="/PastPurchase" element={<PastPurchase />} />
-          <Route path="/OwnCar" element={<OwnCar />} />
-          <Route path="/carDetails/*" element={<CarDetails />} />
-          <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
-          <Route path="/Service" element={<CustomerSerivceAppointment />} />
-          <Route path="/ServiceHistory" element={<ServiceHistory />} />
-          <Route path="/carAccessories" element={<CarAccessories />} />
-          <Route path="/Addons" element={<Addons/>} />
-          <Route path="ContactPage" element={<ContactPage/>} />
-          <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
-          <Route path="makeOffer" element={<MakeOffer/>} />
-          <Route path="/customerManageOffers" element={<ManageOffers/>} />
-          <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
-          <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
-          <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
-
-          
-          
-        </Routes>
-      </ChakraProvider>
-    </Router>
+    <ChakraProvider>
+      <Router>
+        <Flex direction="column" minHeight="100vh">
+          <Box flex="1" overflowY="auto">
+            <Routes>
+              <Route path="/" element={<Homepage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/Roles_login" element={<Roles_login />} />
+              <Route path="/homepage" element={<SignedInHomepage />} />
+              <Route path="/tech" element={<Technician />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/manager" element={<Manager />} />
+              <Route path="/ModifyInfo" element={<CustomerModifyInfo />} />
+              <Route path="/Cart" element={<CustomerCart/>} />
+              <Route path="/PastPurchase" element={<PastPurchase />} />
+              <Route path="/OwnCar" element={<OwnCar />} />
+              <Route path="/carDetails/*" element={<CarDetails />} />
+              <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+              <Route path="/Service" element={<CustomerSerivceAppointment />} />
+              <Route path="/ServiceHistory" element={<ServiceHistory />} />
+              <Route path="/carAccessories" element={<CarAccessories />} />
+              <Route path="/Addons" element={<Addons/>} />
+              <Route path="ContactPage" element={<ContactPage/>} />
+              <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
+              <Route path="makeOffer" element={<MakeOffer/>} />
+              <Route path="/customerManageOffers" element={<ManageOffers/>} />
+              <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
+              <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
+              <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
+            </Routes>
+          </Box>
+          <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+            Velocity Motors &copy; {new Date().getFullYear()}
+            <Flex justifyContent="center">
+              <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
+            </Flex>
+          </Box>
+        </Flex>
+      </Router>
+    </ChakraProvider>
     </div>
   )
 }
@@ -92,7 +99,7 @@ const ContactPage = () => {
         bg='black'
         w='100%'
         color='white'
-        height="90vh"
+        height="86.3vh"
         bgGradient="linear(to-b, black, gray.600)"
       >
         <Flex justifyContent="space-between" alignItems="center" p={4}>
@@ -114,22 +121,9 @@ const ContactPage = () => {
           <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
         </Text>
       </Box>
-      <Footer marginTop='-37px' />
     </>
   )
 }
-
-// this will be used as the footer on the site, must declare a marginTop or else defaults to 0px
-const Footer = ({ marginTop }) => { 
-  return (
-    <Box bg="purple.900" height="100px" marginTop={marginTop}> {/* Use marginTop prop */}
-      <Text textAlign="center" fontSize="lg" color="white">Velocity Motors &copy; {new Date().getFullYear()}</Text>
-      <Flex justifyContent="center">
-        <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
-      </Flex>
-    </Box>
-  );
-};
 
 const DropdownMenu = ({ title, options, selected, onSelect }) => {
   return (
@@ -272,7 +266,6 @@ const Homepage = () => {
   const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
-  const [forceRender, setForceRender] = useState(false);
   const carsPerPage = 12;
 
   useEffect(() => {
@@ -300,7 +293,8 @@ const Homepage = () => {
   
     // Check if any cars were found and set the message accordingly
     if (data.cars.length === 0) {
-      setMessage("Sorry, no cars found.");  // if no cars found, show this
+      alert("Sorry, no cars found with those filters")  // if no cars found, show this
+      handleSearch({ make: '', model: '', color: '', budget: '' });
     } else {
       setMessage('');   // if cars found after error message, set error message to blank
     }
@@ -410,25 +404,17 @@ const Homepage = () => {
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
-
-      {message ? (
-      <Box textAlign="center" color="white" mt="20px">
-        {message}
-      </Box>
-      ) : (
-        // if no error message, display cars
-        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
-          {rows.map((row, rowIndex) => (
-            <Flex key={rowIndex} justifyContent="flex-start">
-              {row.map((car, index) => (
-                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
-                  <CarDisplayBox car={car} />
-                </Box>
-              ))}
-            </Flex>
-          ))}
-        </Flex>
-      )}
+      <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+        {rows.map((row, rowIndex) => (
+          <Flex key={rowIndex} justifyContent="flex-start">
+            {row.map((car, index) => (
+              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                <CarDisplayBox car={car} />
+              </Box>
+            ))}
+          </Flex>
+        ))}
+      </Flex>
 
       {/* Pagination */}
       <Box height="40px">
@@ -448,7 +434,6 @@ const Homepage = () => {
           ))}
         </Flex>
       </Box>
-      <Footer marginTop='15px' />
     </>
   );
 };
@@ -530,7 +515,8 @@ const SignedInHomepage = () => {
   
     // Check if any cars were found and set the message accordingly
     if (data.cars.length === 0) {
-      setMessage("Sorry, no cars found.");  // if no cars found, show this
+      alert("Sorry, no cars found with those filters")  // if no cars found, show this
+      handleSearch({ make: '', model: '', color: '', budget: '' });
     } else {
       setMessage('');   // if cars found after error message, set error message to blank
     }
@@ -694,7 +680,6 @@ const SignedInHomepage = () => {
           ))}
         </Flex>
       </Box>
-      <Footer marginTop='15px' />
     </>
   );
 };
