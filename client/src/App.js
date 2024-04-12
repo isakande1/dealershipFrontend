@@ -2394,7 +2394,6 @@ const Login = () => {
   );
 };
 
-
 const Roles_login = () => {
 
   const [role, setRole] = useState('');
@@ -2620,6 +2619,7 @@ const Manager = () => {
   const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [showTestDriveRequests, setShowTestDriveRequests] = useState(false);
+  const [showAssignTech, setShowAssignTech] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
     lastName: '',  
@@ -2713,7 +2713,6 @@ const Manager = () => {
       });
   };
 
-  
   const fetchServiceRequests = () => {
     axios.get('/show_customer_service_requests/')
     .then(response => {
@@ -2892,7 +2891,6 @@ const Manager = () => {
     setError(null);
   };
 
-
   // when manager clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -2963,6 +2961,17 @@ const Manager = () => {
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
+        break;
+      case 'assignTechnician':
+        setShowAssignTech(true);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowTestDriveRequests(false);
+        setShowServiceRequests(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -2972,6 +2981,7 @@ const Manager = () => {
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -2981,6 +2991,7 @@ const Manager = () => {
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -2990,6 +3001,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -2999,6 +3011,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(true);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
         break;
       case 'addMiscellaneous':
         setShowServiceRequests(false);
@@ -3008,6 +3021,7 @@ const Manager = () => {
         setShowTestDriveRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(true);
+        setShowAssignTech(false);
         break;
       case 'manageTestDriveRequests':
         setShowServiceRequests(false);
@@ -3017,6 +3031,7 @@ const Manager = () => {
         setShowRemoveCars(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
         break;
       default:
         break;
@@ -3113,6 +3128,25 @@ const Manager = () => {
             <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
           </form>
         </div>
+      )}
+
+      { /* assigns available technician for service to be done on a car */ }
+      {showAssignTech && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          <Text fontSize="5xl" color="white" style={{  position:'absolute', marginTop:"80px", fontWeight:'bold', marginLeft:'60px' }}>Assign Technicians</Text>
+          <Table striped bordered hover style={{ fontSize:'20px', marginLeft:'20px', marginRight:'10px', marginTop:'190px'}}>
+            <thead>
+              <tr>
+                <th style={{textAlign: 'center', width:'3%'}}>Technician</th>
+                <th style={{textAlign: 'center', width:'3%'}}>Number of Jobs</th>
+                <th style={{textAlign: 'center', width:'3%'}}>Assign</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </Table>
+        </Box>
       )}
 
       {/* this is for adding stuff too the accessory database */}
@@ -3323,7 +3357,7 @@ const Manager = () => {
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageServiceRequests')}>Service Appointment Requests</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Assign Technicians</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('assignTechnician')}>Assign Technicians</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageTestDriveRequests')}>Test Drive Requests</Button>
