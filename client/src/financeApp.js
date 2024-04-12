@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import FinalizeFinance from "./financeFinalization";
 import './App.css';
 
 export default function FinanceApp () {
+    const navigate = useNavigate();
     const location = useLocation();
     const { userData, carInfos } = location.state;
     const [error, setError] = useState('');
     const [ income, setIncome ] = useState('');
     const [ socialSecurity, setSocialSecurity ] = useState('');
-
-    console.log(userData.first_name + " " + userData.last_name);
+    const [ financeTerms, setFinanceTerms ] = useState({});
 
     const sendFinanceApp = async (e) => {
         e.preventDefault();
-        console.log("HIT");
 
         const formData = {
             full_name: `${userData.first_name} ${userData.last_name}`,  
@@ -30,18 +30,21 @@ export default function FinanceApp () {
 
         try {
             const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData);
-            console.log(response.data['message']); 
       
-            if (response.status === 201) {
-              console.log("Form successfully sent!!")
+            if (response.status === 200) {
+              console.log(response.data)
+              setFinanceTerms(response);
             } else {
-              setError('Failed to schedule test drive.');
+              setError('Failed to sent finance application');
             }
         } catch (error) {
             console.error('Error:', error);
         }
 
-        console.log(formData);
+        navigate('/finalizeFinance', {
+            state: { financeTerms },
+        });
+
     };
     
     return (
@@ -88,6 +91,9 @@ export default function FinanceApp () {
                     </center>
                 </form> 
             </div>
+            <Routes>
+                <Route path="/finalizeFinance" element={<FinalizeFinance />} />
+            </Routes>
         </div>
     );
 }
