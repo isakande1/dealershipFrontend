@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
+import FinalizeFinance from './financeFinalization';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
@@ -64,6 +65,7 @@ function App() {
           <Route path="/customerManageOffers" element={<ManageOffers/>} />
           <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
           <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
+          <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
 
           
           

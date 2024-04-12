@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import FinalizeFinance from "./financeFinalization";
 import './App.css';
 
 export default function FinanceApp () {
+    const navigate = useNavigate();
     const location = useLocation();
     const { userData, carInfos } = location.state;
     const [error, setError] = useState('');
     const [ income, setIncome ] = useState('');
-    const [ creditScore, setCreditScore ] = useState('');
-
-    console.log(userData.first_name + " " + userData.last_name);
+    const [ socialSecurity, setSocialSecurity ] = useState('');
+    const [ financeTerms, setFinanceTerms ] = useState({});
 
     const sendFinanceApp = async (e) => {
         e.preventDefault();
-        console.log("HIT");
 
         const formData = {
             full_name: `${userData.first_name} ${userData.last_name}`,  
@@ -25,23 +25,26 @@ export default function FinanceApp () {
             car_year: carInfos.year,
             purchase_price: carInfos.price,
             vin: carInfos.car_id,
-            credit_score: creditScore
+            social_security: socialSecurity
         };
 
         try {
             const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData);
-            console.log(response.data['message']); 
       
-            if (response.status === 201) {
-              console.log("Form successfully sent!!")
+            if (response.status === 200) {
+              console.log(response.data)
+              setFinanceTerms(response);
             } else {
-              setError('Failed to schedule test drive.');
+              setError('Failed to sent finance application');
             }
         } catch (error) {
             console.error('Error:', error);
         }
 
-        console.log(formData);
+        navigate('/finalizeFinance', {
+            state: { financeTerms },
+        });
+
     };
     
     return (
@@ -63,31 +66,34 @@ export default function FinanceApp () {
                     <input type="text" id="full_name" name="full_name" value={`${userData.first_name} ${userData.last_name}`} /><br /><br />
 
                     <label for="customer_id">Customer ID:</label><br />
-                    <input type="text" id="customer_id" name="customer_id" value={`${userData.customer_id}`} /><br /><br />
+                    <input type="number" id="customer_id" name="customer_id" value={`${userData.customer_id}`} /><br /><br />
 
                     <label for="annual_income">Annual Income:</label><br />
-                    <input type="text" id="annual_income" name="annual_income" value={income} onChange={(e) => setIncome(e.target.value)} /><br /><br />
+                    <input type="number" id="annual_income" name="annual_income" value={income} onChange={(e) => setIncome(e.target.value)} /><br /><br />
 
                     <label for="vehicle_make_and_model">Vehicle Make and Model:</label><br />
                     <input type="text" id="vehicle_make_and_model" name="vehicle_make_and_model" value={`${carInfos.make} ${carInfos.model}`} /><br /><br />
 
                     <label for="year_of_the_car">Year of the Car:</label><br />
-                    <input type="text" id="year_of_the_car" name="year_of_the_car" value={`${carInfos.year}`} /><br /><br />
+                    <input type="number" id="year_of_the_car" name="year_of_the_car" value={`${carInfos.year}`} /><br /><br />
 
                     <label for="purchase_price">Purchase Price:</label><br />
                     <input type="text" id="purchase_price" name="purchase_price" value={`$${carInfos.price}`} /><br /><br />
 
                     <label for="vin_number">Vehicle Identification Number (VIN):</label><br />
-                    <input type="text" id="vin_number" name="vin_number" value={`${carInfos.car_id}`} /><br /><br />
+                    <input type="number" id="vin_number" name="vin_number" value={`${carInfos.car_id}`} /><br /><br />
 
-                    <label for="credit_history">Credit Score:</label><br />
-                    <input type="text" id="credit_history" name="credit_history" value={creditScore} onChange={(e) => setCreditScore(e.target.value)} /><br /><br />
+                    <label for="social-security">Social Security Number:</label><br />
+                    <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" value={socialSecurity} onChange={(e) => setSocialSecurity(e.target.value)} /><br /><br />
 
                     <center id="finButtonDiv">
                         <input id="financeSubmit" type="submit" value="Submit" />
                     </center>
                 </form> 
             </div>
+            <Routes>
+                <Route path="/finalizeFinance" element={<FinalizeFinance />} />
+            </Routes>
         </div>
     );
 }

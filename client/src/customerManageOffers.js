@@ -82,14 +82,16 @@ const buttonStyle = {
     w:"100%" ,
     bg:"#44337A",
     fontWeight: "bold",
-    color:"white"
+    color:"white",
+    fontFamily:"sans-serif"
 }
 const buttonStyleOfferBox={
     variant:"light",
      w:"100px",
      bg:"#44337A",
      fontWeight: "bold",
-    color:"white"
+    color:"white",
+    fontFamily:"sans-serif"
 }
 const highlight = (category, status) => {
     return category=== status ? { border: "2px solid white" } : {};
@@ -105,7 +107,7 @@ const OfferBox = (data) =>{
     </Box>
     <Grid gridTemplateRows="100px 1fr"> 
         <Box>
-            <Text margin="0">Car: {`${data.data.make} ${data.data.model} ${data.data.year}`} </Text>
+            <Text margin="0" fontFamily="sans-serif">Car: {`${data.data.make} ${data.data.model} ${data.data.year}`} </Text>
             <Text margin="0"> Price: ${data.data.car_price}</Text>
             <Text margin="0"> Offer: ${data.data.offer_price}</Text>
          </Box>
@@ -123,7 +125,7 @@ const OfferBox = (data) =>{
 return(
      
     <Box bg='black' bgGradient="linear(to-b, black, gray.600)" minH="100vh" minW="100vh" position="relative">
-     <Heading position="fixed" color="white" paddingTop="20px"fontFamily= "cursive"> Manage all offers  </Heading> 
+     <Heading position="fixed" color="white" paddingTop="20px"fontFamily="sans-serif"> Manage all offers  </Heading> 
     <Grid > 
         <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="500px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
         <Button sx={{...buttonStyle,...highlight(" pending",category)}}   onClick={()=>{setCategory("pending"); setMessage("Pending offers")}}>Pending offers</Button>

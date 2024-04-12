@@ -302,28 +302,28 @@ export default function CarDetails() {
         return (
           <Grid bg="black" templateColumns="1fr 1fr" justifyItems="center">
             <Box>
-            <Text marginBottom="5px" color="white">
+            <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 VIN-number: {carInfos.car_id}
               </Text>
-              <Text marginBottom="5px" marginTop="8px" color="white">
+              <Text marginBottom="5px" marginTop="8px" color="white" fontFamily="sans-serif">
                 Make: {carInfos.make}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Year: {carInfos.year}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Model: {carInfos.model}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Color: {carInfos.color}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Engine: {carInfos.engine}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Transmission: {carInfos.transmission}
               </Text>
-              <Text marginBottom="5px" color="white">
+              <Text marginBottom="5px" color="white" fontFamily="sans-serif">
                 Price: ${carInfos.price}
               </Text>
             </Box>
@@ -336,13 +336,13 @@ export default function CarDetails() {
                 w="200px"
                 bg="#44337A"
                 onClick={handleNavigateTestDrive}
-              >
+                fontFamily="sans-serif" >
                 Schedule test drive 
               </Button>
-              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" onClick={handleFinance}>
+              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" fontFamily="sans-serif" onClick={handleFinance}>
                 Financing
               </Button>
-              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" onClick={handleMakeOffer}>
+              <Button marginBottom="5px" display="block" variant="light" w="200px" bg="#44337A" fontFamily="sans-serif" onClick={handleMakeOffer}>
                 Make an offer
               </Button>
               <Button

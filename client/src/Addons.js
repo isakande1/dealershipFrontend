@@ -83,7 +83,8 @@ export default function Addons(){
      w:"100%",
     bg :"green",
     position:"absolute",
-    bottom:"0"
+    bottom:"0",
+    fontFamily:"sans-serif"
    
    }
 
@@ -112,12 +113,12 @@ export default function Addons(){
                         src={car_image}
                     />
             </Box>
-            <Box>
+            <Box fontFamily="sans-serif">
                 <Heading color="white"> {car_name} </Heading>
            </Box>
            <Box>
-             <Text color="white" > Total </Text>
-             <Text color="orange"> ${total.toFixed(2)} </Text>
+             <Heading color="white" fontFamily="sans-serif" fontSize="22px"> Total </Heading>
+             <Text color="orange" fontFamily="sans-serif"> ${total.toFixed(2)} </Text>
            </Box>
         </Grid>);
     };
@@ -194,12 +195,12 @@ export default function Addons(){
               <Image sx={imageStyle} src={packageInfos.image} />
               </Box>
               <Box h="150px" >
-              <Text color="white" fontWeight="bold" margin="0" >{packageInfos.name} </Text>
-              <Text color="white"margin="0" > ${packageInfos.price}</Text>
-              <Text color="white" margin="0" > {packageInfos.description}</Text>
+              <Text color="white" fontWeight="bold" margin="0" fontFamily="sans-serif" >{packageInfos.name} </Text>
+              <Text color="white"margin="0" fontFamily="sans-serif" > ${packageInfos.price}</Text>
+              <Text color="white" margin="0" fontFamily="sans-serif" > {packageInfos.description}</Text>
               </Box>
             
-              <Button sx={{ ...buttonStyle, ...buttonColor(isAdded) }} onClick={() => handleClick()}>
+              <Button fontFamily="sans-serif" sx={{ ...buttonStyle, ...buttonColor(isAdded) }} onClick={() => handleClick()} color="white">
                   {isAdded ? "Remove" : "Add"}
                   {console.log({ isAdded })}
               </Button>
@@ -220,7 +221,7 @@ export default function Addons(){
         </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
        <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData, car_id)}>
-       <Text>{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
+       <Text fontFamily="sans-serif">{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>
         </>
