@@ -85,10 +85,14 @@ function App() {
 
 // contact page that displays the email and phone number as text fields to the user
 const ContactPage = () => {
+  const storedData = sessionStorage?.getItem('data');
+  const parsedData = JSON.parse(storedData);
+  const customer_id = parsedData?.['customer_id'];
+  console.log("customer    ", customer_id);
   const [isLoggedIn, setIsLoggedIn] = useState(false);  // check if user is logged in
   const navigate = useNavigate();
-
   const handleClickCart = () => {
+ 
     if (!isLoggedIn) {
       const confirmed = window.confirm('You need to be logged in. Proceed to login?');
       if (confirmed) {
