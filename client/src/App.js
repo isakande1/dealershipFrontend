@@ -85,14 +85,20 @@ function App() {
 
 // contact page that displays the email and phone number as text fields to the user
 const ContactPage = () => {
-  const handleClickCart = () => {
-    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-    if (confirmed) {
-    // Redirect to login page
-    window.location.href = '/login';
-  }
-    };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  // check if user is logged in
+  const navigate = useNavigate();
 
+  const handleClickCart = () => {
+    if (!isLoggedIn) {
+      const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+      if (confirmed) {
+        navigate('/login'); // Redirect to login page if not logged in and user confirms
+      }
+    } else {
+      navigate('/cart'); // Navigate to cart if logged in
+    }
+  };
+  
   return (
     <>
       <Box
