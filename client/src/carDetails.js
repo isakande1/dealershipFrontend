@@ -287,13 +287,10 @@ export default function CarDetails() {
         };
 
         const handleFinance = () => {
-          console.log("HIT");
           if (userData && carInfos) {
             navigate('/carDetails/financeApplication', {
               state: { userData, carInfos},
             });
-            console.log(userData);
-            console.log(carInfos);
           } else {
             console.error('userData or carInfos is undefined.');
           }

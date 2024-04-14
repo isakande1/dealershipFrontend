@@ -13,6 +13,10 @@ export default function FinanceApp () {
     const [ socialSecurity, setSocialSecurity ] = useState('');
     const [ financeTerms, setFinanceTerms ] = useState({});
 
+    useEffect(() => {
+        console.log('financeTerms:', financeTerms);
+    }, [financeTerms]);
+
     const sendFinanceApp = async (e) => {
         e.preventDefault();
 
@@ -29,11 +33,12 @@ export default function FinanceApp () {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData);
-      
+            const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData)
+            
             if (response.status === 200) {
-              console.log(response.data)
-              setFinanceTerms(response);
+              console.log(response.data);
+              setFinanceTerms(response.data);
+              console.log(financeTerms);
             } else {
               setError('Failed to sent finance application');
             }
@@ -41,8 +46,10 @@ export default function FinanceApp () {
             console.error('Error:', error);
         }
 
+        console.log(financeTerms);
+
         navigate('/finalizeFinance', {
-            state: { financeTerms },
+            state: { financeTerms, userData, carInfos },
         });
 
     };
