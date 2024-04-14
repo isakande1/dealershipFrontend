@@ -320,6 +320,7 @@ const CarDisplayBox = ({ car }) => {
       bg="gray.700"
       onClick={handleCarDetailsClick}
       padding="10px 0 0 0"     // padding for top of the box where image and text goes of each car
+      boxShadow="0 0 18px rgba(255,255,255,0.9)" // soft white glow
     >
       <img
         src={car.image}
