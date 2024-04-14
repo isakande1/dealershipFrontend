@@ -13,9 +13,11 @@ export default function FinanceApp () {
     const [ socialSecurity, setSocialSecurity ] = useState('');
     const [ financeTerms, setFinanceTerms ] = useState({});
 
-    useEffect(() => {
-        console.log('financeTerms:', financeTerms);
-    }, [financeTerms]);
+    let finTerms = {};
+
+    //useEffect(() => {
+      //  console.log('financeTerms:', financeTerms);
+    //}, [financeTerms]);
 
     const sendFinanceApp = async (e) => {
         e.preventDefault();
@@ -36,9 +38,12 @@ export default function FinanceApp () {
             const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData)
             
             if (response.status === 200) {
-              console.log(response.data);
+              console.log("Response data: ", response.data);
               setFinanceTerms(response.data);
-              console.log(financeTerms);
+              console.log("State before navigation: ", { financeTerms, userData, carInfos });
+              navigate('/finalizeFinance', {
+                state: { financeTerms, userData, carInfos },
+              });
             } else {
               setError('Failed to sent finance application');
             }
@@ -46,13 +51,15 @@ export default function FinanceApp () {
             console.error('Error:', error);
         }
 
-        console.log(financeTerms);
-
-        navigate('/finalizeFinance', {
-            state: { financeTerms, userData, carInfos },
-        });
+        /*navigate('/finalizeFinance', {
+            state: { finTerms, userData, carInfos },
+        });*/
 
     };
+
+    useEffect(() => {
+        console.log("State after update:", { financeTerms, userData, carInfos });
+    }, [financeTerms, userData, carInfos]);
     
     return (
         <div id="finAppBg">
