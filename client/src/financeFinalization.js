@@ -23,7 +23,7 @@ export default function FinalizeFinance () {
             <center><p>Sign your full name below</p></center>
             <center id="sigContainer"><input id="signature" type="text" /></center>
             <center><input id="agreement" type="checkbox" required /> I Agree</center>
-            <center><button id="finalize" class="blue-btn">Yerrr</button></center>
+            <center><button id="finalize" class="blue-btn">Sign</button></center>
         </div>
     );
 }
