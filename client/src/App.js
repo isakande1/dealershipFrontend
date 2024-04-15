@@ -66,7 +66,7 @@ function App() {
               <Route path="makeOffer" element={<MakeOffer/>} />
               <Route path="/customerManageOffers" element={<ManageOffers/>} />
               <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
-              <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
+              <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
             </Routes>
           </Box>
@@ -2735,7 +2735,7 @@ const HandleAddCars = ({managerId}) => {
 };
 
 return (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position:"fixed", marginLeft:'700px', marginTop:'275px'}}>
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position:"fixed", marginLeft:'700px', marginTop:'283px'}}>
     <div>
       <Text fontWeight="bold" color="white" fontSize="5xl" style={{ marginLeft: '-350px', marginTop:'-200px' }}>Select a file to add cars</Text>
       <FaFolderOpen size="12em" style={{ marginLeft: '110px', color:'white', marginTop:'80px' }} />
@@ -3270,8 +3270,8 @@ const Manager = () => {
       { /* assigns available technician for service to be done on a car */ }
       {showAssignTech && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <Text fontSize="5xl" color="white" style={{  position:'absolute', marginTop:"80px", fontWeight:'bold', marginLeft:'60px' }}>Assign Technicians</Text>
-          <Table striped bordered hover style={{ fontSize:'20px', marginLeft:'20px', marginRight:'10px', marginTop:'190px'}}>
+          <Text fontSize="5xl" color="white" style={{  position:'absolute', marginTop:"13px", fontWeight:'bold', marginLeft:'70px' }}>Assign Technicians</Text>
+          <Table striped bordered hover style={{ fontSize:'20px', marginLeft:'20px', marginRight:'10px', marginTop:'160px'}}>
             <thead>
               <tr>
                 <th style={{textAlign: 'center', width:'3%'}}>Technician</th>
@@ -3351,32 +3351,37 @@ const Manager = () => {
       )}
       
       {showRemoveMiscellaneous && (
-              <div>
-                <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-                  <Flex flexDirection="row" justifyContent="space-between">
-                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-                  <FormControl id="firstName" isRequired marginBottom="20px">
-                    <FormLabel color="white">Accessory ID</FormLabel>
-                    <Input
-                      type="text"
-                      value={accessoryID.accessoire_id}
-                      onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
-                      color="white"
-                    />
-                  </FormControl>
-                </Flex>
-                            </Flex>
-                {error && <div style={{ color: 'red' }}>{error}</div>}
-                <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
-                            </form>
-                {message && <p>{message}</p>}
-              </div>
-          )}
+        <div>
+        <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
+          Remove Accessories
+        </Text>
+        <div>
+          <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
+            <Flex flexDirection="row" justifyContent="space-between">
+          <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+            <FormControl id="firstName" isRequired marginBottom="20px">
+              <FormLabel color="white">Accessory ID</FormLabel>
+              <Input
+                type="text"
+                value={accessoryID.accessoire_id}
+                onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+          </Flex>
+                      </Flex>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
+                      </form>
+          {message && <p>{message}</p>}
+        </div>
+      </div>
+    )}
     
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{fontSize:'48px', paddingBottom:'30px', paddingTop:'88px', marginLeft:'72px'}}><strong>Service Requests</strong></h1>
+          <h1 style={{fontSize:'48px', paddingBottom:'30px', paddingTop:'19px', marginLeft:'75px'}}><strong>Service Requests</strong></h1>
           <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px', marginTop:"20px"}}>
             <thead>
               <tr>
@@ -3506,8 +3511,8 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Miscellaneous Car Products</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Miscellaneous Car Products</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Accessories</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
