@@ -3288,62 +3288,67 @@ const Manager = () => {
 
       {/* this is for adding stuff too the accessory database */}
       {showAddMiscellaneous && (
-              <form onSubmit={handleAddMiscellaneous} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-              <Flex flexDirection="row" justifyContent="space-between">
-                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-                <FormControl id="firstName" isRequired marginBottom="20px">
-                  <FormLabel color="white">Name</FormLabel>
-                  <Input
-                    type="text"
-                    value={accessoryData.name}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, name: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-                <FormControl id="Description" isRequired marginBottom="20px">
-                  <FormLabel>Description</FormLabel>
-                  <Input
-                    type="text"
-                    value={accessoryData.description}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, description: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-                <FormControl id="price" isRequired marginBottom="20px">
-                  <FormLabel>Price</FormLabel>
-                  <Input
-                    type="text"
-                    value={accessoryData.price}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, price: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-              </Flex>
-              <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
-                <FormControl id="image" isRequired marginBottom="20px">
-                  <FormLabel>Image</FormLabel>
-                  <Input
-                    type="text"
-                    value={accessoryData.image}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, image: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-                <FormControl id="category" isRequired marginBottom="20px">
-                  <FormLabel>Category</FormLabel>
-                  <Input
-                    type="text"
-                    value={accessoryData.category}
-                    onChange={(e) => setAccessoryData({ ...accessoryData, category: e.target.value })}
-                    color="white"
-                  />
-                </FormControl>
-              </Flex>
-            </Flex>
-              {error && <div style={{ color: 'red' }}>{error}</div>}
-              <Button type="submit" colorScheme="green" marginTop="10px">Add Accessory</Button>
-            </form>
-          )}
+        <div style={{ top: '100px', left:'100px'}}>
+        <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="80px" marginLeft='350px'>
+          Add Accessories
+        </Text>
+          <form onSubmit={handleAddMiscellaneous} style={{ position: 'absolute', width: '50%', top: '200px', left: '550px' }}>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+            <FormControl id="firstName" isRequired marginBottom="20px">
+              <FormLabel color="white">Name</FormLabel>
+              <Input
+                type="text"
+                value={accessoryData.name}
+                onChange={(e) => setAccessoryData({ ...accessoryData, name: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+            <FormControl id="Description" isRequired marginBottom="20px">
+              <FormLabel>Description</FormLabel>
+              <Input
+                type="text"
+                value={accessoryData.description}
+                onChange={(e) => setAccessoryData({ ...accessoryData, description: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+            <FormControl id="price" isRequired marginBottom="20px">
+              <FormLabel>Price</FormLabel>
+              <Input
+                type="text"
+                value={accessoryData.price}
+                onChange={(e) => setAccessoryData({ ...accessoryData, price: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDirection="column" alignItems="flex-end" flex="1" marginLeft="10px">
+            <FormControl id="image" isRequired marginBottom="20px">
+              <FormLabel>Image</FormLabel>
+              <Input
+                type="text"
+                value={accessoryData.image}
+                onChange={(e) => setAccessoryData({ ...accessoryData, image: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+            <FormControl id="category" isRequired marginBottom="20px">
+              <FormLabel>Category</FormLabel>
+              <Input
+                type="text"
+                value={accessoryData.category}
+                onChange={(e) => setAccessoryData({ ...accessoryData, category: e.target.value })}
+                color="white"
+              />
+            </FormControl>
+          </Flex>
+        </Flex>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <Button type="submit" colorScheme="green" marginTop="10px">Add Accessory</Button>
+        </form>
+      </div>
+      )}
       
       {showRemoveMiscellaneous && (
               <div>
