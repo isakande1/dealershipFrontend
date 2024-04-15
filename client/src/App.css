@@ -257,3 +257,75 @@ button:hover {
   background-color: #0056b3;
   border-radius: 15px;
 }
+
+#final-bg {
+  background-image: linear-gradient(#000, #777);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#pdf-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 10%;
+}
+
+#viewer {
+  /*overflow: hidden;*/
+  margin-top: 10%;
+}
+
+#agreement {
+  margin-top: 20px;
+}
+
+#finalize {
+  margin-bottom: 10%;
+  margin-top: 20px;
+  background-color: #060057;
+  width: 120px;
+  height: 50px;
+}
+
+#signature {
+  width: 15%;
+  height: 1%;
+  margin: 0 auto;
+}
+
+.blue-btn {
+  transition: all 0.3s ease-in-out;
+  font-family: "Dosis", sans-serif;
+}
+
+.blue-btn {
+  width: 150px;
+  height: 60px;
+  border-radius: 50px;
+  background-image: linear-gradient(135deg, #31107e 0%, #be07d6 100%);
+  box-shadow: 0 20px 30px -6px rgba(126, 34, 187, 0.911);
+  outline: none;
+  cursor: pointer;
+  border: none;
+  font-size: 24px;
+  color: white;
+}
+
+.blue-btn:hover {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+.blue-btn:active {
+  opacity: 0.5;
+}
+
+#final-heading {
+  color: #3429cc;
+  margin-top: 40px;
+}

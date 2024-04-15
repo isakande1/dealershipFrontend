@@ -41,9 +41,6 @@ export default function FinanceApp () {
               console.log("Response data: ", response.data);
               setFinanceTerms(response.data);
               console.log("State before navigation: ", { financeTerms, userData, carInfos });
-              navigate('/finalizeFinance', {
-                state: { financeTerms, userData, carInfos },
-              });
             } else {
               setError('Failed to sent finance application');
             }
@@ -51,14 +48,16 @@ export default function FinanceApp () {
             console.error('Error:', error);
         }
 
-        /*navigate('/finalizeFinance', {
-            state: { finTerms, userData, carInfos },
-        });*/
 
     };
 
     useEffect(() => {
-        console.log("State after update:", { financeTerms, userData, carInfos });
+      if (Object.keys(financeTerms).length !== 0) {
+        console.log("State right before nav:", { financeTerms, userData, carInfos });
+        navigate('/finalizeFinance', {
+          state: { financeTerms, userData, carInfos },
+        });
+      }
     }, [financeTerms, userData, carInfos]);
     
     return (
