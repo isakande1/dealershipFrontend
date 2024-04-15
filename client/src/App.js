@@ -70,12 +70,6 @@ function App() {
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
             </Routes>
           </Box>
-          <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
-            Velocity Motors &copy; {new Date().getFullYear()}
-            <Flex justifyContent="center">
-              <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
-            </Flex>
-          </Box>
         </Flex>
       </Router>
     </ChakraProvider>
@@ -257,6 +251,12 @@ const ContactPage = () => {
           </Flex>
         </Box>
       )}
+      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+        Velocity Motors &copy; {new Date().getFullYear()}
+        <Flex justifyContent="center">
+          <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
+        </Flex>
+      </Box>
       </>
     )
   }
@@ -572,6 +572,12 @@ const Homepage = () => {
           ))}
         </Flex>
       </Box>
+      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+        Velocity Motors &copy; {new Date().getFullYear()}
+        <Flex justifyContent="center">
+          <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
+        </Flex>
+      </Box>
     </>
   );
 };
@@ -816,6 +822,12 @@ const SignedInHomepage = () => {
               {pageNumber + 1}
             </Button>
           ))}
+        </Flex>
+      </Box>
+      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+        Velocity Motors &copy; {new Date().getFullYear()}
+        <Flex justifyContent="center">
+          <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
         </Flex>
       </Box>
     </>
