@@ -329,3 +329,9 @@ button:hover {
   color: #3429cc;
   margin-top: 40px;
 }
+
+#declined-screen {
+  width: 100vw;
+  height: 100vh;
+  background-color: #00c9e4;
+}

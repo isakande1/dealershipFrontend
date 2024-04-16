@@ -66,7 +66,7 @@ function App() {
               <Route path="makeOffer" element={<MakeOffer/>} />
               <Route path="/customerManageOffers" element={<ManageOffers/>} />
               <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
-              <Route path='/carDetails/financeApplication' element={<FinanceApp />}></Route>
+              <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
             </Routes>
           </Box>
