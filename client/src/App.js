@@ -175,6 +175,12 @@ const ContactPage = () => {
             <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
           </Text>
         </Box>
+        <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+        Velocity Motors &copy; {new Date().getFullYear()}
+        <Flex justifyContent="center">
+          <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
+        </Flex>
+        </Box>
       </>
     )
   }
@@ -572,7 +578,7 @@ const Homepage = () => {
           ))}
         </Flex>
       </Box>
-      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom" marginTop='30px'>
         Velocity Motors &copy; {new Date().getFullYear()}
         <Flex justifyContent="center">
           <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
@@ -824,7 +830,7 @@ const SignedInHomepage = () => {
           ))}
         </Flex>
       </Box>
-      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom">
+      <Box as="footer" bg="purple.900" color="white" textAlign="center" p={4} position="bottom" marginTop="30px">
         Velocity Motors &copy; {new Date().getFullYear()}
         <Flex justifyContent="center">
           <Button as={Link} to="/ContactPage" variant="link" color="white" alignContent="center" fontSize="lg" marginTop="15px">Contact Us!</Button>
@@ -3043,6 +3049,10 @@ const Manager = () => {
     setShowTechnicianForm(true);
   };
 
+  const AvailableTechnicians = ({date}) => {
+    
+  }
+
   // this is the function to add the service to the users cart when the service is accepted by a manager
   // const acceptService = e => {
   //   e.preventDefault();
@@ -3269,18 +3279,28 @@ const Manager = () => {
 
       { /* assigns available technician for service to be done on a car */ }
       {showAssignTech && (
-        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <Text fontSize="5xl" color="white" style={{  position:'absolute', marginTop:"13px", fontWeight:'bold', marginLeft:'70px' }}>Assign Technicians</Text>
-          <Table striped bordered hover style={{ fontSize:'20px', marginLeft:'20px', marginRight:'10px', marginTop:'160px'}}>
+        <Box position="absolute" style={{ color: 'white', position: 'absolute', width: '75%', top: '10%', right: 'calc(2% + 0px)' }}>
+          <Text fontSize="5xl" color="white" style={{ position: 'absolute', marginTop: "13px", fontWeight: 'bold' }}>Assign Technicians</Text>
+          <Table striped bordered hover style={{ fontSize: '20px', marginLeft:'-15px', marginRight: '10px', marginTop: '140px', border: '2px solid white'}}>
             <thead>
               <tr>
-                <th style={{textAlign: 'center', width:'3%'}}>Technician</th>
-                <th style={{textAlign: 'center', width:'3%'}}>Number of Jobs</th>
-                <th style={{textAlign: 'center', width:'3%'}}>Assign</th>
+                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Service</th>
+                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Vehicle</th>
+                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Customer</th>
+                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Date</th>
+                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>View Technicians</th>
               </tr>
             </thead>
             <tbody>
-              
+              <tr>
+                <td style={{ textAlign: 'center', width:'3%', border: '1px solid white', padding: '15px 0' }}>Oil Change</td>
+                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>2023 Subaru Outback</td>
+                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>John Doe</td>
+                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>4/17/24</td>
+                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>
+                  <Button colorScheme="blue" fontWeight="bold" onClick={() => AvailableTechnicians('4/17/24')}>View</Button>
+                </td>
+              </tr>
             </tbody>
           </Table>
         </Box>
@@ -3376,7 +3396,7 @@ const Manager = () => {
           {message && <p>{message}</p>}
         </div>
       </div>
-    )}
+      )}
     
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
@@ -3427,7 +3447,7 @@ const Manager = () => {
 
       {showTestDriveRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px', paddingTop:'80px', marginLeft:'40px'}}><strong>Test Drive Requests</strong></h1>
+          <h1 style={{paddingBottom:'10px', fontSize:'45px', paddingTop:'22px', marginLeft:'70px'}}><strong>Test Drive Requests</strong></h1>
           <Table striped bordered hover style={{ marginLeft:'30px', marginRight:'10px', marginTop:"20px"}}>
             <thead>
               <tr>
@@ -3467,26 +3487,31 @@ const Manager = () => {
         </Box>
       )}
 
-    {showRemoveCars && (
-            <form onSubmit={handleSubmitRemoveCarForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
-              <Flex flexDirection="row" justifyContent="space-between">
-                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-                  <FormControl id="car_id" isRequired marginBottom="20px">
-                    <FormLabel color="white">Car VIN</FormLabel>
-                    <Input
-                      type="text"
-                      value={removeCarFormData.car_id}
-                      onChange={(e) => setRemoveCarFormData({ ...removeCarFormData, car_id: e.target.value })}
-                      placeholder='Enter VIN to remove car'
-                      color="white"
-                    />
-                  </FormControl>
-                </Flex>
-              </Flex>
-              {error && <div style={{ color: 'red' }}>{error}</div>}
-              <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
-            </form>
-          )}
+      {showRemoveCars && (
+      <div style={{ top: '100px', left:'100px'}}>
+      <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
+        Remove Cars
+      </Text>
+        <form onSubmit={handleSubmitRemoveCarForm} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+              <FormControl id="car_id" isRequired marginBottom="20px">
+                <FormLabel color="white">Car VIN</FormLabel>
+                <Input
+                  type="text"
+                  value={removeCarFormData.car_id}
+                  onChange={(e) => setRemoveCarFormData({ ...removeCarFormData, car_id: e.target.value })}
+                  placeholder='Enter VIN to remove car'
+                  color="white"
+                />
+              </FormControl>
+            </Flex>
+          </Flex>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
+        </form>
+      </div>
+      )}
 
       {/* Dashboard options shown to the manager upon signing in */}
       <Box
