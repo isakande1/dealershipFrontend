@@ -3689,6 +3689,11 @@ const Technician = () => {
   const navigate = useNavigate();
   const [showAssignedServices, setShowAssignedServices] = useState(false);
   const [assignedServices, setAssignedServices] = useState([]);
+  const [detailsModal, setDetailsModal] = useState(false);
+  const [showTicketDetails, setShowTicketDetails] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [serviceDetails, setServiceDetails] = useState(null);
+  const [report, setReport] = useState('');
   
   useEffect(() => {
     if (showAssignedServices) {
@@ -3751,6 +3756,101 @@ const Technician = () => {
       });
   };
 
+  const handleCloseModal = () => setDetailsModal(false);
+
+  // const handleAddAccessoryModalClose = () => {
+  //   setShowAddAccessoryModal(false);
+  // };
+
+  const showDetailsModal = async (service) => {
+    setSelectedService(service);
+    try {
+        // Send API call
+        console.log("assigned service id", service.assigned_service_id);
+        const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
+
+        // Assign response data to service details
+        const details = response.data;
+
+        // Check log to see if the data transferred 
+        console.log("this is the data received: ", details);
+
+        // Update state variables
+        setSelectedService(service);
+        setServiceDetails(details);
+        setShowAssignedServices(false);
+        setDetailsModal(true);
+    } catch (error) {
+        // Handle errors if any
+        console.error('Error fetching service details:', error);
+    }
+};
+
+const handleSubmitReport = () => {
+  // Retrieve the value of the input textbox
+  const reportValue = document.getElementById('report').value;
+  console.log("report is: ", reportValue)
+
+  // Send the report value and assigned_service_id to the backend
+  sendSubmitReport(reportValue, selectedService.assigned_service_id);
+};
+
+const sendSubmitReport = (reportValue, assignedServiceId) => {
+  // Perform an HTTP request to send the report value and assigned_service_id to the backend
+  // Example using Fetch API:
+  fetch('/submitReport', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ report: reportValue, assigned_service_id: assignedServiceId })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle success
+    console.log('Report sent successfully:', data);
+    window.alert('Thank you for your feedback');
+  })
+  .catch(error => {
+    // Handle error
+    console.error('Error sending report:', error);
+    window.alert('Failed to save feedback. Please try again later.');
+  });
+};
+
+
+  // const TicketDetails = () =>{
+  //   return (
+  //        <Box bg='black' w='100%' color='white' height='100vh'>
+  //          <Modal isOpen={detailsModal} onClose={handleCloseModal}>
+  //             <ModalHeader>Customer Details</ModalHeader>
+  //             <ModalCloseButton />
+  //             <ModalBody>
+  //             <FormControl mt={4}>
+  //               <FormLabel color="white" >Description</FormLabel>
+  //               <Input
+  //                   type="text"
+  //                   //value={}
+  //                   //onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
+  //                   color="white"
+  //                 />
+  //             </FormControl>
+  //             </ModalBody>
+  //             <ModalFooter>
+  //               <Button variant="secondary" onClick={handleCloseModal}>
+  //                   Close
+  //               </Button>
+  //             </ModalFooter>
+  //           </Modal>
+  //        </Box>
+  //   )
+  // };
+
   const fetchAssignedServices = () => {
     axios.get('/show_assigned_services')
       .then(response => {
@@ -3772,6 +3872,11 @@ const Technician = () => {
     switch (section) {
       case 'checkAssignedWork':
         setShowAssignedServices(true);
+        setShowTicketDetails(false);
+        break;
+      case 'checkTicketDetails':
+        setShowAssignedServices(false);
+        setShowTicketDetails(true);
         break;
       default:
         break;
@@ -3831,10 +3936,35 @@ const Technician = () => {
                       Decline
                     </Button>
                   </td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="blue" onClick={() => {showDetailsModal(service); handleButtonClick('checkTicketDetails');}}>
+                      Details
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+        </Box>
+      )}
+
+      {showTicketDetails && selectedService && serviceDetails && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
+          <Heading as="h1" size="lg">Ticket Details</Heading>
+          <Text>Assigned Service ID: {selectedService.assigned_service_id}</Text>
+          <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
+          <Text>Customer Name: {`${selectedService.customer_first_name} ${selectedService.customer_last_name}`}</Text>
+          <Text>Customer Contact Number: {`${selectedService.customer_phone}`}</Text>
+          <Text>Car Details: {serviceDetails[0].car_make} {serviceDetails[0].car_model}</Text>
+          <Text>Service ID: {serviceDetails[0].assigned_service_id}</Text>
+          <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
+          <Text>Service Status: {selectedService.status}</Text>
+          <Text>Price: ${serviceDetails[0].service_price}</Text>
+          <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
+            <Input id="report" placeholder="Leave feedback" value={report} onChange={(e) => setReport(e.target.value)} />
+          </Flex>
+          <Button onClick={handleSubmitReport} colorScheme="green">Submit Report</Button>
         </Box>
       )}
     </>
