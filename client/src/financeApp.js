@@ -13,9 +13,11 @@ export default function FinanceApp () {
     const [ socialSecurity, setSocialSecurity ] = useState('');
     const [ financeTerms, setFinanceTerms ] = useState({});
 
-    useEffect(() => {
-        console.log('financeTerms:', financeTerms);
-    }, [financeTerms]);
+    let finTerms = {};
+
+    //useEffect(() => {
+      //  console.log('financeTerms:', financeTerms);
+    //}, [financeTerms]);
 
     const sendFinanceApp = async (e) => {
         e.preventDefault();
@@ -36,9 +38,9 @@ export default function FinanceApp () {
             const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData)
             
             if (response.status === 200) {
-              console.log(response.data);
+              console.log("Response data: ", response.data);
               setFinanceTerms(response.data);
-              console.log(financeTerms);
+              console.log("State before navigation: ", { financeTerms, userData, carInfos });
             } else {
               setError('Failed to sent finance application');
             }
@@ -46,13 +48,17 @@ export default function FinanceApp () {
             console.error('Error:', error);
         }
 
-        console.log(financeTerms);
-
-        navigate('/finalizeFinance', {
-            state: { financeTerms, userData, carInfos },
-        });
 
     };
+
+    useEffect(() => {
+      if (Object.keys(financeTerms).length !== 0) {
+        console.log("State right before nav:", { financeTerms, userData, carInfos });
+        navigate('/finalizeFinance', {
+          state: { financeTerms, userData, carInfos },
+        });
+      }
+    }, [financeTerms, userData, carInfos]);
     
     return (
         <div id="finAppBg">
@@ -69,28 +75,28 @@ export default function FinanceApp () {
             <div id="finAppFormContainer">
                 <form id="financeForm" onSubmit={sendFinanceApp}>
                     <center><h2 id="financeTitle">Finance Application</h2></center>
-                    <label for="full_name">Full Name:</label><br />
-                    <input type="text" id="full_name" name="full_name" value={`${userData.first_name} ${userData.last_name}`} /><br /><br />
+                    <label htmlFor="full_name">Full Name:</label><br />
+                    <input type="text" id="full_name" name="full_name" readOnly value={`${userData.first_name} ${userData.last_name}`} /><br /><br />
 
-                    <label for="customer_id">Customer ID:</label><br />
-                    <input type="number" id="customer_id" name="customer_id" value={`${userData.customer_id}`} /><br /><br />
+                    <label htmlFor="customer_id">Customer ID:</label><br />
+                    <input type="number" id="customer_id" name="customer_id" readOnly value={`${userData.customer_id}`} /><br /><br />
 
-                    <label for="annual_income">Annual Income:</label><br />
+                    <label htmlFor="annual_income">Annual Income:</label><br />
                     <input type="number" id="annual_income" name="annual_income" value={income} onChange={(e) => setIncome(e.target.value)} /><br /><br />
 
-                    <label for="vehicle_make_and_model">Vehicle Make and Model:</label><br />
-                    <input type="text" id="vehicle_make_and_model" name="vehicle_make_and_model" value={`${carInfos.make} ${carInfos.model}`} /><br /><br />
+                    <label htmlFor="vehicle_make_and_model">Vehicle Make and Model:</label><br />
+                    <input type="text" id="vehicle_make_and_model" name="vehicle_make_and_model" readOnly value={`${carInfos.make} ${carInfos.model}`} /><br /><br />
 
-                    <label for="year_of_the_car">Year of the Car:</label><br />
-                    <input type="number" id="year_of_the_car" name="year_of_the_car" value={`${carInfos.year}`} /><br /><br />
+                    <label htmlFor="year_of_the_car">Year of the Car:</label><br />
+                    <input type="number" id="year_of_the_car" name="year_of_the_car" readOnly value={`${carInfos.year}`} /><br /><br />
 
-                    <label for="purchase_price">Purchase Price:</label><br />
-                    <input type="text" id="purchase_price" name="purchase_price" value={`$${carInfos.price}`} /><br /><br />
+                    <label htmlFor="purchase_price">Purchase Price:</label><br />
+                    <input type="text" id="purchase_price" name="purchase_price" readOnly value={`$${carInfos.price}`} /><br /><br />
 
-                    <label for="vin_number">Vehicle Identification Number (VIN):</label><br />
-                    <input type="number" id="vin_number" name="vin_number" value={`${carInfos.car_id}`} /><br /><br />
+                    <label htmlFor="vin_number">Vehicle Identification Number (VIN):</label><br />
+                    <input type="number" id="vin_number" name="vin_number" readOnly value={`${carInfos.car_id}`} /><br /><br />
 
-                    <label for="social-security">Social Security Number:</label><br />
+                    <label htmlFor="social-security">Social Security Number:</label><br />
                     <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" value={socialSecurity} onChange={(e) => setSocialSecurity(e.target.value)} /><br /><br />
 
                     <center id="finButtonDiv">
