@@ -1831,6 +1831,7 @@ const CarAccessories = () => {
     item_name: "",
     accessoire_id: "",
   });
+  const [categories, setCategories] = useState([]);
 
   const fetchAccessories = async (category) => {
     try {
@@ -2014,9 +2015,20 @@ const CarAccessories = () => {
 
   const navigate = useNavigate();  
 
-const handleNavigate = (path) => {
-    navigate(path, { state: { userData } });
+  const handleNavigate = (path) => {
+      navigate(path, { state: { userData } });
   };
+
+  useEffect(() => {
+    // Fetch categories from the database
+    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+      .then(response => {
+        setCategories(response.data); // Assuming the response data is an array of categories
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
 
   return (
     <>
@@ -2083,31 +2095,31 @@ const handleNavigate = (path) => {
         >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
     Accessories
-  </Text>
-  <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
-    <FormControl mx="auto">
-      <FormLabel>Category</FormLabel>
-      <Select
-        name="category"
-        defaultValue=""
-        onChange={handleSelectChange}
-        color="black" // Text color inside dropdown
-        bg="white" // Dropdown background color
-        border="none" // Remove border
-        borderRadius="md" // Add some border-radius
-        boxShadow="sm" // Add a slight shadow
-      >
-        <option value="">Select a category...</option>
-        <option value="car-mat">Car Mat</option>
-        <option value="cover">Cover</option>
-        <option value="wiper">Wiper</option>
-        <option value="air-freshener">Air Freshener</option>
-        <option value="dash-cam">Dash Cam</option>
-      </Select>
-    </FormControl>
-    <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
-      Fetch Accessories
-    </Button>
+        </Text>
+        <Box style={{ display: 'flex', alignItems: 'center', width: '50%', marginLeft: '20%' }}>
+          <FormControl mx="auto">
+            <FormLabel>Category</FormLabel>
+            <Select
+              name="category"
+              value={selectedCategory}
+              onChange={handleSelectChange}
+              color="black" // Text color inside dropdown
+              bg="white" // Dropdown background color
+              border="none" // Remove border
+              borderRadius="md" // Add some border-radius
+              boxShadow="sm"
+            >
+              <option value="">Select Category</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="32px" marginLeft="20px">
+            Fetch Accessories
+          </Button>
     </Box>
       {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
@@ -2175,7 +2187,7 @@ const handleNavigate = (path) => {
               <Td>{accessory.price}</Td>
               {/* <Td>{accessory.image}</Td> */}
               {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-              <Td><Image src={accessory.image} alt="Large Image"/></Td>
+              <Td><Image src={accessory.image} alt="Small Image" w="200px" h="200px"/></Td>
               <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
               {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
               {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
@@ -2790,6 +2802,9 @@ const Manager = () => {
     accessoire_id: '',
   });
   const [message, setMessage] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [accessories, setAccessories] = useState([]);
 
   useEffect(() => {
     if (showServiceRequests) {
@@ -3185,6 +3200,67 @@ const Manager = () => {
     }
   };
 
+  const handleSelectChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  useEffect(() => {
+    // Fetch categories from the database
+    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+      .then(response => {
+        setCategories(response.data); // Assuming the response data is an array of categories
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+
+  const handleCategoryClick = (e) => {
+    e.preventDefault();
+    console.log("the category: ", selectedCategory);
+    fetchAccessories(selectedCategory);
+  };
+
+  const fetchAccessories = async (category) => {
+    try {
+      const response = await fetch(`http://localhost:5000/accessories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      setAccessories(data);
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+    }
+  };
+
+  const handleDeleteAccessory = async (accessoryID) => {
+    console.log("the ID recieved: ", accessoryID) // testing that we recieved the accessory_id to be deleted
+    try {
+      const response = await fetch(`http://localhost:5000/deleteAccessory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessoryID }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      // If deletion was successful, refetch the accessories data
+      if (response.ok) {
+        fetchAccessories(selectedCategory);
+        alert("Accessory was removed successfully");
+      }
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+      alert("Error removing Accessory");
+    }
+  };
+
   return (
     <>
       {/* This will be the gradient box */}
@@ -3370,34 +3446,82 @@ const Manager = () => {
       </div>
       )}
       
-      {showRemoveMiscellaneous && (
+      {showRemoveMiscellaneous && categories && accessories && (
         <div>
-        <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
-          Remove Accessories
-        </Text>
-        <div>
-          <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
-            <Flex flexDirection="row" justifyContent="space-between">
-          <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-            <FormControl id="firstName" isRequired marginBottom="20px">
-              <FormLabel color="white">Accessory ID</FormLabel>
-              <Input
-                type="text"
-                value={accessoryID.accessoire_id}
-                onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
-                color="white"
-              />
-            </FormControl>
-          </Flex>
-                      </Flex>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
-                      </form>
+          <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
+            Remove Accessories
+          </Text>
+          <div>
+            <form onSubmit={handleCategoryClick} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                  <FormControl p={4}>
+                    <FormLabel>Select Category</FormLabel>
+                    <Select
+                      name="category"
+                      value={selectedCategory}
+                      onChange={handleSelectChange}
+                      color="black" // Text color inside dropdown
+                      bg="white" // Dropdown background color
+                      border="none" // Remove border
+                      borderRadius="md" // Add some border-radius
+                      boxShadow="sm"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Flex>
+                <Button type="submit" colorScheme="green" marginTop="10px" left="10px" top="38px">
+                Fetch Accessories
+              </Button>
+              </Flex>
+              
+              {/* {error && <div style={{ color: 'red' }}>{error}</div>}
+              <Button type="submit" colorScheme="green" marginTop="10px">
+                Fetch Accessories
+              </Button> */}
+            </form>
+          </div>
+          <Box position="absolute" style={{ color: 'white', width: '80%', top: '400px', right: 'calc(2% + 0px)' }}>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center' }}>Accessory ID</th>
+                  <th style={{ textAlign: 'center' }}>Name</th>
+                  <th style={{ textAlign: 'center' }}>Description</th>
+                  <th style={{ textAlign: 'center' }}>Price</th>
+                  <th style={{ textAlign: 'center' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accessories.map(accessory => (
+                  <tr key={accessory.accessoire_id}>
+                    <td style={{ textAlign: 'center' }}>{accessory.accessoire_id}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.name}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.description}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.price}</td>
+                    <td style={{ textAlign: 'center', padding: '0px 0px 20px 0px' }}>
+                      <Button colorScheme="red" onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>
+                        Delete
+                      </Button>
+                      {/* <Button colorScheme="red" onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>
+                  Delete
+                </Button> */}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Box>
           {message && <p>{message}</p>}
         </div>
-      </div>
       )}
-    
+
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
