@@ -2763,6 +2763,81 @@ return (
   );
 };
 
+const AssignTechnicians = () => {
+  const [serviceRequests, setServiceRequests] = useState([]);
+  const [availableTechnicians, setAvailableTechnicians] = useState([]);
+  const [selectedTechnician, setSelectedTechnician] = useState('');
+
+  useEffect(() => {
+    // Fetch service requests that are accepted and pending technician assignment
+    axios.get('/api/service_requests/accepted')  // Modify the endpoint as needed
+      .then(response => setServiceRequests(response.data))
+      .catch(error => console.error('Error fetching service requests:', error));
+  }, []);
+
+  const handleViewTechnicians = (date) => {
+    axios.get(`/api/get_available_technicians?date=${date}`)
+      .then(response => setAvailableTechnicians(response.data))
+      .catch(error => console.error('Error fetching technicians:', error));
+  };
+
+  const handleAssignTechnician = (serviceRequestId) => {
+    if (!selectedTechnician) {
+      alert('Please select a technician first');
+      return;
+    }
+
+    axios.post('/api/assign_technicians', {
+      technician_id: selectedTechnician,
+      service_request_id: serviceRequestId
+    }).then(() => {
+      alert('Technician assigned successfully');
+      // Refresh the list or make additional changes as necessary
+    }).catch(error => console.error('Error assigning technician:', error));
+  };
+
+  return (
+    <Box width='75%' position="absolute" top='10%' right='calc(2% + 0px)'>
+      <Text fontSize="5xl" color="white" fontWeight="bold">Assign Technicians</Text>
+      <Table variant="striped" colorScheme="teal">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Vehicle</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>View Technicians</th>
+            <th>Assign</th>
+          </tr>
+        </thead>
+        <tbody>
+          {serviceRequests.map((request) => (
+            <tr key={request.service_request_id}>
+              <td>{request.service}</td>
+              <td>{request.vehicle}</td>
+              <td>{request.customer}</td>
+              <td>{request.date}</td>
+              <td>
+                <Button colorScheme="blue" onClick={() => handleViewTechnicians(request.date)}>View</Button>
+              </td>
+              <td>
+                <Select placeholder="Select technician" onChange={e => setSelectedTechnician(e.target.value)}>
+                  {availableTechnicians.map(tech => (
+                    <option key={tech.technician_id} value={tech.technician_id}>
+                      {tech.name} - Jobs: {tech.job_count}
+                    </option>
+                  ))}
+                </Select>
+                <Button colorScheme="green" onClick={() => handleAssignTechnician(request.service_request_id)}>Assign</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Box>
+  );
+};
+
 // component for displaying the manager dashboard ui
 const Manager = () => {
   const location = useLocation();
@@ -3063,10 +3138,6 @@ const Manager = () => {
   const handleCreateTechnician = () => {
     setShowTechnicianForm(true);
   };
-
-  const AvailableTechnicians = ({date}) => {
-    
-  }
 
   // this is the function to add the service to the users cart when the service is accepted by a manager
   // const acceptService = e => {
@@ -3959,13 +4030,6 @@ const Admin = () => {
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="green" color="white" marginBottom="10px" onClick={() => setShowManagerForm(true)}>Create Manager Account</Button>
           <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
-          <Button variant="green" color="white" marginBottom="10px">Service Appointment Requests</Button>
-          <Button variant="green" color="white" marginBottom="10px">Assign Technicians</Button>
-          <Button variant="green" color="white" marginBottom="10px">Add Cars To Dealership</Button>
-          <Button variant="green" color="white" marginBottom="10px">Remove Cars From Dealership</Button>
-          <Button variant="green" color="white" marginBottom="10px">Manage Test Drive Appointments</Button>
-          <Button variant="green" color="white" marginBottom="10px">Generate Report</Button>
-          <Button variant="green" color="white" marginBottom="10px">Send Service Report</Button>
         </Flex>
       </Box>
     </>
@@ -4260,7 +4324,6 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
     </>
   );
 }
-
 
 // hope this works
 export default App;
