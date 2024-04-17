@@ -223,7 +223,7 @@ const ContactPage = () => {
           </Text>
           <Text style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <FaEnvelope style={{ marginRight: '15px', fontSize: '25px', marginTop: '30px'}} />
-            <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
+            <a style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}} href="mailto:velocitymotors@cars.com">velocitymotors@cars.com</a>
           </Text>
         </Box>
 
