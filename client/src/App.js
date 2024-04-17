@@ -2916,7 +2916,7 @@ const Manager = () => {
       manager_id: userData.manager_id 
     };
   
-    axios.post('/add_technician', formData)
+    axios.post('http://localhost:5000/add_technician', formData)
     .then(response => {
       console.log('Technician added successfully');
       alert('Technician added successfully'); // Display success alert
