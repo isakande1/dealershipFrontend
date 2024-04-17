@@ -367,7 +367,7 @@ export default function CarDetails() {
       <Routes>
         <Route path="/carDetails/*" element={<CarDetails />} />
         <Route path="/carDetails/schedule-test-drive/" element={<TestDriveForm />} />
-        <Route path="/carDetails/financeApplication/" element={<FinanceApp />} />
+        <Route path="/carDetails/financeApplication/*" element={<FinanceApp />} />
       </Routes>
     </Grid>
 
