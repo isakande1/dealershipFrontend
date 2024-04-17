@@ -223,7 +223,7 @@ const ContactPage = () => {
           </Text>
           <Text style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <FaEnvelope style={{ marginRight: '15px', fontSize: '25px', marginTop: '30px'}} />
-            <span style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}}>velocitymotors@cars.com</span>
+            <a style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '30px'}} href="mailto:velocitymotors@cars.com">velocitymotors@cars.com</a>
           </Text>
         </Box>
 
@@ -1831,6 +1831,7 @@ const CarAccessories = () => {
     item_name: "",
     accessoire_id: "",
   });
+  const [categories, setCategories] = useState([]);
 
   const fetchAccessories = async (category) => {
     try {
@@ -2014,9 +2015,20 @@ const CarAccessories = () => {
 
   const navigate = useNavigate();  
 
-const handleNavigate = (path) => {
-    navigate(path, { state: { userData } });
+  const handleNavigate = (path) => {
+      navigate(path, { state: { userData } });
   };
+
+  useEffect(() => {
+    // Fetch categories from the database
+    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+      .then(response => {
+        setCategories(response.data); // Assuming the response data is an array of categories
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
 
   return (
     <>
@@ -2083,31 +2095,31 @@ const handleNavigate = (path) => {
         >
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" my={4}>
     Accessories
-  </Text>
-  <Box style={{ display: 'flex', alignItems: 'center', width:'50%', marginLeft:'20%' }}>
-    <FormControl mx="auto">
-      <FormLabel>Category</FormLabel>
-      <Select
-        name="category"
-        defaultValue=""
-        onChange={handleSelectChange}
-        color="black" // Text color inside dropdown
-        bg="white" // Dropdown background color
-        border="none" // Remove border
-        borderRadius="md" // Add some border-radius
-        boxShadow="sm" // Add a slight shadow
-      >
-        <option value="">Select a category...</option>
-        <option value="car-mat">Car Mat</option>
-        <option value="cover">Cover</option>
-        <option value="wiper">Wiper</option>
-        <option value="air-freshener">Air Freshener</option>
-        <option value="dash-cam">Dash Cam</option>
-      </Select>
-    </FormControl>
-    <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="25px"> 
-      Fetch Accessories
-    </Button>
+        </Text>
+        <Box style={{ display: 'flex', alignItems: 'center', width: '50%', marginLeft: '20%' }}>
+          <FormControl mx="auto">
+            <FormLabel>Category</FormLabel>
+            <Select
+              name="category"
+              value={selectedCategory}
+              onChange={handleSelectChange}
+              color="black" // Text color inside dropdown
+              bg="white" // Dropdown background color
+              border="none" // Remove border
+              borderRadius="md" // Add some border-radius
+              boxShadow="sm"
+            >
+              <option value="">Select Category</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <Button onClick={handleButtonClick} colorScheme="green" mx="auto" marginTop="32px" marginLeft="20px">
+            Fetch Accessories
+          </Button>
     </Box>
       {/* <Button onClick={handleAddAccessoryButton} colorScheme="blue" mx="auto" mt={4} mb={8}>
         Add Accessories
@@ -2175,7 +2187,7 @@ const handleNavigate = (path) => {
               <Td>{accessory.price}</Td>
               {/* <Td>{accessory.image}</Td> */}
               {/* <Td><img src={accessory.image} alt={accessory.name || "Accessory Image"} /></Td> */}
-              <Td><Image src={accessory.image} alt="Large Image"/></Td>
+              <Td><Image src={accessory.image} alt="Small Image" w="200px" h="200px"/></Td>
               <Td><Button onClick={() => handleAddToCart(accessory)}>Add to Cart</Button></Td>
               {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
               {/* <Td><Button onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>Delete</Button></Td> */}
@@ -2790,6 +2802,9 @@ const Manager = () => {
     accessoire_id: '',
   });
   const [message, setMessage] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [accessories, setAccessories] = useState([]);
 
   useEffect(() => {
     if (showServiceRequests) {
@@ -3185,6 +3200,67 @@ const Manager = () => {
     }
   };
 
+  const handleSelectChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  useEffect(() => {
+    // Fetch categories from the database
+    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+      .then(response => {
+        setCategories(response.data); // Assuming the response data is an array of categories
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+
+  const handleCategoryClick = (e) => {
+    e.preventDefault();
+    console.log("the category: ", selectedCategory);
+    fetchAccessories(selectedCategory);
+  };
+
+  const fetchAccessories = async (category) => {
+    try {
+      const response = await fetch(`http://localhost:5000/accessories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      setAccessories(data);
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+    }
+  };
+
+  const handleDeleteAccessory = async (accessoryID) => {
+    console.log("the ID recieved: ", accessoryID) // testing that we recieved the accessory_id to be deleted
+    try {
+      const response = await fetch(`http://localhost:5000/deleteAccessory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessoryID }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      // If deletion was successful, refetch the accessories data
+      if (response.ok) {
+        fetchAccessories(selectedCategory);
+        alert("Accessory was removed successfully");
+      }
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+      alert("Error removing Accessory");
+    }
+  };
+
   return (
     <>
       {/* This will be the gradient box */}
@@ -3370,34 +3446,82 @@ const Manager = () => {
       </div>
       )}
       
-      {showRemoveMiscellaneous && (
+      {showRemoveMiscellaneous && categories && accessories && (
         <div>
-        <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
-          Remove Accessories
-        </Text>
-        <div>
-          <form onSubmit={handleSubmitMiscellaneousForm} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
-            <Flex flexDirection="row" justifyContent="space-between">
-          <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-            <FormControl id="firstName" isRequired marginBottom="20px">
-              <FormLabel color="white">Accessory ID</FormLabel>
-              <Input
-                type="text"
-                value={accessoryID.accessoire_id}
-                onChange={(e) => setAccessoryID({ ...accessoryID, accessoire_id: e.target.value })}
-                color="white"
-              />
-            </FormControl>
-          </Flex>
-                      </Flex>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <Button type="submit" colorScheme="green" marginTop="10px" /*</form>onClick={() => handleDeleteAccessory()}*/>Remove Accessory</Button>
-                      </form>
+          <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
+            Remove Accessories
+          </Text>
+          <div>
+            <form onSubmit={handleCategoryClick} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                  <FormControl p={4}>
+                    <FormLabel>Select Category</FormLabel>
+                    <Select
+                      name="category"
+                      value={selectedCategory}
+                      onChange={handleSelectChange}
+                      color="black" // Text color inside dropdown
+                      bg="white" // Dropdown background color
+                      border="none" // Remove border
+                      borderRadius="md" // Add some border-radius
+                      boxShadow="sm"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Flex>
+                <Button type="submit" colorScheme="green" marginTop="10px" left="10px" top="38px">
+                Fetch Accessories
+              </Button>
+              </Flex>
+              
+              {/* {error && <div style={{ color: 'red' }}>{error}</div>}
+              <Button type="submit" colorScheme="green" marginTop="10px">
+                Fetch Accessories
+              </Button> */}
+            </form>
+          </div>
+          <Box position="absolute" style={{ color: 'white', width: '80%', top: '400px', right: 'calc(2% + 0px)' }}>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center' }}>Accessory ID</th>
+                  <th style={{ textAlign: 'center' }}>Name</th>
+                  <th style={{ textAlign: 'center' }}>Description</th>
+                  <th style={{ textAlign: 'center' }}>Price</th>
+                  <th style={{ textAlign: 'center' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accessories.map(accessory => (
+                  <tr key={accessory.accessoire_id}>
+                    <td style={{ textAlign: 'center' }}>{accessory.accessoire_id}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.name}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.description}</td>
+                    <td style={{ textAlign: 'center' }}>{accessory.price}</td>
+                    <td style={{ textAlign: 'center', padding: '0px 0px 20px 0px' }}>
+                      <Button colorScheme="red" onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>
+                        Delete
+                      </Button>
+                      {/* <Button colorScheme="red" onClick={() => handleDeleteAccessory(accessory.accessoire_id)}>
+                  Delete
+                </Button> */}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Box>
           {message && <p>{message}</p>}
         </div>
-      </div>
       )}
-    
+
       { /* if the account is successfully created, display a success message to the user */}
       {showServiceRequests && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
@@ -3855,6 +3979,11 @@ const Technician = () => {
   const navigate = useNavigate();
   const [showAssignedServices, setShowAssignedServices] = useState(false);
   const [assignedServices, setAssignedServices] = useState([]);
+  const [detailsModal, setDetailsModal] = useState(false);
+  const [showTicketDetails, setShowTicketDetails] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [serviceDetails, setServiceDetails] = useState(null);
+  const [report, setReport] = useState('');
   
   useEffect(() => {
     if (showAssignedServices) {
@@ -3917,6 +4046,101 @@ const Technician = () => {
       });
   };
 
+  const handleCloseModal = () => setDetailsModal(false);
+
+  // const handleAddAccessoryModalClose = () => {
+  //   setShowAddAccessoryModal(false);
+  // };
+
+  const showDetailsModal = async (service) => {
+    setSelectedService(service);
+    try {
+        // Send API call
+        console.log("assigned service id", service.assigned_service_id);
+        const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
+
+        // Assign response data to service details
+        const details = response.data;
+
+        // Check log to see if the data transferred 
+        console.log("this is the data received: ", details);
+
+        // Update state variables
+        setSelectedService(service);
+        setServiceDetails(details);
+        setShowAssignedServices(false);
+        setDetailsModal(true);
+    } catch (error) {
+        // Handle errors if any
+        console.error('Error fetching service details:', error);
+    }
+};
+
+const handleSubmitReport = () => {
+  // Retrieve the value of the input textbox
+  const reportValue = document.getElementById('report').value;
+  console.log("report is: ", reportValue)
+
+  // Send the report value and assigned_service_id to the backend
+  sendSubmitReport(reportValue, selectedService.assigned_service_id);
+};
+
+const sendSubmitReport = (reportValue, assignedServiceId) => {
+  // Perform an HTTP request to send the report value and assigned_service_id to the backend
+  // Example using Fetch API:
+  fetch('/submitReport', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ report: reportValue, assigned_service_id: assignedServiceId })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle success
+    console.log('Report sent successfully:', data);
+    window.alert('Thank you for your feedback');
+  })
+  .catch(error => {
+    // Handle error
+    console.error('Error sending report:', error);
+    window.alert('Failed to save feedback. Please try again later.');
+  });
+};
+
+
+  // const TicketDetails = () =>{
+  //   return (
+  //        <Box bg='black' w='100%' color='white' height='100vh'>
+  //          <Modal isOpen={detailsModal} onClose={handleCloseModal}>
+  //             <ModalHeader>Customer Details</ModalHeader>
+  //             <ModalCloseButton />
+  //             <ModalBody>
+  //             <FormControl mt={4}>
+  //               <FormLabel color="white" >Description</FormLabel>
+  //               <Input
+  //                   type="text"
+  //                   //value={}
+  //                   //onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
+  //                   color="white"
+  //                 />
+  //             </FormControl>
+  //             </ModalBody>
+  //             <ModalFooter>
+  //               <Button variant="secondary" onClick={handleCloseModal}>
+  //                   Close
+  //               </Button>
+  //             </ModalFooter>
+  //           </Modal>
+  //        </Box>
+  //   )
+  // };
+
   const fetchAssignedServices = () => {
     axios.get('/show_assigned_services')
       .then(response => {
@@ -3938,6 +4162,11 @@ const Technician = () => {
     switch (section) {
       case 'checkAssignedWork':
         setShowAssignedServices(true);
+        setShowTicketDetails(false);
+        break;
+      case 'checkTicketDetails':
+        setShowAssignedServices(false);
+        setShowTicketDetails(true);
         break;
       default:
         break;
@@ -3997,10 +4226,35 @@ const Technician = () => {
                       Decline
                     </Button>
                   </td>
+                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
+                    <Button colorScheme="blue" onClick={() => {showDetailsModal(service); handleButtonClick('checkTicketDetails');}}>
+                      Details
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+        </Box>
+      )}
+
+      {showTicketDetails && selectedService && serviceDetails && (
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+          {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
+          <Heading as="h1" size="lg">Ticket Details</Heading>
+          <Text>Assigned Service ID: {selectedService.assigned_service_id}</Text>
+          <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
+          <Text>Customer Name: {`${selectedService.customer_first_name} ${selectedService.customer_last_name}`}</Text>
+          <Text>Customer Contact Number: {`${selectedService.customer_phone}`}</Text>
+          <Text>Car Details: {serviceDetails[0].car_make} {serviceDetails[0].car_model}</Text>
+          <Text>Service ID: {serviceDetails[0].assigned_service_id}</Text>
+          <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
+          <Text>Service Status: {selectedService.status}</Text>
+          <Text>Price: ${serviceDetails[0].service_price}</Text>
+          <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
+            <Input id="report" placeholder="Leave feedback" value={report} onChange={(e) => setReport(e.target.value)} />
+          </Flex>
+          <Button onClick={handleSubmitReport} colorScheme="green">Submit Report</Button>
         </Box>
       )}
     </>
