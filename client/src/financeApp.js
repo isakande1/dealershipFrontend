@@ -37,7 +37,7 @@ export default function FinanceApp () {
         try {
             const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData)
             
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
               console.log("Response data: ", response.data);
               setFinanceTerms(response.data);
               console.log("State before navigation: ", { financeTerms, userData, carInfos });
