@@ -305,7 +305,7 @@ button:hover {
 
 .blue-btn {
   width: 200px;
-  height: 60px;
+  height: 80px;
   border-radius: 50px;
   background-image: linear-gradient(135deg, #31107e 0%, #be07d6 100%);
   box-shadow: 0 20px 30px -6px rgba(126, 34, 187, 0.911);
@@ -322,6 +322,33 @@ button:hover {
 }
 
 .blue-btn:active {
+  opacity: 0.5;
+}
+
+.blue-btn2 {
+  transition: all 0.3s ease-in-out;
+  font-family: "Dosis", sans-serif;
+}
+
+.blue-btn2 {
+  width: 200px !important;
+  height: 80px !important;
+  border-radius: 50px;
+  background-image: linear-gradient(135deg, #31107e 0%, #be07d6 100%);
+  box-shadow: 0 20px 30px -6px rgba(126, 34, 187, 0.911);
+  outline: none;
+  cursor: pointer;
+  border: none;
+  font-size: 24px;
+  color: white;
+}
+
+.blue-btn2:hover {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+.blue-btn2:active {
   opacity: 0.5;
 }
 

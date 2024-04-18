@@ -4,7 +4,7 @@ import './App.css';
 
 const FinanceAgreementPDF = ({ financeTerms, userData, carInfos }) => {
 
-  if (financeTerms.status === "approved"){
+  if (financeTerms.status == "approved"){
     const loanTerm = financeTerms.terms ? financeTerms.terms.loan_term : '';
     console.log(financeTerms.status);
 
