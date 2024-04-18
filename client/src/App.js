@@ -2805,6 +2805,11 @@ const Manager = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [accessories, setAccessories] = useState([]);
+  const [carMakers, setCarMakers] = useState([]);
+  const [selectedMake, setSelectedMake] = useState("");
+  const [carMakerDetails, setCarMakerDetails] = useState([]);
+  // const [carModels, setCarModels] = useState([]);
+  // const [selectedModel, setSelectedModel] = useState("");
 
   useEffect(() => {
     if (showServiceRequests) {
@@ -3261,6 +3266,83 @@ const Manager = () => {
     }
   };
 
+  const handleSelectMakeChange = (e) => {
+    fetchCarMake(e.target.value);
+  };
+
+  // const handleSelectModelChange = (e) => {
+  //   setSelectedModel(e.target.value);
+  // };
+
+  useEffect(() => {
+    // Fetch car make from the database
+    axios.get('http://localhost:5000/getCarMakeManager')
+      .then(response => {
+        setCarMakers(response.data); // Assuming the response data is an array of car makers
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+
+  const handleCarMakeClick = (e) => {
+    e.preventDefault();
+    console.log("the make: ", selectedMake);
+    fetchCarMake(selectedMake);
+  };
+
+  const fetchCarMake = async (carMake) => {
+    try {
+      const response = await fetch(`http://localhost:5000/fetchCarByMake`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ carMake }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      setCarMakerDetails(data);
+    } catch (error) {
+      console.error('Error fetching accessories:', error);
+    }
+  };
+
+  const handleDeleteCar = async (carID) => {
+    console.log("the ID recieved: ", carID) // testing that we recieved the accessory_id to be deleted
+    try {
+      const response = await fetch(`http://localhost:5000/deleteCarManager`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ carID }),
+      });
+      const data = await response.json();
+      console.log("data collect", data)
+      // If deletion was successful, refetch the accessories data
+      if (response.ok) {
+        fetchCarMake(selectedMake);
+        alert("Car was removed successfully");
+      }
+    } catch (error) {
+      console.error('Error fetching Car:', error);
+      alert("Error removing Car");
+    }
+  };
+
+  // useEffect(() => {
+  //   // Fetch car models from the database
+  //   axios.get('http://localhost:5000/getCarModelManager')
+  //     .then(response => {
+  //       setCarModels(response.data); // Assuming the response data is an array of car models
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching categories:', error);
+  //     });
+  // }, []);
+
+
   return (
     <>
       {/* This will be the gradient box */}
@@ -3611,30 +3693,70 @@ const Manager = () => {
         </Box>
       )}
 
-      {showRemoveCars && (
-      <div style={{ top: '100px', left:'100px'}}>
-      <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
-        Remove Cars
-      </Text>
-        <form onSubmit={handleSubmitRemoveCarForm} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
-              <FormControl id="car_id" isRequired marginBottom="20px">
-                <FormLabel color="white">Car VIN</FormLabel>
-                <Input
-                  type="text"
-                  value={removeCarFormData.car_id}
-                  onChange={(e) => setRemoveCarFormData({ ...removeCarFormData, car_id: e.target.value })}
-                  placeholder='Enter VIN to remove car'
-                  color="white"
-                />
-              </FormControl>
+      {showRemoveCars && carMakers && carMakerDetails && (
+        <div style={{ top: '100px', left: '100px' }}>
+          <Text fontSize="5xl" fontWeight="bold" color="white" position='absolute' marginTop="82px" marginLeft='350px'>
+            Remove Cars
+          </Text>
+          <form onSubmit={handleCarMakeClick} style={{ position: 'absolute', width: '50%', top: '240px', left: '500px' }}>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
+                <FormControl id="car_id" isRequired marginBottom="20px">
+                  <FormLabel color="white">Car Make</FormLabel>
+                  <Select
+                    name="make"
+                    value={selectedMake}
+                    onChange={handleSelectMakeChange}
+                    color="black" // Text color inside dropdown
+                    bg="white" // Dropdown background color
+                    border="none" // Remove border
+                    borderRadius="md" // Add some border-radius
+                    boxShadow="sm"
+                  >
+                    <option value="">Select Make</option>
+                    {carMakers.map((make, index) => (
+                      <option key={index} value={make}>
+                        {make}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Flex>
             </Flex>
-          </Flex>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <Button type="submit" colorScheme="green" marginTop="10px">Remove Car</Button>
-        </form>
-      </div>
+            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {/* <Button type="submit" colorScheme="green" marginTop="10px">Display Cars</Button> */}
+          </form>
+          <Box position="absolute" style={{ color: 'white', width: '80%', top: '400px', right: 'calc(2% + 0px)' }}>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'center' }}>Car ID</th>
+                  <th style={{ textAlign: 'center' }}>Make</th>
+                  <th style={{ textAlign: 'center' }}>Model</th>
+                  <th style={{ textAlign: 'center' }}>Year</th>
+                  <th style={{ textAlign: 'center' }}>Color</th>
+                  <th style={{ textAlign: 'center' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {carMakerDetails.map(car => (
+                  <tr key={car.car_id}>
+                    <td style={{ textAlign: 'center' }}>{car.car_id}</td>
+                    <td style={{ textAlign: 'center' }}>{car.make}</td>
+                    <td style={{ textAlign: 'center' }}>{car.model}</td>
+                    <td style={{ textAlign: 'center' }}>{car.year}</td>
+                    <td style={{ textAlign: 'center' }}>{car.color}</td>
+                    <td style={{ textAlign: 'center', padding: '0px 0px 20px 0px' }}>
+                      <Button colorScheme="red" onClick={() => handleDeleteCar(car.car_id)}>
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Box>
+        </div>
       )}
 
       {/* Dashboard options shown to the manager upon signing in */}
