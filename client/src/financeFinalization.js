@@ -16,7 +16,9 @@ export default function FinalizeFinance () {
     console.log(userData);
     console.log(carInfos);
 
-    const handleSignedApp = async () => {
+    const handleSignedApp = async (e) => {
+        e.preventDefault();
+
         try {
             const response = await fetch('http://localhost:5000/add_to_cart', {
                 method: 'POST',
@@ -32,7 +34,7 @@ export default function FinalizeFinance () {
                 }),
             });
             console.log(response)
-            /*
+            
             if (response.status === 200 || response.status === 201) {
                 console.log('userData', userData)
                 navigate('/Addons', {
@@ -61,7 +63,7 @@ export default function FinalizeFinance () {
                 }
             } else {
                 throw new Error('Error adding car');
-            }*/
+            }
         } catch (error) {
             // Handle any errors here
             console.error(error);
@@ -78,11 +80,11 @@ export default function FinalizeFinance () {
                         <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
                     </PDFViewer>
                 </div>
-                <form>
+                <form onSubmit={handleSignedApp}>
                     <center><p>Sign your full name below</p></center>
                     <center id="sigContainer"><input id="signature" type="text" required /></center>
                     <center><input id="agreement" type="checkbox" required /> I Agree</center>
-                    <center><button id="finalize" className="blue-btn" onClick={handleSignedApp}>Sign</button></center>
+                    <center><input type="submit" value="Sign" id="finalize" className="blue-btn" /></center>
                 </form>
             </div>
         );
