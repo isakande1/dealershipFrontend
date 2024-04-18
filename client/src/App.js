@@ -2763,78 +2763,105 @@ return (
   );
 };
 
+// assigns a technician selected to do a particular job
 const AssignTechnicians = () => {
   const [serviceRequests, setServiceRequests] = useState([]);
   const [availableTechnicians, setAvailableTechnicians] = useState([]);
+  const [selectedServiceRequest, setSelectedServiceRequest] = useState('');
   const [selectedTechnician, setSelectedTechnician] = useState('');
+  const [isDateSelected, setIsDateSelected] = useState(false);
 
   useEffect(() => {
-    // Fetch service requests that are accepted and pending technician assignment
-    axios.get('/api/service_requests/accepted')  // Modify the endpoint as needed
-      .then(response => setServiceRequests(response.data))
-      .catch(error => console.error('Error fetching service requests:', error));
+    fetchServiceRequests();
   }, []);
 
-  const handleViewTechnicians = (date) => {
-    axios.get(`/api/get_available_technicians?date=${date}`)
-      .then(response => setAvailableTechnicians(response.data))
-      .catch(error => console.error('Error fetching technicians:', error));
+  // calls backend endpoint to get all services in the week
+  const fetchServiceRequests = () => {
+    axios.get('/get_upcoming_week_requests')
+      .then(response => {
+        setServiceRequests(response.data.accepted_service_requests);
+      })
+      .catch(error => {
+        console.error('Error fetching service requests:', error);
+        setServiceRequests([]);
+      });
   };
 
-  const handleAssignTechnician = (serviceRequestId) => {
-    if (!selectedTechnician) {
-      alert('Please select a technician first');
+  // call backend endpoint to return all available technicians 
+  const fetchTechniciansForRequest = (serviceRequestId, date) => {
+    setIsDateSelected(true); 
+    axios.get(`/get_available_technicians?date=${date}`)
+      .then(response => {
+        setAvailableTechnicians(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching technicians:', error);
+        setAvailableTechnicians([]); 
+      });
+  };
+
+  const handleServiceRequestChange = (event) => {
+    const selectedId = event.target.value;
+    const selectedRequest = serviceRequests.find(req => req.service_request_id.toString() === selectedId);
+    if (selectedRequest) {
+      setSelectedServiceRequest(selectedId);
+      setSelectedTechnician(''); 
+      fetchTechniciansForRequest(selectedId, selectedRequest.date);
+    } else {
+      setSelectedServiceRequest('');
+      setSelectedTechnician('');
+      setAvailableTechnicians([]);
+      setIsDateSelected(false); 
+    }
+  };
+
+  // ensures selections are made before assigning a technician
+  const handleAssignTechnician = () => {
+    if (!selectedTechnician || !selectedServiceRequest) {
+      alert('Please select both a service request and a technician');
       return;
     }
-
-    axios.post('/api/assign_technicians', {
+  
+    axios.post('/assign_technicians', {
       technician_id: selectedTechnician,
-      service_request_id: serviceRequestId
+      service_request_id: selectedServiceRequest
     }).then(() => {
       alert('Technician assigned successfully');
-      // Refresh the list or make additional changes as necessary
-    }).catch(error => console.error('Error assigning technician:', error));
+      // Reset selections when a technician is successfully assigned 
+      setSelectedServiceRequest('');  
+      setSelectedTechnician('');
+      setAvailableTechnicians([]);   
+      fetchServiceRequests();        
+    }).catch(error => {
+      console.error('Error assigning technician:', error);
+    });
   };
 
   return (
     <Box width='75%' position="absolute" top='10%' right='calc(2% + 0px)'>
-      <Text fontSize="5xl" color="white" fontWeight="bold">Assign Technicians</Text>
-      <Table variant="striped" colorScheme="teal">
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Vehicle</th>
-            <th>Customer</th>
-            <th>Date</th>
-            <th>View Technicians</th>
-            <th>Assign</th>
-          </tr>
-        </thead>
-        <tbody>
-          {serviceRequests.map((request) => (
-            <tr key={request.service_request_id}>
-              <td>{request.service}</td>
-              <td>{request.vehicle}</td>
-              <td>{request.customer}</td>
-              <td>{request.date}</td>
-              <td>
-                <Button colorScheme="blue" onClick={() => handleViewTechnicians(request.date)}>View</Button>
-              </td>
-              <td>
-                <Select placeholder="Select technician" onChange={e => setSelectedTechnician(e.target.value)}>
-                  {availableTechnicians.map(tech => (
-                    <option key={tech.technician_id} value={tech.technician_id}>
-                      {tech.name} - Jobs: {tech.job_count}
-                    </option>
-                  ))}
-                </Select>
-                <Button colorScheme="green" onClick={() => handleAssignTechnician(request.service_request_id)}>Assign</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Box>
+    <Text fontSize="5xl" color="white" fontWeight="bold">Upcoming Service Requests</Text>
+    <Select placeholder="Select Service Request" color="grey" marginTop="20px"
+      value={selectedServiceRequest} 
+      onChange={handleServiceRequestChange}>
+      {serviceRequests.map(req => (
+        <option key={req.service_request_id} value={req.service_request_id}>
+          {req.date} - {req.service_name} - {req.technician_name}
+        </option>
+      ))}
+    </Select>
+    {availableTechnicians.length > 0 ? (
+      <Select placeholder="Select Technician" color="grey" marginTop="20px"
+        value={selectedTechnician} 
+        onChange={e => setSelectedTechnician(e.target.value)}>
+        {availableTechnicians.map(tech => (
+          <option key={tech.technician_id} value={tech.technician_id}>
+            {tech.full_name} - Jobs: {tech.job_count}
+          </option>
+        ))}
+      </Select>
+    ) : null}
+    <Button colorScheme="green" marginTop="20px" onClick={handleAssignTechnician}>Assign Technician</Button>
+  </Box>
   );
 };
 
@@ -3425,33 +3452,7 @@ const Manager = () => {
       )}
 
       { /* assigns available technician for service to be done on a car */ }
-      {showAssignTech && (
-        <Box position="absolute" style={{ color: 'white', position: 'absolute', width: '75%', top: '10%', right: 'calc(2% + 0px)' }}>
-          <Text fontSize="5xl" color="white" style={{ position: 'absolute', marginTop: "13px", fontWeight: 'bold' }}>Assign Technicians</Text>
-          <Table striped bordered hover style={{ fontSize: '20px', marginLeft:'-15px', marginRight: '10px', marginTop: '140px', border: '2px solid white'}}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Service</th>
-                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Vehicle</th>
-                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Customer</th>
-                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>Date</th>
-                <th style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>View Technicians</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ textAlign: 'center', width:'3%', border: '1px solid white', padding: '15px 0' }}>Oil Change</td>
-                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>2023 Subaru Outback</td>
-                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>John Doe</td>
-                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>4/17/24</td>
-                <td style={{ textAlign: 'center', width: '3%', border: '1px solid white', padding: '15px 0' }}>
-                  <Button colorScheme="blue" fontWeight="bold" onClick={() => AvailableTechnicians('4/17/24')}>View</Button>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-        </Box>
-      )}
+      {showAssignTech && <AssignTechnicians />}
 
       {/* this is for adding stuff too the accessory database */}
       {showAddMiscellaneous && (
