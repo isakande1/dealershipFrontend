@@ -39,7 +39,7 @@ const FinanceAgreementPDF = ({ financeTerms, userData, carInfos }) => {
               <Text>Status: {financeTerms.status}</Text>
               <Text>Loan Term: {loanTerm} Months</Text>
               <Text>Principal: ${financeTerms.terms.principal}</Text>
-              <Text>APR: {financeTerms.terms.apr}%</Text>
+              <Text>APR: {(financeTerms.terms.apr * 100).toFixed(2)}%</Text>
               <Text>Monthly Payment: ${financeTerms.terms.monthly_payment}</Text>
             </View>
             <View style={styles.footer}>
