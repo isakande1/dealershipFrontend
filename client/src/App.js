@@ -4185,66 +4185,7 @@ const Technician = () => {
     }
   }, [showAssignedServices]);
 
-  const handleAccept = (serviceRequestId) => {
-    const updatedRequest = {
-      status: 'accepted'
-    };
-  
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
-      .then(response => {
-        // Update UI if necessary
-        console.log('Service request accepted:', response.data);
-        fetchAssignedServices();
-      })
-      .catch(error => {
-        console.error('Error accepting service request:', error);
-      });
-  };
 
-  // The function below is in case we also want the technician to accept the service and have the service go into the customers cart
-  // const acceptService = (serviceRequestId) =>{
-  //   const serviceRequest = serviceRequests.find(service => service.service_request_id === serviceRequestId);
-  //   const formData = {
-  //     customer_id: serviceRequest.customer_id,
-  //     item_price: serviceRequest.service_price,
-  //     item_image: 'https://ibb.co/b64Kdyh',
-  //     item_name: serviceRequest.service_name,
-  //     car_id: serviceRequest.car_id,
-  //     service_offered_id: serviceRequest.service_offered_id
-  //   }
-  //   axios.post('/add_to_cart', formData)
-  //     .then(response => {
-  //       // Handle success response
-  //       console.log('Service added to cart successfully');
-  //       // You may want to update the UI or perform any additional actions here
-  //     })
-  //     .catch(error => {
-  //       // Handle error response
-  //       console.error('Failed to add service to cart:', error);
-  //     });
-  // }
-  
-  const handleDecline = (serviceRequestId) => {
-    const updatedRequest = {
-      status: 'declined'
-    };
-  
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
-      .then(response => {
-        // Update UI if necessary
-        console.log('Service request declined:', response.data);
-        fetchAssignedServices();
-      })
-      .catch(error => {
-        console.error('Error declining service request:', error);
-      });
-  };
-
-  const handleCloseModal = () => setDetailsModal(false);
-
-  // const handleAddAccessoryModalClose = () => {
-  //   setShowAddAccessoryModal(false);
-  // };
 
   const showDetailsModal = async (service) => {
     setSelectedService(service);
@@ -4336,7 +4277,7 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
   // };
 
   const fetchAssignedServices = () => {
-    axios.get('/show_assigned_services')
+    axios.get(`/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
         console.log(response.data); // Add this line
         setAssignedServices(response.data);
@@ -4393,32 +4334,16 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th style={{textAlign: 'center'}}>Assigned Service ID</th>
-                <th style={{textAlign: 'center'}}>Service</th>
-                <th style={{textAlign: 'center'}}>Assigned Technician</th>
-                <th style={{textAlign: 'center'}}>Status</th>
-                <th style={{textAlign: 'center'}}>Customer Information</th>
+                <th style={{textAlign: 'center'}}>Assigned Service ID </th>
               </tr>
             </thead>
             <tbody>
               {assignedServices.map(service => (
                 <tr key={service.assigned_service_id}>
                   <td style={{textAlign: 'center'}}>{service.assigned_service_id}</td>
-                  <td style={{textAlign: 'center'}}>{service.service_name}: {service.service_description}</td>
-                  <td style={{textAlign: 'center'}}>{`${service.technician_first_name} ${service.technician_last_name} (${service.technician_email})`}</td>
-                  <td style={{textAlign: 'center'}}>{service.status}</td>
-                  <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
+  
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
-                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
-                    <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
-                      Accept
-                    </Button>
-                  </td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
-                    <Button colorScheme="red" onClick={() => handleDecline(service.service_request_id)}>
-                      Decline
-                    </Button>
+
                   </td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
                     <Button colorScheme="blue" onClick={() => {showDetailsModal(service); handleButtonClick('checkTicketDetails');}}>
