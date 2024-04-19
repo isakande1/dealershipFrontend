@@ -4387,31 +4387,15 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
             <thead>
               <tr>
                 <th style={{textAlign: 'center'}}>Assigned Service ID</th>
-                <th style={{textAlign: 'center'}}>Service</th>
-                <th style={{textAlign: 'center'}}>Assigned Technician</th>
-                <th style={{textAlign: 'center'}}>Status</th>
-                <th style={{textAlign: 'center'}}>Customer Information</th>
               </tr>
             </thead>
             <tbody>
               {assignedServices.map(service => (
                 <tr key={service.assigned_service_id}>
                   <td style={{textAlign: 'center'}}>{service.assigned_service_id}</td>
-                  <td style={{textAlign: 'center'}}>{service.service_name}: {service.service_description}</td>
-                  <td style={{textAlign: 'center'}}>{`${service.technician_first_name} ${service.technician_last_name} (${service.technician_email})`}</td>
-                  <td style={{textAlign: 'center'}}>{service.status}</td>
-                  <td style={{textAlign: 'center'}}>{`${service.customer_first_name} ${service.customer_last_name} (${service.customer_phone})`}</td>
+  
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
-                    {/* The line below is in case we also want the technician to accept the service and have the service go into the customers cart
-                    <Button colorScheme="green" onClick={() => {handleAccept(service.service_request_id); acceptService(service.service_request_id);}}> */}
-                    <Button colorScheme="green" onClick={() => handleAccept(service.service_request_id)}>
-                      Accept
-                    </Button>
-                  </td>
-                  <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
-                    <Button colorScheme="red" onClick={() => handleDecline(service.service_request_id)}>
-                      Decline
-                    </Button>
+
                   </td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 0px'}}>
                     <Button colorScheme="blue" onClick={() => {showDetailsModal(service); handleButtonClick('checkTicketDetails');}}>
