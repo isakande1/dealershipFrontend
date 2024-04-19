@@ -2763,9 +2763,8 @@ return (
   );
 };
 
-// assigns a technician selected to do a particular job
 const AssignTechnicians = () => {
-  const [serviceRequests, setServiceRequests] = useState([]);
+  const [serviceRequests, setServiceRequests] = useState({ accepted: [], assigned: [] });
   const [availableTechnicians, setAvailableTechnicians] = useState([]);
   const [selectedServiceRequest, setSelectedServiceRequest] = useState('');
   const [selectedTechnician, setSelectedTechnician] = useState('');
@@ -2775,47 +2774,46 @@ const AssignTechnicians = () => {
     fetchServiceRequests();
   }, []);
 
-  // calls backend endpoint to get all services in the week
   const fetchServiceRequests = () => {
     axios.get('/get_upcoming_week_requests')
       .then(response => {
-        setServiceRequests(response.data.accepted_service_requests);
+        setServiceRequests({
+          accepted: response.data.accepted_service_requests,
+          assigned: response.data.assigned_service_requests
+        });
       })
       .catch(error => {
         console.error('Error fetching service requests:', error);
-        setServiceRequests([]);
-      });
-  };
-
-  // call backend endpoint to return all available technicians 
-  const fetchTechniciansForRequest = (serviceRequestId, date) => {
-    setIsDateSelected(true); 
-    axios.get(`/get_available_technicians?date=${date}`)
-      .then(response => {
-        setAvailableTechnicians(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching technicians:', error);
-        setAvailableTechnicians([]); 
+        setServiceRequests({ accepted: [], assigned: [] });
       });
   };
 
   const handleServiceRequestChange = (event) => {
     const selectedId = event.target.value;
-    const selectedRequest = serviceRequests.find(req => req.service_request_id.toString() === selectedId);
+    setSelectedServiceRequest(selectedId);
+    
+    // Attempt to find the request in both 'accepted' and 'assigned' arrays
+    let selectedRequest = serviceRequests.accepted.find(req => req.service_request_id.toString() === selectedId);
+    if (!selectedRequest) {
+      selectedRequest = serviceRequests.assigned.find(req => req.service_request_id.toString() === selectedId);
+    }
+  
     if (selectedRequest) {
-      setSelectedServiceRequest(selectedId);
-      setSelectedTechnician(''); 
-      fetchTechniciansForRequest(selectedId, selectedRequest.date);
+      setIsDateSelected(true);
+      axios.get(`/get_available_technicians?date=${selectedRequest.date_time.split(' ')[0]}`)
+        .then(response => {
+          setAvailableTechnicians(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching technicians:', error);
+          setAvailableTechnicians([]);
+        });
     } else {
-      setSelectedServiceRequest('');
-      setSelectedTechnician('');
+      setIsDateSelected(false);
       setAvailableTechnicians([]);
-      setIsDateSelected(false); 
     }
   };
 
-  // ensures selections are made before assigning a technician
   const handleAssignTechnician = () => {
     if (!selectedTechnician || !selectedServiceRequest) {
       alert('Please select both a service request and a technician');
@@ -2827,11 +2825,12 @@ const AssignTechnicians = () => {
       service_request_id: selectedServiceRequest
     }).then(() => {
       alert('Technician assigned successfully');
-      // Reset selections when a technician is successfully assigned 
-      setSelectedServiceRequest('');  
+      // Clear selections and reset state
+      setSelectedServiceRequest('');
       setSelectedTechnician('');
-      setAvailableTechnicians([]);   
-      fetchServiceRequests();        
+      setIsDateSelected(false);
+      // Refresh data
+      fetchServiceRequests();
     }).catch(error => {
       console.error('Error assigning technician:', error);
     });
@@ -2839,31 +2838,39 @@ const AssignTechnicians = () => {
 
   return (
     <Box width='75%' position="absolute" top='10%' right='calc(2% + 0px)'>
-    <Text fontSize="5xl" color="white" fontWeight="bold">Upcoming Service Requests</Text>
-    <Select placeholder="Select Service Request" color="grey" marginTop="20px"
-      value={selectedServiceRequest} 
-      onChange={handleServiceRequestChange}>
-      {serviceRequests.map(req => (
-        <option key={req.service_request_id} value={req.service_request_id}>
-          {req.date} - {req.service_name} - {req.technician_name}
-        </option>
-      ))}
-    </Select>
-    {availableTechnicians.length > 0 ? (
-      <Select placeholder="Select Technician" color="grey" marginTop="20px"
-        value={selectedTechnician} 
-        onChange={e => setSelectedTechnician(e.target.value)}>
-        {availableTechnicians.map(tech => (
-          <option key={tech.technician_id} value={tech.technician_id}>
-            {tech.full_name} - Jobs: {tech.job_count}
-          </option>
-        ))}
+      <Text fontSize="5xl" marginTop="13px" color="white" fontWeight="bold">Assign Technicians</Text>
+      <Select placeholder="Select Service Request" color="grey" marginTop="20px" onChange={handleServiceRequestChange} value={selectedServiceRequest}>
+        <optgroup label="Service Requests">
+          {serviceRequests.accepted.map(req => (
+            <option key={req.service_request_id} value={req.service_request_id}>
+              {req.date_time} - {req.service_name} - {req.technician_name} ({req.car_info.year} {req.car_info.make} {req.car_info.model})
+            </option>
+          ))}
+        </optgroup>
+        <optgroup label="Service Requests With Assigned Technicians" disabled>
+          {serviceRequests.assigned.map(req => (
+            <option key={req.service_request_id} value={req.service_request_id} disabled={true}>
+              {req.date_time} - {req.service_name} - {req.technician_name} ({req.car_info.year} {req.car_info.make} {req.car_info.model})
+            </option>
+          ))}
+        </optgroup>
       </Select>
-    ) : null}
-    <Button colorScheme="green" marginTop="20px" onClick={handleAssignTechnician}>Assign Technician</Button>
-  </Box>
+      {isDateSelected && availableTechnicians.length > 0 ? (
+        <Select placeholder="Select Technician" color="grey" marginTop="20px" onChange={e => setSelectedTechnician(e.target.value)} value={selectedTechnician}>
+          {availableTechnicians.map(tech => (
+            <option key={tech.technician_id} value={tech.technician_id}>
+              {tech.full_name} - Jobs: {tech.job_count}
+            </option>
+          ))}
+        </Select>
+      ) : isDateSelected ? (
+        <Text color="red">No Technicians Available</Text>
+      ) : null}
+      <Button colorScheme="green" marginTop="20px" onClick={handleAssignTechnician}>Assign Technician</Button>
+    </Box>
   );
 };
+
 
 // component for displaying the manager dashboard ui
 const Manager = () => {
