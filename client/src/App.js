@@ -4178,6 +4178,7 @@ const Technician = () => {
   const [selectedService, setSelectedService] = useState(null);
   const [serviceDetails, setServiceDetails] = useState(null);
   const [report, setReport] = useState('');
+  const [isReportSubmitted, setIsReportSubmitted] = useState(false);
   
   useEffect(() => {
     if (showAssignedServices) {
@@ -4215,9 +4216,8 @@ const handleSubmitReport = () => {
   // Retrieve the value of the input textbox
   const reportValue = document.getElementById('report').value;
   console.log("report is: ", reportValue)
-
-  // Send the report value and assigned_service_id to the backend
-  sendSubmitReport(reportValue, 'serviced',serviceDetails[0].service_request_id ,selectedService.assigned_service_id);
+  setIsReportSubmitted(true);
+  sendSubmitReport(reportValue, 'serviced-closed',serviceDetails[0].service_request_id ,selectedService.assigned_service_id);
 };
 
 const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
@@ -4369,10 +4369,18 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
           <Text>Service ID: {serviceDetails[0].service_request_id}</Text>
           <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
           <Text>Price: ${serviceDetails[0].service_price}</Text>
+          <Text>Report: {serviceDetails[0].report}</Text>
           <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
-            <Input id="report" placeholder="Leave feedback" value={report} onChange={(e) => setReport(e.target.value)} />
+          <Input
+              id="report"
+              placeholder="Report"
+              value={report}
+              required
+              onChange={(e) => setReport(e.target.value)}
+              style={{ opacity: isReportSubmitted ? 0.5 : 1, pointerEvents: isReportSubmitted ? 'none' : 'auto' }}
+/>
           </Flex>
-          <Button onClick={handleSubmitReport} colorScheme="green">Submit Report And close ticket</Button>
+          <Button onClick={handleSubmitReport} colorScheme="green">Close ticket</Button>
         </Box>
       )}
     </>
