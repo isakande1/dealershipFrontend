@@ -12,7 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -68,6 +68,7 @@ function App() {
               <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
               <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
+              <Route path='/checkout' element={<Checkout />}></Route>
             </Routes>
           </Box>
         </Flex>
@@ -401,6 +402,80 @@ const FilterCarsSearch = ({ handleSearch }) => {
     </Flex>
   );
 };
+
+const Checkout = () => {
+  const location = useLocation();
+  const totalPrice = location.state?.totalPrice;
+  console.log("Received Total Price:", totalPrice);
+
+  return (
+    <>
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height="100vh"
+        bgGradient="linear(to-b, black, gray.600)"
+      >
+        <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="20%" marginLeft="75%" height="90vh" position="absolute" marginTop="35px" borderRadius="xl">
+          <Flex justifyContent="center">
+            <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
+            <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
+          </Flex>
+          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
+          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: </Text>
+          <Button borderColor="black" width="90%" marginLeft="15px" marginTop="20px">Purchase</Button>
+        </Box>
+        <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
+          <Text fontWeight="bold" fontSize="5xl" marginLeft="30px" color="black">Checkout</Text>
+          <Box p="6">
+            <Flex gap={5}>
+              <FormControl id="name">
+                <FormLabel color="black">Name</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }}/>
+              </FormControl>
+              <FormControl id="email">
+                <FormLabel color="black">Email</FormLabel>
+                <Input type="email" color="black"style={{ borderColor: "black" }}/>
+              </FormControl>
+            </Flex>
+            <Flex gap={5}>
+              <FormControl id="phone" mt={4}>
+                <FormLabel color="black">Phone number</FormLabel>
+                <Input type="tel" color="black" style={{ borderColor: "black" }}/>
+              </FormControl>
+              <FormControl id="address" mt={4}>
+                <FormLabel color="black">Address</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }} />
+              </FormControl>
+            </Flex>
+            <Flex gap={5}>
+              <FormControl id="city" mt={4}>
+                <FormLabel color="black">City</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }} />
+              </FormControl>
+              <FormControl id="zip" mt={4}>
+                <FormLabel color="black">Zip Code</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }} />
+              </FormControl>
+            </Flex>
+            <Flex gap={5}>
+              <FormControl id="state" mt={4}>
+                <FormLabel color="black">State</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }} />
+              </FormControl>
+              <FormControl id="country" mt={4}>
+                <FormLabel color="black">Country</FormLabel>
+                <Input type="text" color="black" style={{ borderColor: "black" }} />
+              </FormControl>
+            </Flex>
+          </Box>
+        </Box>
+      </Box>
+    </>
+  )
+}
 
 // this will be the homepage for when the user has not logged in to their account
 const Homepage = () => {
@@ -1293,7 +1368,6 @@ const ServiceHistory = () => {
   );
 };
 
-
 const CustomerCart = () => {
   const location = useLocation();
   const userData = location.state?.userData;
@@ -1435,7 +1509,9 @@ const handleNavigate = (path) => {
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
             </Text>
-            <Button mt={4} colorScheme="blue">Checkout</Button>
+            <Link to={{pathname: "/checkout", state: { totalPrice: totalPrice.toFixed(2) }}}>
+              <Button mt={4} colorScheme="blue">Checkout</Button>
+            </Link>
           </>
         ) : (
           <Text color="White">No items in the cart.</Text>
@@ -2821,20 +2897,21 @@ const AssignTechnicians = () => {
     }
   
     axios.post('/assign_technicians', {
-      technician_id: selectedTechnician,
-      service_request_id: selectedServiceRequest
+        technician_id: selectedTechnician,
+        service_request_id: selectedServiceRequest
     }).then(() => {
-      alert('Technician assigned successfully');
-      // Clear selections and reset state
-      setSelectedServiceRequest('');
-      setSelectedTechnician('');
-      setIsDateSelected(false);
-      // Refresh data
-      fetchServiceRequests();
+        alert('Technician assigned successfully');
+        fetchServiceRequests(); // Refresh data
+        setSelectedServiceRequest(''); // Clear selected service request
+        setSelectedTechnician(''); // Clear selected technician
     }).catch(error => {
-      console.error('Error assigning technician:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+            alert(error.response.data.error);
+        } else {
+            console.error('Error assigning technician:', error);
+        }
     });
-  };
+};
 
   return (
     <Box width='75%' position="absolute" top='10%' right='calc(2% + 0px)'>
