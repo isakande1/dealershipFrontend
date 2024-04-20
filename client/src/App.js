@@ -2206,6 +2206,13 @@ const CustomerModifyInfo = () => {
   const userData = location.state?.userData;
   const navigate = useNavigate();
   const [EditMessage, setEditMessage] = useState('');
+  const [bankInfo, setBankInfo] = useState({
+    bank_name: '',
+    account_number: '',
+    routing_number: '',
+  });
+  const [loading, setLoading] = useState(true);
+
 
   const handleSignOut = () => {
     sessionStorage.clear(); //remove data in session
@@ -2223,6 +2230,27 @@ const CustomerModifyInfo = () => {
     usernames: userData?.usernames || '',
   });
 
+  const fetchBankInfo = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/get-customer-bank_info/${userData?.customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch bank info');
+      }
+      const data = await response.json();
+      console.log(data);
+      const bankInfoData = data[0]; 
+      setBankInfo(bankInfoData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBankInfo();
+  }, [userData?.customer_id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedData((prevData) => ({
@@ -2230,6 +2258,25 @@ const CustomerModifyInfo = () => {
       [name]: value,
     }));
   };
+
+  const handleBankInfoSubmission = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/add-customer-bank_info/${userData?.customer_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bankInfo),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit bank info');
+      }
+      console.log('Bank info submitted successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
 
   const handleEdit = async () => {
     try {
@@ -2311,6 +2358,7 @@ const CustomerModifyInfo = () => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      overflowY="auto"
     >
       <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
@@ -2359,14 +2407,30 @@ const CustomerModifyInfo = () => {
           </FormControl>
         </Flex>
 
-        {/* Password (Kept alone due to sensitivity) */}
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+          <FormLabel htmlFor='bank_name' color='black'>Bank Name</FormLabel>
+          <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
+        </FormControl>
         <FormControl mb={4}>
+          <FormLabel htmlFor='account_number' color='black'>Account Number</FormLabel>
+          <Input id='account_number' type='text' name='account_number' value={bankInfo.account_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, account_number: e.target.value })} />
+        </FormControl>
+        </Flex>
+
+        <FormControl mb={1}>
+          <FormLabel htmlFor='routing_number' color='black'>Routing Number</FormLabel>
+          <Input id='routing_number' type='text' name='routing_number' value={bankInfo.routing_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, routing_number: e.target.value })} />
+        </FormControl>
+     
+        <FormControl mb={1}>
           <FormLabel htmlFor='password' color='black'>Password</FormLabel>
           <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
         </FormControl>
 
         {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-        <Button colorScheme='blue' width="20%" onClick={handleEdit}>Save</Button>
+        <Button colorScheme='blue' width="20%" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
       </form>
     </Flex>
     </Box>
