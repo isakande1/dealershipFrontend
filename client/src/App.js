@@ -3009,7 +3009,7 @@ const AssignTechnicians = () => {
   }, []);
 
   const fetchServiceRequests = () => {
-    axios.get('/get_upcoming_week_requests')
+    axios.get('http://localhost:5000/get_upcoming_week_requests')
       .then(response => {
         setServiceRequests({
           accepted: response.data.accepted_service_requests,
@@ -3034,7 +3034,7 @@ const AssignTechnicians = () => {
   
     if (selectedRequest) {
       setIsDateSelected(true);
-      axios.get(`/get_available_technicians?date=${selectedRequest.date_time.split(' ')[0]}`)
+      axios.get(`http://localhost:5000/get_available_technicians?date=${selectedRequest.date_time.split(' ')[0]}`)
         .then(response => {
           setAvailableTechnicians(response.data);
         })
@@ -3054,7 +3054,7 @@ const AssignTechnicians = () => {
       return;
     }
   
-    axios.post('/assign_technicians', {
+    axios.post('http://localhost:5000/assign_technicians', {
         technician_id: selectedTechnician,
         service_request_id: selectedServiceRequest
     }).then(() => {

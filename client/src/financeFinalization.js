@@ -37,6 +37,38 @@ export default function FinalizeFinance () {
             
             if (response.status === 200 || response.status === 201) {
                 console.log('userData', userData)
+
+                const response2 = await fetch('http://localhost:5000/saveFinanceApplication', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        first_name: userData.first_name,
+                        last_name: userData.last_name,
+                        email: userData.email,
+                        address: userData.Address,
+                        phone_number: userData.phone,
+                        car_year: carInfos.year,
+                        car_make: carInfos.make,
+                        car_model: carInfos.model,
+                        car_price: carInfos.year,
+                        credit_score: financeTerms.credit_score,
+                        finance_decision: financeTerms.status,
+                        loan_term: financeTerms.terms.loan_term,
+                        loan_apr: financeTerms.terms.apr,
+                        loan_monthly_payment: financeTerms.terms.monthly_payment
+                    }),
+                });
+
+                //console.log("Application to be saved: ", response2.body);
+                if (response2.ok) {
+                    const data = await response2.json();
+                    console.log(data); // This should now contain the data returned by the server
+                } else {
+                    console.error('Error saving application:', response2.statusText);
+                }
+
                 navigate('/Addons', {
                     state: {
                         userData: userData,
