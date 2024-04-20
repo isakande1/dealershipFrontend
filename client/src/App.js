@@ -2282,6 +2282,13 @@ const CustomerModifyInfo = () => {
   const userData = location.state?.userData;
   const navigate = useNavigate();
   const [EditMessage, setEditMessage] = useState('');
+  const [bankInfo, setBankInfo] = useState({
+    bank_name: '',
+    account_number: '',
+    routing_number: '',
+  });
+  const [loading, setLoading] = useState(true);
+
 
   const handleSignOut = () => {
     sessionStorage.clear(); //remove data in session
@@ -2299,6 +2306,27 @@ const CustomerModifyInfo = () => {
     usernames: userData?.usernames || '',
   });
 
+  const fetchBankInfo = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/get-customer-bank_info/${userData?.customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch bank info');
+      }
+      const data = await response.json();
+      console.log(data);
+      const bankInfoData = data[0]; 
+      setBankInfo(bankInfoData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBankInfo();
+  }, [userData?.customer_id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedData((prevData) => ({
@@ -2306,6 +2334,25 @@ const CustomerModifyInfo = () => {
       [name]: value,
     }));
   };
+
+  const handleBankInfoSubmission = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/add-customer-bank_info/${userData?.customer_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bankInfo),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit bank info');
+      }
+      console.log('Bank info submitted successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
 
   const handleEdit = async () => {
     try {
@@ -2387,6 +2434,7 @@ const CustomerModifyInfo = () => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      overflowY="auto"
     >
       <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
@@ -2435,14 +2483,30 @@ const CustomerModifyInfo = () => {
           </FormControl>
         </Flex>
 
-        {/* Password (Kept alone due to sensitivity) */}
+        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+          
+          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+          <FormLabel htmlFor='bank_name' color='black'>Bank Name</FormLabel>
+          <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
+        </FormControl>
         <FormControl mb={4}>
+          <FormLabel htmlFor='account_number' color='black'>Account Number  (16 digts) </FormLabel>
+          <Input id='account_number' type='text' name='account_number' value={bankInfo.account_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, account_number: e.target.value })} />
+        </FormControl>
+        </Flex>
+
+        <FormControl mb={1}>
+          <FormLabel htmlFor='routing_number' color='black'>Routing Number ( 9 digits)</FormLabel>
+          <Input id='routing_number' type='text' name='routing_number' value={bankInfo.routing_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, routing_number: e.target.value })} />
+        </FormControl>
+     
+        <FormControl mb={1}>
           <FormLabel htmlFor='password' color='black'>Password</FormLabel>
           <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
         </FormControl>
 
         {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-        <Button colorScheme='blue' width="20%" onClick={handleEdit}>Save</Button>
+        <Button colorScheme='blue' width="20%" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
       </form>
     </Flex>
     </Box>
@@ -2602,6 +2666,10 @@ const Login = () => {
               <label htmlFor="email">Email:</label>
               <input type="email" id="email" name="email" required />
             </div>
+            <div className="form-group">
+            <label htmlFor="social_security">Social Security:</label>
+          <input type="number" id="social_security" name="social_security" pattern="[0-9]{9}" placeholder="Enter 9 digits" required />
+          </div>
             <div className="form-group">
               <label htmlFor="phone">Phone:</label>
               <input type="text" id="phone" name="phone" required />
@@ -4255,6 +4323,7 @@ const Technician = () => {
   const [selectedService, setSelectedService] = useState(null);
   const [serviceDetails, setServiceDetails] = useState(null);
   const [report, setReport] = useState('');
+  const [isReportSubmitted, setIsReportSubmitted] = useState(false);
   
   useEffect(() => {
     if (showAssignedServices) {
@@ -4267,14 +4336,14 @@ const Technician = () => {
   const showDetailsModal = async (service) => {
     setSelectedService(service);
     try {
-        // Send API call
+        
         console.log("assigned service id", service.assigned_service_id);
         const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
 
-        // Assign response data to service details
+       
         const details = response.data;
 
-        // Check log to see if the data transferred 
+        
         console.log("this is the data received: ", details);
 
         // Update state variables
@@ -4292,12 +4361,11 @@ const handleSubmitReport = () => {
   // Retrieve the value of the input textbox
   const reportValue = document.getElementById('report').value;
   console.log("report is: ", reportValue)
-
-  // Send the report value and assigned_service_id to the backend
-  sendSubmitReport(reportValue, selectedService.assigned_service_id);
+  setIsReportSubmitted(true);
+  sendSubmitReport(reportValue, 'serviced-closed',serviceDetails[0].service_request_id ,selectedService.assigned_service_id);
 };
 
-const sendSubmitReport = (reportValue, assignedServiceId) => {
+const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
   // Perform an HTTP request to send the report value and assigned_service_id to the backend
   // Example using Fetch API:
   fetch('/submitReport', {
@@ -4305,7 +4373,7 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ report: reportValue, assigned_service_id: assignedServiceId })
+    body: JSON.stringify({ report: reportValue, status: statusValue, request_id:service_request_id ,assigned_service_id: assignedServiceId })
   })
   .then(response => {
     if (!response.ok) {
@@ -4356,7 +4424,7 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
   const fetchAssignedServices = () => {
     axios.get(`/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
-        console.log(response.data); // Add this line
+        console.log(response.data); 
         setAssignedServices(response.data);
       })
       .catch(error => {
@@ -4412,13 +4480,14 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
             <thead>
               <tr>
                 <th style={{textAlign: 'center'}}>Assigned Service ID </th>
+                <th style={{textAlign: 'center'}}>Service Status:</th>
               </tr>
             </thead>
             <tbody>
               {assignedServices.map(service => (
                 <tr key={service.assigned_service_id}>
                   <td style={{textAlign: 'center'}}>{service.assigned_service_id}</td>
-  
+                  <td style={{textAlign: 'center'}}>{service.status}</td>
                   <td style={{textAlign: 'center', padding:'0px 0px 20px 10px'}}>
 
                   </td>
@@ -4438,19 +4507,25 @@ const sendSubmitReport = (reportValue, assignedServiceId) => {
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
           {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
           <Heading as="h1" size="lg">Ticket Details</Heading>
-          <Text>Assigned Service ID: {selectedService.assigned_service_id}</Text>
           <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
           <Text>Customer Name: {`${selectedService.customer_first_name} ${selectedService.customer_last_name}`}</Text>
           <Text>Customer Contact Number: {`${selectedService.customer_phone}`}</Text>
           <Text>Car Details: {serviceDetails[0].car_make} {serviceDetails[0].car_model}</Text>
-          <Text>Service ID: {serviceDetails[0].assigned_service_id}</Text>
+          <Text>Service ID: {serviceDetails[0].service_request_id}</Text>
           <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
-          <Text>Service Status: {selectedService.status}</Text>
           <Text>Price: ${serviceDetails[0].service_price}</Text>
+          <Text>Report: {serviceDetails[0].report}</Text>
           <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
-            <Input id="report" placeholder="Leave feedback" value={report} onChange={(e) => setReport(e.target.value)} />
+          <Input
+              id="report"
+              placeholder="Report"
+              value={report}
+              required
+              onChange={(e) => setReport(e.target.value)}
+              style={{ opacity: isReportSubmitted ? 0.5 : 1, pointerEvents: isReportSubmitted ? 'none' : 'auto' }}
+/>
           </Flex>
-          <Button onClick={handleSubmitReport} colorScheme="green">Submit Report</Button>
+          <Button onClick={handleSubmitReport} colorScheme="green">Close ticket</Button>
         </Box>
       )}
     </>
