@@ -2394,6 +2394,7 @@ const CustomerModifyInfo = () => {
     Address: userData?.Address || '',
     password: userData?.password || '',
     usernames: userData?.usernames || '',
+    social_security: userData?.social_security || '',
   });
 
   const fetchBankInfo = async () => {
@@ -2548,7 +2549,10 @@ const CustomerModifyInfo = () => {
             <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
           </FormControl>
         </Flex>
-
+        <FormControl pl={{ base: 0, sm: 2 }} flex="1">
+            <FormLabel htmlFor='social_security' color='black'>Social Security</FormLabel>
+            <Input id='social_security' type='text' color='red' name='social_security' value={editedData.social_security} onChange={handleInputChange} isReadOnly />
+          </FormControl>
         <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
           {/* User Name and Email */}
           <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
