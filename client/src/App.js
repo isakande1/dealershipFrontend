@@ -3001,6 +3001,7 @@ return (
   );
 };
 
+// component to handle assigning a technician to a service request as long as there is no time conflicts
 const AssignTechnicians = () => {
   const [serviceRequests, setServiceRequests] = useState({ accepted: [], assigned: [] });
   const [availableTechnicians, setAvailableTechnicians] = useState([]);
@@ -3015,10 +3016,8 @@ const AssignTechnicians = () => {
   const fetchServiceRequests = () => {
     axios.get('/get_upcoming_week_requests')
       .then(response => {
-        setServiceRequests({
-          accepted: response.data.accepted_service_requests,
-          assigned: response.data.assigned_service_requests
-        });
+        const { accepted_service_requests, assigned_service_requests } = response.data;
+        setServiceRequests({ accepted: accepted_service_requests || [], assigned: assigned_service_requests || [] });
       })
       .catch(error => {
         console.error('Error fetching service requests:', error);
@@ -3029,16 +3028,13 @@ const AssignTechnicians = () => {
   const handleServiceRequestChange = (event) => {
     const selectedId = event.target.value;
     setSelectedServiceRequest(selectedId);
-    
-    // Attempt to find the request in both 'accepted' and 'assigned' arrays
+
+    // if the status is accepted, allow manager to select the service request and assign a technician to it
     let selectedRequest = serviceRequests.accepted.find(req => req.service_request_id.toString() === selectedId);
-    if (!selectedRequest) {
-      selectedRequest = serviceRequests.assigned.find(req => req.service_request_id.toString() === selectedId);
-    }
-  
+    setIsDateSelected(!!selectedRequest);
+
     if (selectedRequest) {
-      setIsDateSelected(true);
-      axios.get(`/get_available_technicians?date=${selectedRequest.date_time.split(' ')[0]}`)
+      axios.get(`/get_available_technicians?date=${selectedRequest.date}`)
         .then(response => {
           setAvailableTechnicians(response.data);
         })
@@ -3047,7 +3043,6 @@ const AssignTechnicians = () => {
           setAvailableTechnicians([]);
         });
     } else {
-      setIsDateSelected(false);
       setAvailableTechnicians([]);
     }
   };
@@ -3057,39 +3052,38 @@ const AssignTechnicians = () => {
       alert('Please select both a service request and a technician');
       return;
     }
-  
+
     axios.post('/assign_technicians', {
-        technician_id: selectedTechnician,
-        service_request_id: selectedServiceRequest
-    }).then(() => {
-        alert('Technician assigned successfully');
-        fetchServiceRequests(); // Refresh data
-        setSelectedServiceRequest(''); // Clear selected service request
-        setSelectedTechnician(''); // Clear selected technician
+      technician_id: selectedTechnician,
+      service_request_id: selectedServiceRequest
+    }).then(response => {
+      alert('Technician assigned successfully');
+      fetchServiceRequests();  
+      setSelectedServiceRequest(''); // upon successful technician creation, reset field
+      setSelectedTechnician(''); // upon successful technician creation, reset field
+      setIsDateSelected(false); 
     }).catch(error => {
-        if (error.response && error.response.data && error.response.data.error) {
-            alert(error.response.data.error);
-        } else {
-            console.error('Error assigning technician:', error);
-        }
+      const errorMessage = error.response?.data?.error || 'Error assigning technician';
+      alert(errorMessage);
+      console.error('Error assigning technician:', error);
     });
-};
+  };
 
   return (
     <Box width='75%' position="absolute" top='10%' right='calc(2% + 0px)'>
       <Text fontSize="5xl" marginTop="13px" color="white" fontWeight="bold">Assign Technicians</Text>
       <Select placeholder="Select Service Request" color="grey" marginTop="20px" onChange={handleServiceRequestChange} value={selectedServiceRequest}>
-        <optgroup label="Service Requests">
+        <optgroup label="Pending Service Requests">
           {serviceRequests.accepted.map(req => (
             <option key={req.service_request_id} value={req.service_request_id}>
-              {req.date_time} - {req.service_name} - {req.technician_name} ({req.car_info.year} {req.car_info.make} {req.car_info.model})
+              {`${req.date_time} - ${req.service_name} - ${req.technician_name} - ${req.car_info.make} ${req.car_info.model} ${req.car_info.year}`}
             </option>
           ))}
         </optgroup>
         <optgroup label="Service Requests With Assigned Technicians" disabled>
           {serviceRequests.assigned.map(req => (
             <option key={req.service_request_id} value={req.service_request_id} disabled={true}>
-              {req.date_time} - {req.service_name} - {req.technician_name} ({req.car_info.year} {req.car_info.make} {req.car_info.model})
+              {`${req.date_time} - ${req.service_name} - ${req.technician_name} - ${req.car_info.make} ${req.car_info.model} ${req.car_info.year}`}
             </option>
           ))}
         </optgroup>
@@ -3105,11 +3099,10 @@ const AssignTechnicians = () => {
       ) : isDateSelected ? (
         <Text color="red">No Technicians Available</Text>
       ) : null}
-      <Button colorScheme="green" marginTop="20px" onClick={handleAssignTechnician}>Assign Technician</Button>
+      <Button colorScheme="green" marginTop="20px" onClick={handleAssignTechnician} disabled={!selectedTechnician || !selectedServiceRequest}>Assign Technician</Button>
     </Box>
   );
 };
-
 
 // component for displaying the manager dashboard ui
 const Manager = () => {
