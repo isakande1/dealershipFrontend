@@ -2414,13 +2414,13 @@ const CustomerModifyInfo = () => {
           <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
         </FormControl>
         <FormControl mb={4}>
-          <FormLabel htmlFor='account_number' color='black'>Account Number</FormLabel>
+          <FormLabel htmlFor='account_number' color='black'>Account Number  (16 digts) </FormLabel>
           <Input id='account_number' type='text' name='account_number' value={bankInfo.account_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, account_number: e.target.value })} />
         </FormControl>
         </Flex>
 
         <FormControl mb={1}>
-          <FormLabel htmlFor='routing_number' color='black'>Routing Number</FormLabel>
+          <FormLabel htmlFor='routing_number' color='black'>Routing Number ( 9 digits)</FormLabel>
           <Input id='routing_number' type='text' name='routing_number' value={bankInfo.routing_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, routing_number: e.target.value })} />
         </FormControl>
      
@@ -2590,6 +2590,10 @@ const Login = () => {
               <label htmlFor="email">Email:</label>
               <input type="email" id="email" name="email" required />
             </div>
+            <div className="form-group">
+            <label htmlFor="social_security">Social Security:</label>
+          <input type="number" id="social_security" name="social_security" pattern="[0-9]{9}" placeholder="Enter 9 digits" required />
+          </div>
             <div className="form-group">
               <label htmlFor="phone">Phone:</label>
               <input type="text" id="phone" name="phone" required />
