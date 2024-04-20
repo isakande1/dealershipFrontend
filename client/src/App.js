@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import {
   Center, Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
-  AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal,
+  AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
   ModalOverlay,
   ModalContent,
   ModalHeader,
@@ -69,6 +69,7 @@ function App() {
               <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
               <Route path='/checkout' element={<Checkout />}></Route>
+              <Route path='/checkoutSuccess' element={<CheckoutSuccess />}></Route>
             </Routes>
           </Box>
         </Flex>
@@ -403,10 +404,75 @@ const FilterCarsSearch = ({ handleSearch }) => {
   );
 };
 
+const CheckoutSuccess = () => {
+
+}
+
+// checkout page with form to enter personal information and select account for payment
 const Checkout = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const totalPrice = location.state?.totalPrice;
-  console.log("Received Total Price:", totalPrice);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    zip: '',
+    state: '',
+    country: '',
+    paymentMethod: ''
+  });
+  const [errors, setErrors] = useState({});
+  const storedData = sessionStorage?.getItem('data');
+  const parsedData = JSON.parse(storedData);
+  const customer_id = parsedData?.['customer_id'];
+
+  useEffect(() => {
+    const fetchBankAccounts = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/get_customer_bank_details?customer_id=${customer_id}`);
+        if (!response.ok) throw new Error('Failed to fetch bank accounts');
+        const data = await response.json();
+        setBankAccounts(data.length ? data : []);
+      } catch (error) {
+        console.error('Error fetching bank accounts:', error);
+      }
+    };
+
+    fetchBankAccounts();
+  }, [customer_id]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear errors on input change
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: null });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = {};
+
+    // Validate inputs
+    Object.keys(formData).forEach(key => {
+      if (!formData[key]) {
+        newErrors[key] = `Please enter your ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`;
+      }
+    });
+
+    setErrors(newErrors);
+
+    // Check if there are no errors
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Form is valid, processing payment...");
+      navigate('/checkoutSuccess');
+    }
+  };
 
   return (
     <>
@@ -424,54 +490,77 @@ const Checkout = () => {
           </Flex>
           <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice}</Text>
           <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
-          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: </Text>
-          <Button borderColor="black" width="90%" marginLeft="15px" marginTop="20px">Purchase</Button>
+          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice}</Text>
         </Box>
-        <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
-          <Text fontWeight="bold" fontSize="5xl" marginLeft="30px" color="black">Checkout</Text>
-          <Box p="6">
-            <Flex gap={5}>
-              <FormControl id="name">
-                <FormLabel color="black">Name</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }}/>
-              </FormControl>
-              <FormControl id="email">
-                <FormLabel color="black">Email</FormLabel>
-                <Input type="email" color="black"style={{ borderColor: "black" }}/>
-              </FormControl>
-            </Flex>
-            <Flex gap={5}>
-              <FormControl id="phone" mt={4}>
-                <FormLabel color="black">Phone number</FormLabel>
-                <Input type="tel" color="black" style={{ borderColor: "black" }}/>
-              </FormControl>
-              <FormControl id="address" mt={4}>
-                <FormLabel color="black">Address</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }} />
-              </FormControl>
-            </Flex>
-            <Flex gap={5}>
-              <FormControl id="city" mt={4}>
-                <FormLabel color="black">City</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }} />
-              </FormControl>
-              <FormControl id="zip" mt={4}>
-                <FormLabel color="black">Zip Code</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }} />
-              </FormControl>
-            </Flex>
-            <Flex gap={5}>
-              <FormControl id="state" mt={4}>
-                <FormLabel color="black">State</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }} />
-              </FormControl>
-              <FormControl id="country" mt={4}>
-                <FormLabel color="black">Country</FormLabel>
-                <Input type="text" color="black" style={{ borderColor: "black" }} />
-              </FormControl>
-            </Flex>
+        <form onSubmit={handleSubmit}>
+          <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
+            <Text fontWeight="bold" fontSize="5xl" marginLeft="30px" color="black">Checkout</Text>
+            <Box p="6">
+              <Flex wrap="wrap" justifyContent="space-between" marginTop="-20px">
+                <Flex width="100%" justifyContent="space-between" mb={1}>
+                  <FormControl isInvalid={!!errors.name} flexBasis="48%">
+                    <FormLabel color="black">Name</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.name} name="name" style={{borderColor:"black"}}/>
+                    {!!errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
+                  </FormControl>
+                  <FormControl isInvalid={!!errors.email} flexBasis="48%">
+                    <FormLabel color="black">Email</FormLabel>
+                    <Input type="email" color="black" onChange={handleInputChange} value={formData.email} name="email" style={{borderColor:"black"}}/>
+                    {!!errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
+                  </FormControl>
+                </Flex>
+                <Flex width="100%" justifyContent="space-between" mb={1}>
+                  <FormControl isInvalid={!!errors.phone} flexBasis="48%">
+                    <FormLabel color="black">Phone number</FormLabel>
+                    <Input type="tel" color="black" onChange={handleInputChange} value={formData.phone} name="phone" style={{borderColor:"black"}}/>
+                    {!!errors.phone && <FormErrorMessage>{errors.phone}</FormErrorMessage>}
+                  </FormControl>
+                  <FormControl isInvalid={!!errors.address} flexBasis="48%">
+                    <FormLabel color="black">Address</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.address} name="address" style={{borderColor:"black"}}/>
+                    {!!errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
+                  </FormControl>
+                </Flex>
+                <Flex width="100%" justifyContent="space-between" mb={1}>
+                  <FormControl isInvalid={!!errors.city} flexBasis="48%">
+                    <FormLabel color="black">City</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.city} name="city" style={{borderColor:"black"}}/>
+                    {!!errors.city && <FormErrorMessage>{errors.city}</FormErrorMessage>}
+                  </FormControl>
+                  <FormControl isInvalid={!!errors.zip} flexBasis="48%">
+                    <FormLabel color="black">Zip Code</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.zip} name="zip" style={{borderColor:"black"}}/>
+                    {!!errors.zip && <FormErrorMessage>{errors.zip}</FormErrorMessage>}
+                  </FormControl>
+                </Flex>
+                <Flex width="100%" justifyContent="space-between" mb={1}>
+                  <FormControl isInvalid={!!errors.state} flexBasis="48%">
+                    <FormLabel color="black">State</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.state} name="state" style={{borderColor:"black"}}/>
+                    {!!errors.state && <FormErrorMessage>{errors.state}</FormErrorMessage>}
+                  </FormControl>
+                  <FormControl isInvalid={!!errors.country} flexBasis="48%">
+                    <FormLabel color="black">Country</FormLabel>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.country} name="country" style={{borderColor:"black"}}/>
+                    {!!errors.country && <FormErrorMessage>{errors.country}</FormErrorMessage>}
+                  </FormControl>
+                </Flex>
+                <FormControl isInvalid={!!errors.paymentMethod} width="100%">
+                  <FormLabel color="black">Payment Method</FormLabel>
+                  <Select placeholder="Select account" color="black" onChange={handleInputChange} value={formData.paymentMethod} name="paymentMethod" style={{borderColor:"black"}}>
+                    {bankAccounts.length > 0 && bankAccounts.map(account => (
+                      <option key={account.bank_detail_id} value={account.account_number}>
+                        {account.account_number} - {account.bank_name}
+                      </option>
+                    ))}
+                  </Select>
+                  {!!errors.paymentMethod && <FormErrorMessage>{errors.paymentMethod}</FormErrorMessage>}
+                </FormControl>
+              </Flex>
+              <Button mt={4} colorScheme="blue" type="submit">Purchase</Button>
+            </Box>
           </Box>
-        </Box>
+        </form>
       </Box>
     </>
   )
@@ -1436,6 +1525,9 @@ const handleNavigate = (path) => {
   navigate(path, { state: { userData } });
 };
 
+const handleCheckout = () => {
+  navigate('/checkout', { state: { totalPrice: totalPrice.toFixed(2) } });
+};
 
   return (
   <>
@@ -1509,9 +1601,7 @@ const handleNavigate = (path) => {
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
             </Text>
-            <Link to={{pathname: "/checkout", state: { totalPrice: totalPrice.toFixed(2) }}}>
-              <Button mt={4} colorScheme="blue">Checkout</Button>
-            </Link>
+            <Button mt={4} colorScheme="blue" onClick={handleCheckout}>Checkout</Button>
           </>
         ) : (
           <Text color="White">No items in the cart.</Text>
