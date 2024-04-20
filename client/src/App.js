@@ -3014,7 +3014,7 @@ const AssignTechnicians = () => {
   }, []);
 
   const fetchServiceRequests = () => {
-    axios.get('/get_upcoming_week_requests')
+    axios.get('http://localhost:5000/get_upcoming_week_requests')
       .then(response => {
         const { accepted_service_requests, assigned_service_requests } = response.data;
         setServiceRequests({ accepted: accepted_service_requests || [], assigned: assigned_service_requests || [] });

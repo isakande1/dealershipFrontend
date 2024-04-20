@@ -32,7 +32,7 @@ export default function Addons(){
 
     //fetch the service packages
     const fetchPackages = () => {
-      axios.get('/ServicesPackage')
+      axios.get('http://localhost:5000/ServicesPackage')
         .then(response => {
           console.log('services package cars:', response.data);
           setAllpackagesInfos(response.data);
@@ -54,7 +54,7 @@ export default function Addons(){
       return;
     }
     console.log("packages",packages);
-      axios.post('/addtoCartAndOwnedService', { customer_id , packages, car_id})
+      axios.post('http://localhost:5000/addtoCartAndOwnedService', { customer_id , packages, car_id})
         .then(()=> {
           navigate('/Cart', { state: { userData } }) ;
         })
