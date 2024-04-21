@@ -4597,11 +4597,10 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
           <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
           <Text>Customer Name: {`${selectedService.customer_first_name} ${selectedService.customer_last_name}`}</Text>
           <Text>Customer Contact Number: {`${selectedService.customer_phone}`}</Text>
-          <Text>Car Details: {serviceDetails[0].car_make} {serviceDetails[0].car_model}</Text>
-          <Text>Service ID: {serviceDetails[0].service_request_id}</Text>
+          <Text>Car Details: {serviceDetails[0]?.car_make} {serviceDetails[0].car_model}</Text>
+          <Text>Service ID: {serviceDetails[0]?.service_request_id}</Text>
           <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
-          <Text>Price: ${serviceDetails[0].service_price}</Text>
-          <Text>Report: {serviceDetails[0].report}</Text>
+          <Text>Price: ${serviceDetails[0]?.service_price}</Text>
           <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
           <Input
               id="report"
