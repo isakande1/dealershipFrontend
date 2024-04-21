@@ -406,13 +406,21 @@ const FilterCarsSearch = ({ handleSearch }) => {
 };
 
 const CheckoutSuccess = () => {
-
+  return (
+    <div id="checkoutBg">
+      <h1>You have purchased your items successfully</h1>
+    </div>
+  );
 }
 
 // checkout page with form to enter personal information and select account for payment
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const userData = location.state?.userData;
+  const car_name = location.state?.car_name;
+  const car_id = location.state?.car_id;
+
   const totalPrice = location.state?.totalPrice;
   const [bankAccounts, setBankAccounts] = useState([]);
   const [formData, setFormData] = useState({
@@ -430,6 +438,8 @@ const Checkout = () => {
   const storedData = sessionStorage?.getItem('data');
   const parsedData = JSON.parse(storedData);
   const customer_id = parsedData?.['customer_id'];
+
+  console.log(location.state);
 
   useEffect(() => {
     const fetchBankAccounts = async () => {
@@ -455,24 +465,40 @@ const Checkout = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let newErrors = {};
-
-    // Validate inputs
-    Object.keys(formData).forEach(key => {
-      if (!formData[key]) {
-        newErrors[key] = `Please enter your ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`;
+  
+    try {
+      const response = await fetch(`http://localhost:5000/get_cart_items/${customer_id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart items');
       }
-    });
+      const data = await response.json();
+      //console.log("fetched", data.allCars);
+      if(data.cart_items) {
+        console.log(data.cart_items);
+      }
 
-    setErrors(newErrors);
+      const response2 = await fetch(`http://localhost:5000/preCheckout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            customer_id: customer_id
+        }),
+      });
 
-    // Check if there are no errors
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Form is valid, processing payment...");
-      navigate('/checkoutSuccess');
+      const response3 = await fetch(`http://localhost:5000/checkout/${customer_id}`, {
+        method: 'DELETE'
+      });
+
+    } catch (error) {
+      console.error('Error fetching cart items or removing them:', error);
     }
+
+    console.log("Form is valid, processing payment...");
+    navigate('/checkoutSuccess');
   };
 
   return (
@@ -501,54 +527,54 @@ const Checkout = () => {
                 <Flex width="100%" justifyContent="space-between" mb={1}>
                   <FormControl isInvalid={!!errors.name} flexBasis="48%">
                     <FormLabel color="black">Name</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.name} name="name" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" value={`${userData.first_name} ${userData.last_name}`} name="name" style={{borderColor:"black"}} required readOnly />
                     {!!errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
                   </FormControl>
                   <FormControl isInvalid={!!errors.email} flexBasis="48%">
                     <FormLabel color="black">Email</FormLabel>
-                    <Input type="email" color="black" onChange={handleInputChange} value={formData.email} name="email" style={{borderColor:"black"}}/>
+                    <Input type="email" color="black" value={userData.email} name="email" style={{borderColor:"black"}} required readOnly />
                     {!!errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
                   </FormControl>
                 </Flex>
                 <Flex width="100%" justifyContent="space-between" mb={1}>
                   <FormControl isInvalid={!!errors.phone} flexBasis="48%">
                     <FormLabel color="black">Phone number</FormLabel>
-                    <Input type="tel" color="black" onChange={handleInputChange} value={formData.phone} name="phone" style={{borderColor:"black"}}/>
+                    <Input type="tel" color="black" value={userData.phone} name="phone" style={{borderColor:"black"}} required readOnly />
                     {!!errors.phone && <FormErrorMessage>{errors.phone}</FormErrorMessage>}
                   </FormControl>
                   <FormControl isInvalid={!!errors.address} flexBasis="48%">
                     <FormLabel color="black">Address</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.address} name="address" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" value={userData.Address} name="address" style={{borderColor:"black"}} required readOnly />
                     {!!errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
                   </FormControl>
                 </Flex>
                 <Flex width="100%" justifyContent="space-between" mb={1}>
                   <FormControl isInvalid={!!errors.city} flexBasis="48%">
                     <FormLabel color="black">City</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.city} name="city" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.city} name="city" style={{borderColor:"black"}}  required />
                     {!!errors.city && <FormErrorMessage>{errors.city}</FormErrorMessage>}
                   </FormControl>
                   <FormControl isInvalid={!!errors.zip} flexBasis="48%">
                     <FormLabel color="black">Zip Code</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.zip} name="zip" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.zip} name="zip" style={{borderColor:"black"}} required />
                     {!!errors.zip && <FormErrorMessage>{errors.zip}</FormErrorMessage>}
                   </FormControl>
                 </Flex>
                 <Flex width="100%" justifyContent="space-between" mb={1}>
                   <FormControl isInvalid={!!errors.state} flexBasis="48%">
                     <FormLabel color="black">State</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.state} name="state" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.state} name="state" style={{borderColor:"black"}} required />
                     {!!errors.state && <FormErrorMessage>{errors.state}</FormErrorMessage>}
                   </FormControl>
                   <FormControl isInvalid={!!errors.country} flexBasis="48%">
                     <FormLabel color="black">Country</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.country} name="country" style={{borderColor:"black"}}/>
+                    <Input type="text" color="black" onChange={handleInputChange} value={formData.country} name="country" style={{borderColor:"black"}} required />
                     {!!errors.country && <FormErrorMessage>{errors.country}</FormErrorMessage>}
                   </FormControl>
                 </Flex>
                 <FormControl isInvalid={!!errors.paymentMethod} width="100%">
                   <FormLabel color="black">Payment Method</FormLabel>
-                  <Select placeholder="Select account" color="black" onChange={handleInputChange} value={formData.paymentMethod} name="paymentMethod" style={{borderColor:"black"}}>
+                  <Select placeholder="Select account" color="black" onChange={handleInputChange} value={formData.paymentMethod} name="paymentMethod" style={{borderColor:"black"}}  required >
                     {bankAccounts.length > 0 && bankAccounts.map(account => (
                       <option key={account.bank_detail_id} value={account.account_number}>
                         {account.account_number} - {account.bank_name}
@@ -1462,6 +1488,9 @@ const CustomerCart = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const customer_id = userData?.customer_id;
+  const car_name = location.state?.car_name;
+  const car_id = location.state?.car_id;
+  const car_price = location.state?.car_price;
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
@@ -1471,6 +1500,8 @@ const CustomerCart = () => {
   const [showContract, setShowContract] = useState(null);
   const [customerSignature, setCustomerSignature] = useState();
   const navigate = useNavigate();  
+
+  console.log("The State of the Cart", location.state);
 
   useEffect(() => {
     fetchCartItems(userData?.customer_id);
@@ -1538,7 +1569,7 @@ const handleNavigate = (path) => {
 };
 
 const handleCheckout = () => {
-  navigate('/checkout', { state: { totalPrice: totalPrice.toFixed(2) } });
+  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice } });
 };
 // console.log("cars    ", allCars);
 

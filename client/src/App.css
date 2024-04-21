@@ -265,6 +265,15 @@ button:hover {
   overflow: hidden;
 }
 
+#checkoutBg {
+  background-image: linear-gradient(#000, #777);
+  width: 100vw;
+  height: 100vh;
+}
+#checkoutBg h1 {
+  color: white;
+}
+
 #pdf-holder {
   display: flex;
   justify-content: center;
