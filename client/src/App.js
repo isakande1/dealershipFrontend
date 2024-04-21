@@ -24,6 +24,7 @@ import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
+import ContractPDF from './contract';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -1466,6 +1467,9 @@ const CustomerCart = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [allCars, setAllCars] = useState([]);
+  const [isSigned, setIsSigned] = useState(false);
+  const [showContract, setShowContract] = useState(null);
+  const [customerSignature, setCustomerSignature] = useState();
   const navigate = useNavigate();  
 
   useEffect(() => {
@@ -1480,8 +1484,11 @@ const CustomerCart = () => {
       }
       const data = await response.json();
       //console.log("fetched", data.allCars);
+      if(data.cart_items){
+        setShowContract(false);
+        setAllCars(data.allCars);
+      }
       setCartItems(data.cart_items);
-      setAllCars(data.allCars);
       setError(null);
       calculateTotalPrice(data.cart_items);
     } catch (error) {
@@ -1533,7 +1540,7 @@ const handleNavigate = (path) => {
 const handleCheckout = () => {
   navigate('/checkout', { state: { totalPrice: totalPrice.toFixed(2) } });
 };
-console.log("cars    ", allCars);
+// console.log("cars    ", allCars);
 
   return (
   <>
@@ -1604,6 +1611,20 @@ console.log("cars    ", allCars);
                 <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
+             {/* contract section */}
+             {/* {showContract === false ? <Text onClick={setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+             : <Text onClick={setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+            {showContract && <ContractPDF isSigned ={isSigned} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>}
+            {allCars && (<>
+              <form onSubmit={(e)=>{e.preventDefault(); setIsSigned(true)}}> 
+            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e)=>setCustomerSignature(e.target.value)}> </input>
+            <Button type="submit">Sign</Button>
+            </form>
+
+            </>)} */}
+ {/* end contract section */}
+            
+            
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
             </Text>
