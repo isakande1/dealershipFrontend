@@ -237,7 +237,7 @@ export default function CarDetails() {
             if (response.ok) {
               //window.confirm('Car added successfully');
               //NAvigate to the next page 
-              console.log('userData', userData)
+             // console.log('userData', userData)
               navigate('/Addons', {
                
                 state: {

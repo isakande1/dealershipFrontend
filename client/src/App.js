@@ -694,8 +694,8 @@ const Homepage = () => {
             <path fill="url(#f)" d="M0 0h1230v769H0V0Z"/>
             <defs>
               <linearGradient id="e" x1="1260.15" x2="258.334" y1="262.616" y2="883.984" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#000A61"/>
-                <stop offset="1" stop-color="#A8A8A8"/>
+                <stop stopColor="#000A61"/>
+                <stop offset="1" stopColor="#A8A8A8"/>
               </linearGradient>
               <pattern id="f" width="1" height="1" patternContentUnits="objectBoundingBox">
                 <use href="#g" transform="scale(.00158 .00253)"/>
@@ -1465,6 +1465,7 @@ const CustomerCart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [allCars, setAllCars] = useState([]);
   const navigate = useNavigate();  
 
   useEffect(() => {
@@ -1478,7 +1479,9 @@ const CustomerCart = () => {
         throw new Error('Failed to fetch cart items');
       }
       const data = await response.json();
+      //console.log("fetched", data.allCars);
       setCartItems(data.cart_items);
+      setAllCars(data.allCars);
       setError(null);
       calculateTotalPrice(data.cart_items);
     } catch (error) {
@@ -1501,7 +1504,9 @@ const CustomerCart = () => {
       if (!response.ok) {
         throw new Error('Failed to remove item from cart');
       }
-      
+      if(car_id && (service_package_id ===null)){
+      setAllCars(allCars.filter((prev)=>prev.car_id != car_id));
+      }
       setCartItems(prevCartItems => prevCartItems.filter(item => item.car_id && service_package_id ===null? item.car_id !== car_id :item.cart_id !== cartId ) );
       calculateTotalPrice(cartItems.filter(item => item.car_id && service_package_id===null? item.car_id !== car_id :item.cart_id !== cartId ));
     } catch (error) {
@@ -1528,6 +1533,7 @@ const handleNavigate = (path) => {
 const handleCheckout = () => {
   navigate('/checkout', { state: { totalPrice: totalPrice.toFixed(2) } });
 };
+console.log("cars    ", allCars);
 
   return (
   <>

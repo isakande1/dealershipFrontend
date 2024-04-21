@@ -34,7 +34,7 @@ export default function Addons(){
     const fetchPackages = () => {
       axios.get('http://localhost:5000/ServicesPackage')
         .then(response => {
-          console.log('services package cars:', response.data);
+         // console.log('services package cars:', response.data);
           setAllpackagesInfos(response.data);
            })
         .catch(error => {
@@ -43,7 +43,7 @@ export default function Addons(){
     };
 
     useEffect(() => {
-      console.log("usfhfg", userData);
+      //console.log("usfhfg", userData);
       fetchPackages();
   }, []);
 
@@ -53,7 +53,7 @@ export default function Addons(){
       navigate('/Cart', { state: { userData } });
       return;
     }
-    console.log("packages",packages);
+    //console.log("packages",packages);
       axios.post('http://localhost:5000/addtoCartAndOwnedService', { customer_id , packages, car_id})
         .then(()=> {
           navigate('/Cart', { state: { userData } }) ;
@@ -150,10 +150,10 @@ export default function Addons(){
     const AddPackage =(packageInfos,index) =>{
     flushSync(()=>{  
       setPackageToAdd([...packageToAdd, packageInfos]);
-      console.log(packageToAdd) ;
+      //console.log(packageToAdd) ;
       setTotal((prev)=>prev + packageInfos.price);
        packageToAdd[index] = packageInfos;
-      console.log(packageToAdd[index]) ;
+      //console.log(packageToAdd[index]) ;
       setItemsCount((prev) => prev + 1);
     });
         
@@ -163,11 +163,11 @@ export default function Addons(){
      
      //remove a package 
      const RemovePackage =(packageInfos) =>{
-      console.log("packinfos" ,packageInfos) ;
-      console.log("remove" ,packageInfos.service_package_id) ;
+      //console.log("packinfos" ,packageInfos) ;
+      //console.log("remove" ,packageInfos.service_package_id) ;
       setTotal((prev)=> prev - packageToAdd.filter(a=>a.service_package_id == packageInfos.service_package_id)[0].price);
       setPackageToAdd(packageToAdd.filter(a=>a.service_package_id !== packageInfos.service_package_id));
-      console.log(packageToAdd);
+      //console.log(packageToAdd);
       setItemsCount((prev) => prev - 1);
      }
 
@@ -202,7 +202,6 @@ export default function Addons(){
             
               <Button fontFamily="sans-serif" sx={{ ...buttonStyle, ...buttonColor(isAdded) }} onClick={() => handleClick()} color="white">
                   {isAdded ? "Remove" : "Add"}
-                  {console.log({ isAdded })}
               </Button>
               
           </Grid>
