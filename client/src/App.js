@@ -1642,19 +1642,21 @@ const handleCheckout = () => {
                 <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
-             {/* contract section */}
-             {/* {showContract === false ? <Text onClick={setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
-             : <Text onClick={setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-            {showContract && <ContractPDF isSigned ={isSigned} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>}
-            {allCars && (<>
-              <form onSubmit={(e)=>{e.preventDefault(); setIsSigned(true)}}> 
-            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e)=>setCustomerSignature(e.target.value)}> </input>
+           {/* contract section */}
+           {showContract === false ? 
+            <Text onClick={() => setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+          : 
+          <Text onClick={() => setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+         {showContract && <ContractPDF isSigned={isSigned} customerSignature={customerSignature} allCars={allCars} userData={userData}/>}
+            {allCars && (
+           <>
+           <form onSubmit={(e) => {e.preventDefault(); setIsSigned(true)}}> 
+            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e) => setCustomerSignature(e.target.value)} /> 
             <Button type="submit">Sign</Button>
-            </form>
-
-            </>)} */}
- {/* end contract section */}
-            
+        </form>
+           </>
+)}
+{/* end contract section */}
             
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
