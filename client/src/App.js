@@ -408,9 +408,18 @@ const FilterCarsSearch = ({ handleSearch }) => {
 };
 
 const CheckoutSuccess = () => {
+  const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
+  const userData = location.state?.userData;
   return (
     <div id="checkoutBg">
       <h1>You have purchased your items successfully</h1>
+      <Center>
+      <PDFViewer width="50%" height="700"  >
+            <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>
+             </Center>
     </div>
   );
 }
@@ -419,6 +428,8 @@ const CheckoutSuccess = () => {
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
   const userData = location.state?.userData;
   const car_name = location.state?.car_name;
   const car_id = location.state?.car_id;
@@ -500,7 +511,7 @@ const Checkout = () => {
     }
 
     console.log("Form is valid, processing payment...");
-    navigate('/checkoutSuccess');
+    navigate('/checkoutSuccess', { state: { userData,customerSignature,allCars } });
   };
 
   return (
@@ -1498,10 +1509,10 @@ const CustomerCart = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [allCars, setAllCars] = useState([]);
-  const [isSigned, setIsSigned] = useState(false);
   const [showContract, setShowContract] = useState(null);
   const [customerSignature, setCustomerSignature] = useState();
   const [tempCustomerSignature, setTempCustomerSignature] = useState();
+  const [signatureFieldColor, setSignatureFiledColor] = useState(null);
   const navigate = useNavigate();  
 
   console.log("The State of the Cart", location.state);
@@ -1572,9 +1583,14 @@ const handleNavigate = (path) => {
 };
 
 const handleCheckout = () => {
-  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice } });
+  if(customerSignature){
+  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
+  }else{
+    setSignatureFiledColor("red");
+    window.confirm('Missing signature on car(s) purchase contract !');
+  }
 };
-// console.log("cars    ", allCars);
+
 
   return (
   <>
@@ -1649,17 +1665,17 @@ const handleCheckout = () => {
                         
              {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
              : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-             <Center> {showContract &&  <PDFViewer width="50%" height="500px" >
-            <ContractPDF isSigned ={isSigned} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
+            <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>}
              </Center>
             {allCars && (<>
             <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
-             <Box   w="200px"  mr="10px"> 
+             <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
             <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
             onChange={(e)=>setTempCustomerSignature(e.target.value)} />
             </Box>
-            <Button  type="submit"  onClick={()=>{setIsSigned(true);setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
+            <Button  type="submit"  onClick={()=>{setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
           </Flex>
 
             </>)}
