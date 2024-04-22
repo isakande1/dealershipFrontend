@@ -49,6 +49,7 @@ export default function FinalizeFinance () {
                         email: userData.email,
                         address: userData.Address,
                         phone_number: userData.phone,
+                        customer_id: userData.customer_id,
                         car_year: carInfos.year,
                         car_make: carInfos.make,
                         car_model: carInfos.model,
