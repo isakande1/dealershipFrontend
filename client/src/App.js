@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
+
 import {
-  Center, Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
+  Center,Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
   ModalOverlay,
   ModalContent,
@@ -13,6 +14,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
+import { PDFViewer } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -1499,6 +1501,7 @@ const CustomerCart = () => {
   const [isSigned, setIsSigned] = useState(false);
   const [showContract, setShowContract] = useState(null);
   const [customerSignature, setCustomerSignature] = useState();
+  const [tempCustomerSignature, setTempCustomerSignature] = useState();
   const navigate = useNavigate();  
 
   console.log("The State of the Cart", location.state);
@@ -1642,21 +1645,25 @@ const handleCheckout = () => {
                 <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
-           {/* contract section */}
-           {showContract === false ? 
-            <Text onClick={() => setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
-          : 
-          <Text onClick={() => setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-         {showContract && <ContractPDF isSigned={isSigned} customerSignature={customerSignature} allCars={allCars} userData={userData}/>}
-            {allCars && (
-           <>
-           <form onSubmit={(e) => {e.preventDefault(); setIsSigned(true)}}> 
-            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e) => setCustomerSignature(e.target.value)} /> 
-            <Button type="submit">Sign</Button>
-        </form>
-           </>
-)}
-{/* end contract section */}
+                        {/* contract section */}
+                        
+             {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+             : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+             <Center> {showContract &&  <PDFViewer width="50%" height="500px" >
+            <ContractPDF isSigned ={isSigned} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>}
+             </Center>
+            {allCars && (<>
+            <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
+             <Box   w="200px"  mr="10px"> 
+            <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
+            onChange={(e)=>setTempCustomerSignature(e.target.value)} />
+            </Box>
+            <Button  type="submit"  onClick={()=>{setIsSigned(true);setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
+          </Flex>
+
+            </>)}
+ {/* end contract section */}
             
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
