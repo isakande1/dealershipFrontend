@@ -24,7 +24,7 @@ import { Document, Page,  View, StyleSheet,  Text } from '@react-pdf/renderer';
             <Text > The Seller hereby conveys to the Buyer full ownership and title to the motor vehicle described below:</Text>
             <Text >Description of motor vehicle(s) sold: </Text>
             {allCars.map((car,index)=>(
-                <Text key={index}> Car : {car.car_name}   VIN : {car.car_id}  Price : {car.car_price}</Text>
+                <Text key={index}> Car : {car.car_name}   VIN : {car.car_id}  Price : ${car.car_price}</Text>
              )
             )}
             <Text > Both parties hereby agrees that the payment match the total car 's price listed on this contract </Text>
@@ -39,11 +39,11 @@ import { Document, Page,  View, StyleSheet,  Text } from '@react-pdf/renderer';
              <Text > Buyer' s signature</Text>
              <Text >Date: {new Date().toLocaleDateString()}</Text>
              </View>
- {isSigned && <View> 
-             <Text> John Doe</Text>
+           <View> 
+          {isSigned &&   <Text> John Doe</Text>}
              <Text> Seller' s signature</Text>
-             <Text >Date: {new Date().toLocaleDateString()}</Text>
-             </View>}
+             <Text >Date: {isSigned && new Date().toLocaleDateString()}</Text>
+             </View>
           </View>
         </Page>
       </Document>
