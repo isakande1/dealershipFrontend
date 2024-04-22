@@ -22,6 +22,7 @@ import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
+import FinanceReport from './financeReportManager.js';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
@@ -73,6 +74,7 @@ function App() {
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
               <Route path='/checkout' element={<Checkout />}></Route>
               <Route path='/checkoutSuccess' element={<CheckoutSuccess />}></Route>
+              <Route path='/financeReportManager' element={<FinanceReport />}></Route>
             </Routes>
           </Box>
         </Flex>
@@ -4180,6 +4182,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Accessories</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/financeReportManager') }>Customers Finance Reports</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}

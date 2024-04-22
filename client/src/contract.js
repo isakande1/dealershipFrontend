@@ -10,7 +10,7 @@ import { Document, Page,  View, StyleSheet,  Text } from '@react-pdf/renderer';
       <Document  >
         <Page size="A4" style={styles.page} bg="red">
           <View style={styles.title} > 
-          <Text>Contract of a purchase of a Car </Text>
+          <Text>Contract of a purchase of a Car(s) </Text>
           </View>
 
           <View style={styles.section} > 
