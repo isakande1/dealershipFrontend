@@ -52,7 +52,7 @@ export default function FinanceReport () {
               <Text>No Finance reports right now.</Text>
             </Box>
           ) : (
-            
+            <Box overflowX={"auto"}>
             <Table variant="striped"  colorScheme="black">
               <Thead>
                 <Tr>
@@ -92,7 +92,7 @@ export default function FinanceReport () {
                 ))}
               </Tbody>
             </Table>
-           
+           </Box>
           )}
         </Box>
       </>
