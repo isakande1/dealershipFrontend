@@ -415,11 +415,13 @@ const CheckoutSuccess = () => {
   return (
     <div id="checkoutBg">
       <h1>You have purchased your items successfully</h1>
+      {allCars.length > 0 && <>(
       <Center>
       <PDFViewer width="50%" height="700"  >
             <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>
-             </Center>
+             </Center>) </>
+}
     </div>
   );
 }
@@ -1583,11 +1585,11 @@ const handleNavigate = (path) => {
 };
 
 const handleCheckout = () => {
-  if(customerSignature){
-  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
-  }else{
+  if(!customerSignature && allCars.length > 0){
     setSignatureFiledColor("red");
     window.confirm('Missing signature on car(s) purchase contract !');
+  }else{
+    navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
   }
 };
 
@@ -1662,14 +1664,14 @@ const handleCheckout = () => {
               </Flex>
             ))}
                         {/* contract section */}
-                        
+               {allCars.length > 0 && (<>         
              {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
              : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
              <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
             <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>}
              </Center>
-            {allCars && (<>
+            
             <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
              <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
             <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
