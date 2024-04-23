@@ -4270,8 +4270,8 @@ const Admin = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
-  /*Create Technician Form Hooks and Variables*/
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
+  const [showManagerForm, setShowManagerForm] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -4282,10 +4282,7 @@ const Admin = () => {
     password: '',
     admin_id: userData.admin_id
   });
-  /*End Of: Create Technician Form Hooks and Variables*/
 
-  /*Create Manager Form Hooks and Variables*/
-  const [showManagerForm, setShowManagerForm] = useState(false);
   const [managerFormData, setManagerFormData] = useState({
     firstName: '',  
     lastName: '',  
@@ -4307,6 +4304,7 @@ const Admin = () => {
     axios.post('/add_technician', formData)
       .then(response => {
         console.log('Technician added successfully');
+        alert('Technician account created successfully!');  // display an alert on success
         setTechnicianFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4337,6 +4335,7 @@ const Admin = () => {
     axios.post('/add_manager', formData)
       .then(response => {
         console.log('Manager added successfully');
+        alert('Manager account created successfully!');  // display an alert on success
         setManagerFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4400,7 +4399,11 @@ const Admin = () => {
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
-        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+      <>
+        <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="41%" transform="translateX(-50%)" zIndex="1000" color="white">
+          Create Technician Account
+        </Text>
+        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
           <Flex flexDirection="row" justifyContent="space-between">
             <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
               <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4463,11 +4466,16 @@ const Admin = () => {
           </Flex>
           <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
         </form>
+      </>
       )}
 
       {/* Conditional Rendering of the Create Manager Account Form */}
       {showManagerForm && (
-            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+        <>
+          <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="40%" transform="translateX(-50%)" zIndex="1000" color="white">
+            Create Manager Account
+          </Text>
+            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
             <Flex flexDirection="row" justifyContent="space-between">
               <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4530,13 +4538,7 @@ const Admin = () => {
             </Flex>
             <Button type="submit" colorScheme="green" marginTop="10px">Create Manager</Button>
           </form>
-      )}
-
-      { /* if the account is successfully created, display a success message to the user */}
-      {accountCreationSuccess && (
-        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
-          Technician account created successfully!
-        </Box>
+        </>
       )}
 
       {/* dashboard options shown to admin upon signing in */}
@@ -4553,8 +4555,14 @@ const Admin = () => {
       >
         { /* options for the admin to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => setShowManagerForm(true)}>Create Manager Account</Button>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(false);
+            setShowManagerForm(true);
+            }}>Create Manager Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(true);
+            setShowManagerForm(false);
+          }}>Create Technician Account</Button>
         </Flex>
       </Box>
     </>
