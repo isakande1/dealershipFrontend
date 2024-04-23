@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import { PDFViewer } from '@react-pdf/renderer';
 import {
-  Center, Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
+  Center,Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
   ModalOverlay,
   ModalContent,
@@ -14,6 +14,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
+import { PDFViewer } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -21,6 +22,7 @@ import CarDetails from './carDetails';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
+import FinanceReport from './financeReportManager.js';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
@@ -73,6 +75,7 @@ function App() {
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
               <Route path='/checkout' element={<Checkout />}></Route>
               <Route path='/checkoutSuccess' element={<CheckoutSuccess />}></Route>
+              <Route path='/financeReportManager' element={<FinanceReport />}></Route>
             </Routes>
           </Box>
         </Flex>
@@ -408,9 +411,11 @@ const FilterCarsSearch = ({ handleSearch }) => {
 };
 
 const CheckoutSuccess = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
   const userData = location.state?.userData;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -427,6 +432,13 @@ const CheckoutSuccess = () => {
   return (
     <div id="checkoutBg">
       <h1>You have purchased your items successfully</h1>
+      {allCars.length > 0 && <>(
+      <Center>
+      <PDFViewer width="50%" height="700"  >
+            <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>
+             </Center>) </>
+}
     </div>
   );
 }
@@ -435,6 +447,8 @@ const CheckoutSuccess = () => {
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
   const userData = location.state?.userData;
   const car_name = location.state?.car_name;
   const car_id = location.state?.car_id;
@@ -516,11 +530,7 @@ const Checkout = () => {
     }
 
     console.log("Form is valid, processing payment...");
-    navigate('/checkoutSuccess', {
-      state: {
-        userData: userData
-      }
-    });
+    navigate('/checkoutSuccess', { state: { userData,customerSignature,allCars } });
   };
 
   return (
@@ -1518,9 +1528,10 @@ const CustomerCart = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [allCars, setAllCars] = useState([]);
-  const [isSigned, setIsSigned] = useState(false);
   const [showContract, setShowContract] = useState(null);
   const [customerSignature, setCustomerSignature] = useState();
+  const [tempCustomerSignature, setTempCustomerSignature] = useState();
+  const [signatureFieldColor, setSignatureFiledColor] = useState(null);
   const navigate = useNavigate();  
 
   console.log("The State of the Cart", location.state);
@@ -1591,9 +1602,14 @@ const handleNavigate = (path) => {
 };
 
 const handleCheckout = () => {
-  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice } });
+  if(!customerSignature && allCars.length > 0){
+    setSignatureFiledColor("red");
+    window.confirm('Missing signature on car(s) purchase contract !');
+  }else{
+    navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
+  }
 };
-// console.log("cars    ", allCars);
+
 
   return (
   <>
@@ -1664,21 +1680,25 @@ const handleCheckout = () => {
                 <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
-           {/* contract section */}
-           {showContract === false ? 
-            <Text onClick={() => setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
-          : 
-          <Text onClick={() => setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-         {showContract && <ContractPDF isSigned={isSigned} customerSignature={customerSignature} allCars={allCars} userData={userData}/>}
-            {allCars && (
-           <>
-           <form onSubmit={(e) => {e.preventDefault(); setIsSigned(true)}}> 
-            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e) => setCustomerSignature(e.target.value)} /> 
-            <Button type="submit">Sign</Button>
-        </form>
-           </>
-)}
-{/* end contract section */}
+                        {/* contract section */}
+               {allCars.length > 0 && (<>         
+             {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+             : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+             <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
+            <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>}
+             </Center>
+            
+            <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
+             <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
+            <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
+            onChange={(e)=>setTempCustomerSignature(e.target.value)} />
+            </Box>
+            <Button  type="submit"  onClick={()=>{setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
+          </Flex>
+
+            </>)}
+ {/* end contract section */}
             
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
@@ -4238,6 +4258,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Accessories</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/financeReportManager') }>Customers Finance Reports</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
