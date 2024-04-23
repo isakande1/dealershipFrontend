@@ -371,3 +371,18 @@ button:hover {
   height: 100vh;
   background-color: #00c9e4;
 }
+
+#salesReportContainer {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+
+#salesReport {
+  margin: 0 auto;
+  margin-top: 3%;
+  justify-content: flex-end;
+  overflow: hidden;
+}

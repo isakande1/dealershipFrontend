@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
+import { PDFViewer } from '@react-pdf/renderer';
 import {
   Center, Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
@@ -25,6 +26,7 @@ import MakeOffer from './makeOffer'
 import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
 import ContractPDF from './contract';
+import SalesReport from './salesReport';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -406,6 +408,22 @@ const FilterCarsSearch = ({ handleSearch }) => {
 };
 
 const CheckoutSuccess = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const userData = location.state?.userData;
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      navigate('/homepage', {
+        state: {
+          userData: userData
+        },
+      });
+    }, 5000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
     <div id="checkoutBg">
       <h1>You have purchased your items successfully</h1>
@@ -498,7 +516,11 @@ const Checkout = () => {
     }
 
     console.log("Form is valid, processing payment...");
-    navigate('/checkoutSuccess');
+    navigate('/checkoutSuccess', {
+      state: {
+        userData: userData
+      }
+    });
   };
 
   return (
@@ -3175,6 +3197,8 @@ const Manager = () => {
   const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [showTestDriveRequests, setShowTestDriveRequests] = useState(false);
+  const [showSalesReport, setShowSalesReport] = useState(false);
+  const [salesReport, setSalesReport] = useState([]);
   const [showAssignTech, setShowAssignTech] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -3211,6 +3235,36 @@ const Manager = () => {
   const [carMakerDetails, setCarMakerDetails] = useState([]);
   // const [carModels, setCarModels] = useState([]);
   // const [selectedModel, setSelectedModel] = useState("");
+
+  useEffect(() => {
+    if (showSalesReport) {
+      getSalesReport()
+    }
+  }, [showSalesReport]);
+
+  const getSalesReport = async () => {
+    try{
+      const response = await axios.get('http://localhost:5000/getMonthlySales');
+      console.log(response.data);
+      setSalesReport(response.data);
+      console.log(salesReport);
+      //const data = await response.data;
+      //console.log(data);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getSalesReport();
+  }, []);
+
+  useEffect(() => {
+    if (salesReport.length > 0) {
+      console.log(salesReport);
+    }
+  }, [salesReport]);
 
   useEffect(() => {
     if (showServiceRequests) {
@@ -3526,6 +3580,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'assignTechnician':
         setShowAssignTech(true);
@@ -3536,6 +3591,7 @@ const Manager = () => {
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowSalesReport(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -3546,6 +3602,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -3556,6 +3613,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -3566,6 +3624,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -3576,6 +3635,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(true);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'addMiscellaneous':
         setShowServiceRequests(false);
@@ -3586,10 +3646,23 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(true);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'manageTestDriveRequests':
         setShowServiceRequests(false);
         setShowTestDriveRequests(true);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
+        setShowSalesReport(false);
+        break;
+      case 'generateReport':
+        setShowSalesReport(true);
+        setShowServiceRequests(false);
+        setShowTestDriveRequests(false);
         setShowTechnicianForm(false);
         setShowAddCars(false);
         setShowRemoveCars(false);
@@ -3761,6 +3834,16 @@ const Manager = () => {
           </Flex>
         </Flex>
       </Box>
+
+      {/* This section is for the current months sales report */}
+      {console.log(showSalesReport)}
+      {showSalesReport && (
+        <div id="salesReportContainer">
+          <PDFViewer id="salesReport" width="60%" height="80%">
+            <SalesReport salesReportContent={salesReport} />
+          </PDFViewer>
+        </div>
+      )}
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
@@ -4150,7 +4233,7 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageTestDriveRequests')}>Test Drive Requests</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('generateReport')}>Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
