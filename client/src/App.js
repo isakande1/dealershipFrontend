@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
-import { PDFViewer } from '@react-pdf/renderer';
 import {
   Center,Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
@@ -424,7 +423,7 @@ const CheckoutSuccess = () => {
           userData: userData
         },
       });
-    }, 5000);
+    }, 40000);
 
     return () => clearTimeout(timeoutId);
   }, []);
