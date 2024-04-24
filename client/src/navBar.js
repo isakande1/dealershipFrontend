@@ -14,9 +14,9 @@ const handleNavigate = (path) => {
 console.log("path", location.pathname);
 return(       
  <>
-{ location.pathname != '/homepage' &&(
-    <nav className="navbar">
-       
+{ location.pathname != '/homepage' &&(<>
+  <Box zIndex="2" position="fixed"  left="0" top="0" w="100%">
+    <nav className="navbar" >
       <ul className="nav-list">
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
@@ -55,7 +55,7 @@ return(
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
+            Personnal cars
           </button>
         </li>
         <li className="nav-item">
@@ -64,7 +64,10 @@ return(
           </button>
         </li> 
       </ul>
-      </nav>)}
+      </nav>
+      </Box>
+      <Box h="50px" w="100%"> </Box> </>
+    )}
       </>
 );
 }

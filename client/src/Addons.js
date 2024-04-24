@@ -103,7 +103,7 @@ export default function Addons(){
   //display the car
     const CarInfos = () =>{
         return(
-        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" position="fixed" zIndex="2" width="100%" top="0" left="0" > 
+        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr"   width="100%" mt="5px" > 
             <Box width="140px" height="100px"> 
             <Image
                         overflow="hidden"
@@ -128,7 +128,7 @@ export default function Addons(){
   
       return(
        
-        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%" marginTop="90px" marginBottom="40px">
+        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%"  marginBottom="40px">
           
       {/* {allpackagesInfos.map((packageInfos, index) => (
         <Package key={index} packageInfos={packageInfos} isAdded={isAdded[index]} setIsAdded={setIsAdded} />
@@ -190,7 +190,7 @@ export default function Addons(){
   
   
       return (
-          <Grid sx={{ ...packageBoxStyle, ...highlight(isAdded)}}    pos="relative">
+          <Grid sx={{ ...packageBoxStyle, ...highlight(isAdded)}}    pos="relative" >
              <Box> 
               <Image sx={imageStyle} src={packageInfos.image} />
               </Box>
