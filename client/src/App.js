@@ -18,6 +18,7 @@ import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import NavBar from './navBar.js';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
@@ -39,14 +40,21 @@ import logo from './img/logo.png'
 // npm install react-bootstrap bootstrap
 
 function App() {
+  const storedData = sessionStorage?.getItem('data');
+  const userData = JSON.parse(storedData);
+
+
   return (
     // this will be used to navigate to different pages in our website
     <div>
-    {/* <NavBar/> */}
+      
     <ChakraProvider>
+    
       <Router>
+        <>
+        { ( typeof userData != "undefined"  )&&< NavBar userData={userData} />}
         <Flex direction="column" minHeight="100vh">
-          <Box flex="1" overflowY="auto">
+          <Box flex="1" overflowY="auto" >
             <Routes>
               <Route path="/" element={<Homepage />} />
               <Route path="/login" element={<Login />} />
@@ -77,8 +85,9 @@ function App() {
               <Route path='/financeReportManager' element={<FinanceReport />}></Route>
             </Routes>
           </Box>
-        </Flex>
+        </Flex>  </>
       </Router>
+    
     </ChakraProvider>
     </div>
   )
@@ -96,6 +105,7 @@ const ContactPage = () => {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
+    const storedData = sessionStorage?.getItem('data');
     sessionStorage.clear(); //clear the data in the session when sign out
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
@@ -257,7 +267,7 @@ const ContactPage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -416,17 +426,17 @@ const CheckoutSuccess = () => {
   const userData = location.state?.userData;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      navigate('/homepage', {
-        state: {
-          userData: userData
-        },
-      });
-    }, 40000);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     navigate('/homepage', {
+  //       state: {
+  //         userData: userData
+  //       },
+  //     });
+  //   }, 40000);
 
-    return () => clearTimeout(timeoutId);
-  }, []);
+  //   return () => clearTimeout(timeoutId);
+  // }, []);
 
   return (
     <div id="checkoutBg">
@@ -964,8 +974,8 @@ const SignedInHomepage = () => {
             <path fill="url(#f)" d="M0 0h1230v769H0V0Z"/>
             <defs>
               <linearGradient id="e" x1="1260.15" x2="258.334" y1="262.616" y2="883.984" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#000A61"/>
-                <stop offset="1" stop-color="#A8A8A8"/>
+                <stop stopColor="#000A61"/>
+                <stop offset="1" stopColor="#A8A8A8"/>
               </linearGradient>
               <pattern id="f" width="1" height="1" patternContentUnits="objectBoundingBox">
                 <use href="#g" transform="scale(.00158 .00253)"/>
@@ -1000,10 +1010,11 @@ const SignedInHomepage = () => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>{ navigate('/carAccessories')}}> Car Accessories</Button>
           </Flex>
         </Box>
       )}
@@ -1091,50 +1102,7 @@ const TestDriveHistory = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-      </ul>
-    </nav>
+   
       <Box
         bg='black'
         w='100%'
@@ -1273,50 +1241,7 @@ const OwnCar = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
+   
     <Box
           bgGradient="linear(to-b, black, gray.600)"
           position='fixed'
@@ -1335,7 +1260,7 @@ const OwnCar = () => {
           overflowY='scroll' // Enable vertical scrolling
         >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="3xl" fontWeight="bold">Add Own Car</Text>
+          <Text fontSize="3xl" fontWeight="bold">Add your Car</Text>
         </Flex>
         <form onSubmit={handleSubmit}>
           <Box mt={8}>
@@ -1377,7 +1302,7 @@ const OwnCar = () => {
           </Box>
         </form>
         <Box mt={8}>
-          <Heading size="md">Customer own Cars</Heading>
+          <Heading size="md">Your Cars</Heading>
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
               customerCars.map((car) => (
@@ -1389,7 +1314,7 @@ const OwnCar = () => {
                 </Box>
               ))
             ) : (
-              <Text>No cars added by this customer.</Text>
+              <Text>No cars added.</Text>
             )}
           </VStack>
         </Box>
@@ -1426,50 +1351,7 @@ const ServiceHistory = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-          <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-        </li>
-      </ul>
-    </nav>
+
       <Box
         bg='black'
         w='100%'
@@ -1613,8 +1495,8 @@ const handleCheckout = () => {
   return (
   <>
  
-    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
-    <nav className="navbar">
+    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)"> 
+    {/* <nav className="navbar">
       <ul className="nav-list">
       <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
@@ -1657,7 +1539,7 @@ const handleCheckout = () => {
           </button>
         </li>
       </ul>
-    </nav>
+    </nav> */}
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -1831,50 +1713,7 @@ const CustomerSerivceAppointment = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-           Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
+ 
       <Box
         bg='black'
         w='100%'
@@ -1984,50 +1823,7 @@ const PastPurchase = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive Status
-          </button>
-        </li>
-      </ul>
-    </nav>
+ 
       <Box
         bg='black'
         w='100%'
@@ -2299,50 +2095,6 @@ const CarAccessories = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
     <Box
           bgGradient="linear(to-b, black, gray.600)"
           position='fixed'
@@ -2576,50 +2328,7 @@ const CustomerModifyInfo = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>  
-      </ul>
-    </nav>
+  
     <Box
       bg='black'
       w='100%'
@@ -2719,6 +2428,7 @@ const Login = () => {
   const [EditMessage, setEditMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+ 
 
   const handleCreateCustomerClick = () => {
     setShowCreateCustomerForm(!showCreateCustomerForm);

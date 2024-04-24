@@ -86,52 +86,60 @@ export default function CarDetails() {
       };
         return (
             <Grid placeItems="center" bg="gray.700">
-                {userData && (
-        <nav className="navbar">
-          <ul className="nav-list">
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-                Home
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-                Service History
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-                Schedule Service
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-                Car Accessories
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-                Modify Info
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-                Cart
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-                Past Purchase
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-                Own Car
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
+{ (userData)  &&(<>
+  <Box zIndex="2" position="fixed"  left="0" top="0" w="100%">
+    <nav className="navbar" >
+      <ul className="nav-list">
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+            Home
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
+            Service History
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
+            Schedule Service
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
+            Car Accessories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
+            Modify Info
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
+            Past Purchase
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
+            Personnal cars
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
+            Test Drive status
+          </button>
+        </li> 
+      </ul>
+      </nav>
+      </Box>
+      <Box h="50px" w="100%"> </Box> </>
+    )}
                 <Box w="80%" h="550px" /*transform="translateY(-25%)"*/>
                     <Image
                         overflow="hidden"
