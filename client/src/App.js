@@ -2539,8 +2539,12 @@ const CustomerModifyInfo = () => {
       if (!response.ok) {
         throw new Error('Failed to submit bank info');
       }
+      setEditMessage('Bank-info added');
+      setTimeout(() => setEditMessage(''), 4000);
       console.log('Bank info submitted successfully');
     } catch (error) {
+      setEditMessage('Bank-info not added');
+      setTimeout(() => setEditMessage(''), 4000);
       console.error('Error:', error);
     }
   };
@@ -2557,11 +2561,11 @@ const CustomerModifyInfo = () => {
       });
       const data = await response.json();
       console.log(data);
-      setEditMessage('Edit successful');
+      setEditMessage('successful');
       setTimeout(() => setEditMessage(''), 4000);
     } catch (error) {
       console.error('Error:', error);
-      setEditMessage('Edit not successful');
+      setEditMessage('Not successful');
       setTimeout(() => setEditMessage(''), 4000);
     }
   };
