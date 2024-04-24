@@ -3030,7 +3030,7 @@ const Manager = () => {
       car_id: serviceRequest.car_id,
       service_offered_id: serviceRequest.service_offered_id
     }
-    axios.post('/add_to_cart', formData)
+    axios.post('http://localhost:5000/add_to_cart', formData)
       .then(response => {
         // Handle success response
         alert('Service successfully added to cart');
@@ -3049,7 +3049,7 @@ const Manager = () => {
       status: 'declined'
     };
   
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request declined:', response.data);
@@ -3061,7 +3061,7 @@ const Manager = () => {
   };
 
   const fetchServiceRequests = () => {
-    axios.get('/show_customer_service_requests/')
+    axios.get('http://localhost:5000/show_customer_service_requests/')
     .then(response => {
       setServiceRequests(response.data);
     })
@@ -3075,7 +3075,7 @@ const Manager = () => {
       status: 'accepted'
     };
   
-    axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);

@@ -63,7 +63,9 @@ const SalesReport = ({ salesReportContent }) => {
     };
 
     const totalRevenue = calculateTotalRevenue(salesReportContent);
-  
+    
+    console.log(salesReportContent);
+
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -76,19 +78,14 @@ const SalesReport = ({ salesReportContent }) => {
             <View style={styles.tableHeader}>
               <Text style={styles.tableLabel}>Customer ID</Text>
               <Text style={styles.tableLabel}>Item</Text>
-              <Text style={styles.tableLabel}>Make</Text>
-              <Text style={styles.tableLabel}>Model</Text>
-              <Text style={styles.tableLabel}>Year</Text>
-              <Text style={styles.tableLabel}>VIN</Text>
+              <Text style={styles.tableLabel}>Name</Text>
               <Text style={styles.tableLabel}>Price</Text>
             </View>
             {salesReportContent.map((sale) => (
                 <View key={sale.id} style={styles.tableItem}>
                     <Text>{sale.customer_id}</Text>
                     <Text>{sale.item_type}</Text>
-                    <Text>{sale.model}</Text>
-                    <Text>{sale.year}</Text>
-                    <Text>{sale.vin}</Text>
+                    <Text>{sale.name}</Text>
                     <Text>{sale.price}</Text>
                 </View>
             ))}
