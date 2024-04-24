@@ -18,6 +18,7 @@ import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import NavBar from './navBar.js';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
@@ -39,15 +40,23 @@ import logo from './img/logo.png'
 // npm install react-bootstrap bootstrap
 
 function App() {
+  const storedData = sessionStorage?.getItem('data');
+  const userData = JSON.parse(storedData);
+ 
+  
   return (
     // this will be used to navigate to different pages in our website
     <div>
-    {/* <NavBar/> */}
+      
     <ChakraProvider>
+    
       <Router>
         <Flex direction="column" minHeight="100vh">
           <Box flex="1" overflowY="auto">
+          
+          { (typeof userData != "undefined" )&&< NavBar userData={userData} />}
             <Routes>
+              
               <Route path="/" element={<Homepage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/Roles_login" element={<Roles_login />} />
@@ -964,8 +973,8 @@ const SignedInHomepage = () => {
             <path fill="url(#f)" d="M0 0h1230v769H0V0Z"/>
             <defs>
               <linearGradient id="e" x1="1260.15" x2="258.334" y1="262.616" y2="883.984" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#000A61"/>
-                <stop offset="1" stop-color="#A8A8A8"/>
+                <stop stopColor="#000A61"/>
+                <stop offset="1" stopColor="#A8A8A8"/>
               </linearGradient>
               <pattern id="f" width="1" height="1" patternContentUnits="objectBoundingBox">
                 <use href="#g" transform="scale(.00158 .00253)"/>
@@ -1613,8 +1622,8 @@ const handleCheckout = () => {
   return (
   <>
  
-    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
-    <nav className="navbar">
+    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">N 
+    {/* <nav className="navbar">
       <ul className="nav-list">
       <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
@@ -1657,7 +1666,7 @@ const handleCheckout = () => {
           </button>
         </li>
       </ul>
-    </nav>
+    </nav> */}
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -2572,50 +2581,7 @@ const CustomerModifyInfo = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>  
-      </ul>
-    </nav>
+  
     <Box
       bg='black'
       w='100%'
@@ -4270,8 +4236,8 @@ const Admin = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
-  /*Create Technician Form Hooks and Variables*/
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
+  const [showManagerForm, setShowManagerForm] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -4282,10 +4248,7 @@ const Admin = () => {
     password: '',
     admin_id: userData.admin_id
   });
-  /*End Of: Create Technician Form Hooks and Variables*/
 
-  /*Create Manager Form Hooks and Variables*/
-  const [showManagerForm, setShowManagerForm] = useState(false);
   const [managerFormData, setManagerFormData] = useState({
     firstName: '',  
     lastName: '',  
@@ -4307,6 +4270,7 @@ const Admin = () => {
     axios.post('/add_technician', formData)
       .then(response => {
         console.log('Technician added successfully');
+        alert('Technician account created successfully!');  // display an alert on success
         setTechnicianFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4337,6 +4301,7 @@ const Admin = () => {
     axios.post('/add_manager', formData)
       .then(response => {
         console.log('Manager added successfully');
+        alert('Manager account created successfully!');  // display an alert on success
         setManagerFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4400,7 +4365,11 @@ const Admin = () => {
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
-        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+      <>
+        <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="41%" transform="translateX(-50%)" zIndex="1000" color="white">
+          Create Technician Account
+        </Text>
+        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
           <Flex flexDirection="row" justifyContent="space-between">
             <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
               <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4463,11 +4432,16 @@ const Admin = () => {
           </Flex>
           <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
         </form>
+      </>
       )}
 
       {/* Conditional Rendering of the Create Manager Account Form */}
       {showManagerForm && (
-            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+        <>
+          <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="40%" transform="translateX(-50%)" zIndex="1000" color="white">
+            Create Manager Account
+          </Text>
+            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
             <Flex flexDirection="row" justifyContent="space-between">
               <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4530,13 +4504,7 @@ const Admin = () => {
             </Flex>
             <Button type="submit" colorScheme="green" marginTop="10px">Create Manager</Button>
           </form>
-      )}
-
-      { /* if the account is successfully created, display a success message to the user */}
-      {accountCreationSuccess && (
-        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
-          Technician account created successfully!
-        </Box>
+        </>
       )}
 
       {/* dashboard options shown to admin upon signing in */}
@@ -4553,8 +4521,14 @@ const Admin = () => {
       >
         { /* options for the admin to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => setShowManagerForm(true)}>Create Manager Account</Button>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(false);
+            setShowManagerForm(true);
+            }}>Create Manager Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(true);
+            setShowManagerForm(false);
+          }}>Create Technician Account</Button>
         </Flex>
       </Box>
     </>

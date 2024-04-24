@@ -86,7 +86,7 @@ export default function CarDetails() {
       };
         return (
             <Grid placeItems="center" bg="gray.700">
-                {userData && (
+                {/* {userData && (
         <nav className="navbar">
           <ul className="nav-list">
             <li className="nav-item">
@@ -131,7 +131,7 @@ export default function CarDetails() {
             </li>
           </ul>
         </nav>
-      )}
+      )} */}
                 <Box w="80%" h="550px" /*transform="translateY(-25%)"*/>
                     <Image
                         overflow="hidden"
