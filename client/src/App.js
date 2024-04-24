@@ -42,8 +42,8 @@ import logo from './img/logo.png'
 function App() {
   const storedData = sessionStorage?.getItem('data');
   const userData = JSON.parse(storedData);
- 
-  
+
+
   return (
     // this will be used to navigate to different pages in our website
     <div>
@@ -52,7 +52,7 @@ function App() {
     
       <Router>
         <>
-      { (typeof userData != "undefined" )&&< NavBar userData={userData} />}
+        { ( typeof userData != "undefined"  )&&< NavBar userData={userData} />}
         <Flex direction="column" minHeight="100vh">
           <Box flex="1" overflowY="auto" >
             <Routes>
@@ -105,6 +105,7 @@ const ContactPage = () => {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
+    const storedData = sessionStorage?.getItem('data');
     sessionStorage.clear(); //clear the data in the session when sign out
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
@@ -2423,6 +2424,7 @@ const Login = () => {
   const [EditMessage, setEditMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+ 
 
   const handleCreateCustomerClick = () => {
     setShowCreateCustomerForm(!showCreateCustomerForm);

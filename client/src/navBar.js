@@ -14,7 +14,7 @@ const handleNavigate = (path) => {
 console.log("path", location.pathname);
 return(       
  <>
-{ location.pathname != '/homepage' &&(<>
+{ (location.pathname != '/homepage' && location.pathname != '/' && location.pathname != '/login' && location.pathname != '/carDetails')  &&(<>
   <Box zIndex="2" position="fixed"  left="0" top="0" w="100%">
     <nav className="navbar" >
       <ul className="nav-list">
