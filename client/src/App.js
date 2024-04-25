@@ -1,5 +1,5 @@
 // import necessary libraries
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,createContext,useContext } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import {
@@ -35,35 +35,38 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
-
+export const UserContext = createContext();
 //import CarAccessories from './carAccessories';
 // npm install react-bootstrap bootstrap
 
 function App() {
-  const storedData = sessionStorage?.getItem('data');
-  const userData = JSON.parse(storedData);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
-
+  //USE TO KEEP NAVBAR ON WHEN THE PAGE IS REFRESHED
+  useEffect(()=>{
+    if(sessionStorage.length > 0){
+      setIsSignedIn(true);
+    }
+  },[isSignedIn]);
+ 
   return (
     // this will be used to navigate to different pages in our website
-    <div>
-      
+    <div> 
     <ChakraProvider>
-    
       <Router>
         <>
-        { ( typeof userData != "undefined"  )&&< NavBar userData={userData} />}
+        <NavBar isSignedIn={isSignedIn} />
         <Flex direction="column" minHeight="100vh">
           <Box flex="1" overflowY="auto" >
             <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Homepage setIsSignedIn={setIsSignedIn}/>} />
+              <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn}/>} />
               <Route path="/Roles_login" element={<Roles_login />} />
-              <Route path="/homepage" element={<SignedInHomepage />} />
+              <Route path="/homepage" element={<SignedInHomepage setIsSignedIn={setIsSignedIn} />} />
               <Route path="/tech" element={<Technician />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/manager" element={<Manager />} />
-              <Route path="/ModifyInfo" element={<CustomerModifyInfo />} />
+              <Route path="/ModifyInfo" element={<CustomerModifyInfo setIsSignedIn={setIsSignedIn}/>} />
               <Route path="/Cart" element={<CustomerCart/>} />
               <Route path="/PastPurchase" element={<PastPurchase />} />
               <Route path="/OwnCar" element={<OwnCar />} />
@@ -73,7 +76,7 @@ function App() {
               <Route path="/ServiceHistory" element={<ServiceHistory />} />
               <Route path="/carAccessories" element={<CarAccessories />} />
               <Route path="/Addons" element={<Addons/>} />
-              <Route path="ContactPage" element={<ContactPage/>} />
+              <Route path="ContactPage" element={<ContactPage setIsSignedIn={setIsSignedIn}/>} />
               <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
               <Route path="makeOffer" element={<MakeOffer/>} />
               <Route path="/customerManageOffers" element={<ManageOffers/>} />
@@ -94,7 +97,7 @@ function App() {
 }
 
 // contact page that displays the email and phone number as text fields to the user
-const ContactPage = () => {
+const ContactPage = ({setIsSignedIn}) => {
   const location = useLocation();
   const [showDashboardOptions, setShowDashboardOptions] = useState(false);
   const storedData = sessionStorage?.getItem('data');
@@ -104,9 +107,10 @@ const ContactPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(customer_id != null);
   const navigate = useNavigate();
 
+
   const handleSignOut = () => {
-    const storedData = sessionStorage?.getItem('data');
     sessionStorage.clear(); //clear the data in the session when sign out
+    setIsSignedIn(false);
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
   };
@@ -821,7 +825,7 @@ const Homepage = () => {
 };
 
 // this will be the homepage for when the user has logged in to their account
-const SignedInHomepage = () => {
+const SignedInHomepage = ({setIsSignedIn}) => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
@@ -834,9 +838,11 @@ const SignedInHomepage = () => {
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
+
   const handleSignOut = () => {
-    sessionStorage.clear(); //clear the data in the session when sign out
+    sessionStorage.clear(); //remove data in session
     localStorage.removeItem('accessToken');
+    setIsSignedIn(false);
     navigate('/', { replace: true });
   };
 
@@ -1398,6 +1404,7 @@ const ServiceHistory = () => {
 };
 
 const CustomerCart = () => {
+
   const location = useLocation();
   const userData = location.state?.userData;
   const customer_id = userData?.customer_id;
@@ -1410,8 +1417,8 @@ const CustomerCart = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [allCars, setAllCars] = useState([]);
   const [showContract, setShowContract] = useState(null);
-  const [customerSignature, setCustomerSignature] = useState();
-  const [tempCustomerSignature, setTempCustomerSignature] = useState();
+  const [customerSignature, setCustomerSignature] = useState(undefined);
+  const [tempCustomerSignature, setTempCustomerSignature] = useState("placeholder");
   const [signatureFieldColor, setSignatureFiledColor] = useState(null);
   const navigate = useNavigate();  
 
@@ -1496,50 +1503,7 @@ const handleCheckout = () => {
   <>
  
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)"> 
-    {/* <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav> */}
+    
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -2220,7 +2184,7 @@ const CarAccessories = () => {
   );
 };
 
-const CustomerModifyInfo = () => {
+const CustomerModifyInfo = ({setIsSignedIn}) => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
@@ -2232,10 +2196,10 @@ const CustomerModifyInfo = () => {
   });
   const [loading, setLoading] = useState(true);
 
-
   const handleSignOut = () => {
     sessionStorage.clear(); //remove data in session
     localStorage.removeItem('accessToken');
+    setIsSignedIn(false);
     navigate('/', { replace: true });
   };
 
@@ -2291,12 +2255,8 @@ const CustomerModifyInfo = () => {
       if (!response.ok) {
         throw new Error('Failed to submit bank info');
       }
-      setEditMessage('Bank-info added');
-      setTimeout(() => setEditMessage(''), 4000);
       console.log('Bank info submitted successfully');
     } catch (error) {
-      setEditMessage('Bank-info not added');
-      setTimeout(() => setEditMessage(''), 4000);
       console.error('Error:', error);
     }
   };
@@ -2313,11 +2273,11 @@ const CustomerModifyInfo = () => {
       });
       const data = await response.json();
       console.log(data);
-      setEditMessage('successful');
+      setEditMessage('Edit successful');
       setTimeout(() => setEditMessage(''), 4000);
     } catch (error) {
       console.error('Error:', error);
-      setEditMessage('Not successful');
+      setEditMessage('Edit not successful');
       setTimeout(() => setEditMessage(''), 4000);
     }
   };
@@ -2422,13 +2382,16 @@ const CustomerModifyInfo = () => {
   );
 };
 
-const Login = () => {
+
+
+
+const Login = ({setIsSignedIn}) => {
   const [showCreateUserForm, setShowCreateUserForm] = useState(false);
   const [showCreateCustomerForm, setShowCreateCustomerForm] = useState(false);
   const [EditMessage, setEditMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
- 
+
 
   const handleCreateCustomerClick = () => {
     setShowCreateCustomerForm(!showCreateCustomerForm);
@@ -2458,6 +2421,7 @@ const Login = () => {
         previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
         // Storing the data object as a string
         sessionStorage.setItem('data', JSON.stringify(data));
+        setIsSignedIn(true);
         // Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
@@ -2472,6 +2436,7 @@ const Login = () => {
       console.error('Error:', error);
     }
   };
+
 
   const handleCreateCustomerSubmit = async (event) => {
     event.preventDefault();
@@ -2519,6 +2484,8 @@ const Login = () => {
       console.error('Error:', error);
     }
   };
+
+ 
 
   return (
     <div className='master-form-container' style={{
@@ -2598,6 +2565,7 @@ const Login = () => {
       </div>
       <div className='circle-top-left'></div>
       <div className='circle-bottom-right'></div>
+
     </div>
   );
 };
@@ -2918,7 +2886,6 @@ const AssignTechnicians = () => {
     </Box>
   );
 };
-
 // component for displaying the manager dashboard ui
 const Manager = () => {
   const location = useLocation();
@@ -3012,7 +2979,7 @@ const Manager = () => {
       status: 'Awaiting Customer Payment'
     };
   
-    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3032,11 +2999,9 @@ const Manager = () => {
       item_image: 'https://ibb.co/b64Kdyh',
       item_name: serviceRequest.service_name,
       car_id: serviceRequest.car_id,
-      service_offered_id: serviceRequest.service_offered_id,
-      service_request_id: serviceRequestId
+      service_offered_id: serviceRequest.service_offered_id
     }
-    handleAccept(serviceRequestId);
-    axios.post('http://localhost:5000/add_to_cart', formData)
+    axios.post('/add_to_cart', formData)
       .then(response => {
         // Handle success response
         alert('Service successfully added to cart');
@@ -3055,7 +3020,7 @@ const Manager = () => {
       status: 'declined'
     };
   
-    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request declined:', response.data);
@@ -3067,7 +3032,7 @@ const Manager = () => {
   };
 
   const fetchServiceRequests = () => {
-    axios.get('http://localhost:5000/show_customer_service_requests/')
+    axios.get('/show_customer_service_requests/')
     .then(response => {
       setServiceRequests(response.data);
     })
@@ -3081,7 +3046,7 @@ const Manager = () => {
       status: 'accepted'
     };
   
-    axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+    axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3097,7 +3062,7 @@ const Manager = () => {
         status: 'declined'
       };
     
-      axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+      axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
         .then(response => {
           // Update UI if necessary
           console.log('Service request declined:', response.data);
@@ -3109,7 +3074,7 @@ const Manager = () => {
   };
   
   const fetchTestDriveRequests = () => {
-    axios.get('http://localhost:5000/show_test_drive_appointments')
+    axios.get('/show_test_drive_appointments')
         .then(response => {
           setTestDriveRequests(response.data);
         })
@@ -4312,7 +4277,7 @@ const Technician = () => {
     try {
         
         console.log("assigned service id", service.assigned_service_id);
-        const response = await axios.get(`http://localhost:5000/view_customer_service_details/${service.assigned_service_id}`);
+        const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
 
        
         const details = response.data;
@@ -4342,7 +4307,7 @@ const handleSubmitReport = () => {
 const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
   // Perform an HTTP request to send the report value and assigned_service_id to the backend
   // Example using Fetch API:
-  fetch('http://localhost:5000/submitReport', {
+  fetch('/submitReport', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -4396,7 +4361,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
   // };
 
   const fetchAssignedServices = () => {
-    axios.get(`http://localhost:5000/show_assigned_services/${userData.technicians_id}`)
+    axios.get(`/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
         console.log(response.data); 
         setAssignedServices(response.data);
