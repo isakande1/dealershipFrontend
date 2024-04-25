@@ -1298,6 +1298,15 @@ const OwnCar = () => {
               mb={4}
               style={{ width: '200px' }}
             /> <br></br>
+                        <Input
+              placeholder="year"
+              name="year"
+              required
+              value={formData.year}
+              onChange={handleInputChange}
+              mb={4}
+              style={{ width: '200px' }}
+            /> <br></br>
             
             <Button type="submit" colorScheme="teal">
               Submit
@@ -1316,6 +1325,7 @@ const OwnCar = () => {
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
+                <Text color="black">{`Model: ${car.year}`}</Text>
                   <Button colorScheme="red" onClick={() => handleRemoveCar(car.car_id)}>Remove</Button>
                 </Box>
               ))
