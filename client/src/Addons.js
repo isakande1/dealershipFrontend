@@ -220,7 +220,7 @@ export default function Addons(){
         </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
        <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData, car_id)}>
-       <Text fontFamily="sans-serif">{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
+       <Text marginTop="15px" fontFamily="sans-serif">{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>
         </>

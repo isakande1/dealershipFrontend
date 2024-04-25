@@ -2310,9 +2310,9 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      overflowY="auto"
+      overflowY="hidden"
     >
-      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800">
+      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto">
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
         <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>
@@ -2323,69 +2323,75 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       
 
       <form>
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* First and Last Name */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input id='first_name' type='text'  color='red' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-        </Flex>
-        <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='social_security' color='black'>Social Security</FormLabel>
-            <Input id='social_security' type='text' color='red' name='social_security' value={editedData.social_security} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* User Name and Email */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
-            <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
-            <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
-          </FormControl>
-        </Flex>
+      <Flex direction="column" p={4} border="1px solid #ccc" borderRadius="md">
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* First and Last Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
+          <Input id='first_name' type='text' color='red' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
+          <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+      </Flex>
 
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* Phone and Address */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
-            <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
-            <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
-          </FormControl>
-        </Flex>
-        <h6>Your credit score is :{bankInfo.credit_score|| ' not yet disclosed'} </h6>
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-         
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Social Security and User Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='social_security' color='black'>Social Security</FormLabel>
+          <Input id='social_security' type='text' color='red' name='social_security' value={editedData.social_security} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
+          <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
+        </FormControl>
+      </Flex>
+
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Email and Phone */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='email' color='black'>Email</FormLabel>
+          <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
+          <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
+        </FormControl>
+      </Flex>
+
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Address and Bank Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
+          <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
           <FormLabel htmlFor='bank_name' color='black'>Bank Name</FormLabel>
           <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
         </FormControl>
-        <FormControl mb={4}>
-          <FormLabel htmlFor='account_number' color='black'>Account Number  (16 digts) </FormLabel>
+      </Flex>
+
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Account Number and Routing Number */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='account_number' color='black'>Account Number</FormLabel>
           <Input id='account_number' type='text' name='account_number' value={bankInfo.account_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, account_number: e.target.value })} />
         </FormControl>
-        </Flex>
-
-        <FormControl mb={1}>
-          <FormLabel htmlFor='routing_number' color='black'>Routing Number ( 9 digits)</FormLabel>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='routing_number' color='black'>Routing Number</FormLabel>
           <Input id='routing_number' type='text' name='routing_number' value={bankInfo.routing_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, routing_number: e.target.value })} />
         </FormControl>
-     
-        <FormControl mb={1}>
-          <FormLabel htmlFor='password' color='black'>Password</FormLabel>
-          <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
-        </FormControl>
+      </Flex>
 
-        {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-        <Button colorScheme='blue' width="20%" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
+      <FormControl isRequired mb={4}>
+        <FormLabel htmlFor='password' color='black'>Password</FormLabel>
+        <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
+      </FormControl>
+
+      {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
+      <Button colorScheme='blue' width="full" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
+      </Flex>
       </form>
     </Flex>
     </Box>
