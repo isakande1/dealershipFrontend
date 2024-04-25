@@ -59,7 +59,7 @@ return(
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Personnal cars
+            Personal cars
           </button>
         </li>
         <li className="nav-item">

@@ -271,7 +271,7 @@ const ContactPage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -1016,7 +1016,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -2301,7 +2301,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       alignItems="center"
       overflowY="auto"
     >
-      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
+      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800">
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
         <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>
@@ -2381,9 +2381,6 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
     </>
   );
 };
-
-
-
 
 const Login = ({setIsSignedIn}) => {
   const [showCreateUserForm, setShowCreateUserForm] = useState(false);
@@ -4414,7 +4411,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
 
       {showAssignedServices && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px'}}><strong>Assigned Work</strong></h1>
+          <h1 style={{paddingBottom:'10px', marginLeft:'40px', marginTop:'10px'}}><strong>Assigned Work</strong></h1>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -4443,7 +4440,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
       )}
 
       {showTicketDetails && selectedService && serviceDetails && (
-        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '76%', top:'13%', right: 'calc(2% + 0px)'}}>
           {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
           <Heading as="h1" size="lg">Ticket Details</Heading>
           <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
