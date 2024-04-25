@@ -2359,7 +2359,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
           <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
         </FormControl>
       </Flex>
-
+        <h6>Your credit score is :{bankInfo.credit_score || ' HAS NOT BEEN DISCLOSED YET'} </h6>
       <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
         {/* Address and Bank Name */}
         <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
