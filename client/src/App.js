@@ -2189,6 +2189,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
   const userData = location.state?.userData;
   const navigate = useNavigate();
   const [EditMessage, setEditMessage] = useState('');
+  const [credit_score_Message, setscoreMessage] = useState('');
   const [bankInfo, setBankInfo] = useState({
     bank_name: '',
     account_number: '',
@@ -2273,11 +2274,11 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       });
       const data = await response.json();
       console.log(data);
-      setEditMessage('Edit successful');
+      setEditMessage('successful');
       setTimeout(() => setEditMessage(''), 4000);
     } catch (error) {
       console.error('Error:', error);
-      setEditMessage('Edit not successful');
+      setEditMessage('not successful');
       setTimeout(() => setEditMessage(''), 4000);
     }
   };
@@ -2350,9 +2351,9 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
             <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
           </FormControl>
         </Flex>
-
+        <h6>Your credit score is :{bankInfo.credit_score|| ' not yet disclosed'} </h6>
         <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          
+         
           <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
           <FormLabel htmlFor='bank_name' color='black'>Bank Name</FormLabel>
           <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
