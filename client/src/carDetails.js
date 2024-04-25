@@ -239,6 +239,10 @@ export default function CarDetails() {
                 item_price: carInfos.price,
                 item_name: `${carInfos.model} ${carInfos.make}`,
                 item_image: carInfos.image0,
+                accessoire_id: null,
+                service_offered_id: null,
+                service_package_id: null,
+                service_request_id: null
               }),
             });
         
