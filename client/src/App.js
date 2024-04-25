@@ -4431,7 +4431,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
 
       {showAssignedServices && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px'}}><strong>Assigned Work</strong></h1>
+          <h1 style={{paddingBottom:'10px', marginLeft:'40px', marginTop:'10px'}}><strong>Assigned Work</strong></h1>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -4460,7 +4460,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
       )}
 
       {showTicketDetails && selectedService && serviceDetails && (
-        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '76%', top:'13%', right: 'calc(2% + 0px)'}}>
           {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
           <Heading as="h1" size="lg">Ticket Details</Heading>
           <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
