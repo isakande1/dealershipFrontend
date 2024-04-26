@@ -338,6 +338,7 @@ const CarDisplayBox = ({ car }) => {
 
   return (
     <Box
+      id='target'
       marginTop="100px"
       marginLeft="25px"
       marginRight="25px"
