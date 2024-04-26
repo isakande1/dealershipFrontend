@@ -125,18 +125,26 @@ export default function CarDetails() {
     };
 
     //end
+const redirectNotLoggedIn = () =>{
+  if( typeof userData == "undefined"){
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+    // Redirect to login page
+    
+    navigate('/login', { state: { previousUrl: '/carDetails' , car_id : car_id} });
+    }
+    return;
+  }
+    //end prompt user to log in
+};
+
 
       
+
     const handleMakeOffer= () =>{
       const userData = location.state?.userData; 
-      if( typeof userData == "undefined"){
-        const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-        if (confirmed) {
-        // Redirect to login page
-        navigate('/login', { state: { previousUrl: '/makeOffer' , car_id : car_id} });
-        }
-        return;
-      }
+      redirectNotLoggedIn();
+      if(userData){
       navigate('/makeOffer', {
            
         state: {
@@ -148,7 +156,7 @@ export default function CarDetails() {
           car_id: carInfos.car_id
         },
       });
-
+    }
     };
 
     //component for the car description and the other options 
@@ -161,17 +169,7 @@ export default function CarDetails() {
         const handleAddToCart = async () => {
             //prompt user to log in
             // console.log("id" , userData.customer_id);
-            if( typeof userData == "undefined"){
-            const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-            if (confirmed) {
-            // Redirect to login page
-            
-            navigate('/login', { state: { previousUrl: '/carDetails' , car_id : car_id} });
-            }
-            return;
-          }
-            //end prompt user to log in
-          
+            redirectNotLoggedIn(); 
           try {
             // Send data to endpoint
             const response = await fetch('http://localhost:5000/add_to_cart', {
@@ -235,23 +233,23 @@ export default function CarDetails() {
         };
 
         const handleNavigateTestDrive = () => {
+          redirectNotLoggedIn();
+            //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/schedule-test-drive', {
               state: { userData, carInfos },
             });
-          } else {
-            console.error('userData or carInfos is undefined.');
-          }
+          } 
         };
 
         const handleFinance = () => {
+          redirectNotLoggedIn();
+            //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/financeApplication', {
               state: { userData, carInfos},
             });
-          } else {
-            console.error('userData or carInfos is undefined.');
-          }
+          } 
         }
         
         return (
