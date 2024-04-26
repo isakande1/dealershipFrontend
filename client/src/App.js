@@ -411,15 +411,15 @@ const FilterCarsSearch = ({ handleSearch }) => {
   // handle selecting an option from the dropdown as well as searching and clearing dropdown selections
   return (
     <Flex>
-      <DropdownMenu title="Make" options={["Subaru", "Tesla", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "GMC"]} selected={make} onSelect={setMake} clearSelection={clearSelection} />
-      <DropdownMenu title="Model" options={["Outback", "Model 3", "Camry", "CRV", "Explorer", "Equinox", "X5", "Yukon", "Tundra", "Pilot", "Escape", "Corolla", "Civic", "F150",
+      <DropdownMenu id="makeDrop" title="Make" options={["Subaru", "Tesla", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "GMC"]} selected={make} onSelect={setMake} clearSelection={clearSelection} />
+      <DropdownMenu id="modelDrop" title="Model" options={["Outback", "Model 3", "Camry", "CRV", "Explorer", "Equinox", "X5", "Yukon", "Tundra", "Pilot", "Escape", "Corolla", "Civic", "F150",
               "Silverado", "Sierra", "Accord", "Mustang", "Camaro", "Forester", "Model S", "X3", "Terrain", "Rav4", "Odyssey", "Fusion"]}selected={model} onSelect={setModel} clearSelection={clearSelection} />
-      <DropdownMenu title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
-      <DropdownMenu title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
-      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
+      <DropdownMenu id="colorDrop" title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
+      <DropdownMenu id="budgetDrop" title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
+      <Button id="searchButton" bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
         <Text align="center" marginTop="16px">Search</Text>
       </Button>
-      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
+      <Button id="clearButton" bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
     </Flex>
   );
 };
