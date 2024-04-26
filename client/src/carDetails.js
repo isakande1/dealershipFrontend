@@ -78,13 +78,7 @@ export default function CarDetails() {
 
     //Component to layout the images of the car
     const CarImagesLayout = () => {
-
-      const userData = location.state?.userData; 
-
-      const handleNavigate = (path) => {
-        navigate(path, { state: { userData } });
-      };
-        return (
+      return (
             <Grid placeItems="center" bg="gray.700">
                 <Box w="80%" h="550px" /*transform="translateY(-25%)"*/>
                     <Image
@@ -125,7 +119,7 @@ export default function CarDetails() {
     };
 
     //end
-const redirectNotLoggedIn = () =>{
+const redirectNotLoggedIn = (userData ) =>{
   if( typeof userData == "undefined"){
     const confirmed = window.confirm('You need to be logged in. Proceed to login?');
     if (confirmed) {
@@ -143,7 +137,7 @@ const redirectNotLoggedIn = () =>{
 
     const handleMakeOffer= () =>{
       const userData = location.state?.userData; 
-      redirectNotLoggedIn();
+      redirectNotLoggedIn(userData);
       if(userData){
       navigate('/makeOffer', {
            
@@ -169,7 +163,7 @@ const redirectNotLoggedIn = () =>{
         const handleAddToCart = async () => {
             //prompt user to log in
             // console.log("id" , userData.customer_id);
-            redirectNotLoggedIn(); 
+            redirectNotLoggedIn(userData);
           try {
             // Send data to endpoint
             const response = await fetch('http://localhost:5000/add_to_cart', {
@@ -233,7 +227,7 @@ const redirectNotLoggedIn = () =>{
         };
 
         const handleNavigateTestDrive = () => {
-          redirectNotLoggedIn();
+          redirectNotLoggedIn(userData);
             //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/schedule-test-drive', {
@@ -243,7 +237,7 @@ const redirectNotLoggedIn = () =>{
         };
 
         const handleFinance = () => {
-          redirectNotLoggedIn();
+          redirectNotLoggedIn(userData);
             //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/financeApplication', {
