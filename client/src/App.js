@@ -59,7 +59,7 @@ function App() {
         <Flex direction="column" minHeight="100vh">
           <Box flex="1" overflowY="auto" >
             <Routes>
-              <Route path="/" element={<Homepage setIsSignedIn={setIsSignedIn}/>} />
+              <Route path="/" element={<Homepage />} />
               <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn}/>} />
               <Route path="/Roles_login" element={<Roles_login />} />
               <Route path="/homepage" element={<SignedInHomepage setIsSignedIn={setIsSignedIn} />} />
@@ -1459,7 +1459,7 @@ const CustomerCart = () => {
       setError('Error fetching cart items. Please try again later.');
     }
   };
-
+console.log("allcars", allCars);
   const calculateTotalPrice = (items) => {
     const total = items.reduce((acc, item) => acc + parseFloat(item.item_price), 0);
     setTotalPrice(total);
@@ -3014,7 +3014,7 @@ const Manager = () => {
     const formData = {
       customer_id: serviceRequest.customer_id,
       item_price: serviceRequest.service_price,
-      item_image: 'https://ibb.co/b64Kdyh',
+      item_image: 'imagePlaceHolder',
       item_name: serviceRequest.service_name,
       car_id: serviceRequest.car_id,
       service_offered_id: serviceRequest.service_offered_id
