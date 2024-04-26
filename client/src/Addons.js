@@ -95,7 +95,7 @@ export default function Addons(){
    //end
     //style package box
     const packageBoxStyle = {
-      height : "350px",
+      height : "365px",
       width : "200px",
       borderRadius:"3px"
     }
@@ -139,7 +139,7 @@ export default function Addons(){
       { <Package  packageInfos={allpackagesInfos[2]} isAdded={isAdded2} setIsAdded={setIsAdded2} />}
       { <Package packageInfos={allpackagesInfos[3]} isAdded={isAdded3} setIsAdded={setIsAdded3} />}
       { <Package  packageInfos={allpackagesInfos[4]} isAdded={isAdded4} setIsAdded={setIsAdded4} />}
-      { <Package packageInfos={allpackagesInfos[1]} isAdded={isAdded5} setIsAdded={setIsAdded5} />}
+      { <Package packageInfos={allpackagesInfos[5]} isAdded={isAdded5} setIsAdded={setIsAdded5} />}
      
     </Grid>
     
