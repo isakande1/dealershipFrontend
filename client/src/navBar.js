@@ -44,7 +44,7 @@ return(
         </li>
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
+            Profile
           </button>
         </li>
         <li className="nav-item">

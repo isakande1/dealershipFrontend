@@ -267,7 +267,7 @@ const ContactPage = ({setIsSignedIn}) => {
               marginBottom="10px"
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Modify Personal Information</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
@@ -1013,7 +1013,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
               marginBottom="10px"
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Modify Personal Information</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
