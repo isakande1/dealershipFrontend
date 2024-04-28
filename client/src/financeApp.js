@@ -97,7 +97,7 @@ export default function FinanceApp () {
                     <input type="number" id="vin_number" name="vin_number" readOnly value={`${carInfos.car_id}`} /><br /><br />
 
                     <label htmlFor="social-security">Social Security Number:</label><br />
-                    <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" value={socialSecurity} onChange={(e) => setSocialSecurity(e.target.value)} /><br /><br />
+                    <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" readOnly value={`${userData.social_security}`} onChange={(e) => setSocialSecurity(e.target.value)}  /><br /><br />
 
                     <center id="finButtonDiv">
                         <input id="financeSubmit" type="submit" value="Submit" />
