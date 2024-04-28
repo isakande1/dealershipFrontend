@@ -367,7 +367,7 @@ const CarDisplayBox = ({ car }) => {
         marginTop="10px"
         marginRight="15px"
       >
-        <Text>{car.year} {car.make} {car.model}</Text>
+        <Text id='car-name'>{car.year} {car.make} {car.model}</Text>
         <Text>${car.price}</Text>
       </Flex>
       <Flex
