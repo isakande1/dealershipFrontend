@@ -445,10 +445,10 @@ const CheckoutSuccess = () => {
 
   return (
     <div id="checkoutBg">
-      <h1>You have purchased your items successfully</h1>
+      <h1>You Have Purchased Your Items Successfully</h1>
       {allCars.length > 0 && <>(
       <Center>
-      <PDFViewer width="50%" height="700"  >
+      <PDFViewer width="50%" height="700">
             <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>
              </Center>) </>
@@ -1503,7 +1503,7 @@ const handleNavigate = (path) => {
 const handleCheckout = () => {
   if(!customerSignature && allCars.length > 0){
     setSignatureFiledColor("red");
-    window.confirm('Missing signature on car(s) purchase contract !');
+    window.confirm('Missing signature on car(s) purchase contract!');
   }else{
     navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
   }
@@ -2360,7 +2360,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
           <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
         </FormControl>
       </Flex>
-        <h6>Your credit score is :{bankInfo.credit_score || ' HAS NOT BEEN DISCLOSED YET'} </h6>
+        <h6>Your credit score is: {bankInfo.credit_score || ' HAS NOT BEEN DISCLOSED YET'} </h6>
       <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
         {/* Address and Bank Name */}
         <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
