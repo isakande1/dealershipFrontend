@@ -2997,7 +2997,7 @@ const Manager = () => {
       status: 'Awaiting Customer Payment'
     };
   
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3020,7 +3020,7 @@ const Manager = () => {
       service_offered_id: serviceRequest.service_offered_id,
       service_request_id: serviceRequest.service_request_id
     }
-    axios.post('/add_to_cart', formData)
+    axios.post('http://localhost:5000/add_to_cart', formData)
       .then(response => {
         // Handle success response
         alert('Service successfully added to cart');
@@ -3039,7 +3039,7 @@ const Manager = () => {
       status: 'declined'
     };
   
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request declined:', response.data);
@@ -3051,7 +3051,7 @@ const Manager = () => {
   };
 
   const fetchServiceRequests = () => {
-    axios.get('/show_customer_service_requests/')
+    axios.get('http://localhost:5000/show_customer_service_requests/')
     .then(response => {
       setServiceRequests(response.data);
     })
@@ -3065,7 +3065,7 @@ const Manager = () => {
       status: 'accepted'
     };
   
-    axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3081,7 +3081,7 @@ const Manager = () => {
         status: 'declined'
       };
     
-      axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+      axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
         .then(response => {
           // Update UI if necessary
           console.log('Service request declined:', response.data);
@@ -3093,7 +3093,7 @@ const Manager = () => {
   };
   
   const fetchTestDriveRequests = () => {
-    axios.get('/show_test_drive_appointments')
+    axios.get('http://localhost:5000/show_test_drive_appointments')
         .then(response => {
           setTestDriveRequests(response.data);
         })
@@ -4296,7 +4296,7 @@ const Technician = () => {
     try {
         
         console.log("assigned service id", service.assigned_service_id);
-        const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
+        const response = await axios.get(`http://localhost:5000/view_customer_service_details/${service.assigned_service_id}`);
 
        
         const details = response.data;
@@ -4326,7 +4326,7 @@ const handleSubmitReport = () => {
 const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
   // Perform an HTTP request to send the report value and assigned_service_id to the backend
   // Example using Fetch API:
-  fetch('/submitReport', {
+  fetch('http://localhost:5000/submitReport', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -4380,7 +4380,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
   // };
 
   const fetchAssignedServices = () => {
-    axios.get(`/show_assigned_services/${userData.technicians_id}`)
+    axios.get(`http://localhost:5000/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
         console.log(response.data); 
         setAssignedServices(response.data);
