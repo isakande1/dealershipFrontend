@@ -3017,7 +3017,8 @@ const Manager = () => {
       item_image: 'imagePlaceHolder',
       item_name: serviceRequest.service_name,
       car_id: serviceRequest.car_id,
-      service_offered_id: serviceRequest.service_offered_id
+      service_offered_id: serviceRequest.service_offered_id,
+      service_request_id: serviceRequest.service_request_id
     }
     axios.post('/add_to_cart', formData)
       .then(response => {
