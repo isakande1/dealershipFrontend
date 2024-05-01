@@ -1095,7 +1095,7 @@ const Contract_View = () => {
         const response = await fetch(`http://localhost:5000/view_finance_contract/${userData.customer_id}`);
         if (response.ok) {
           const data = await response.json();
-          setContracts([data]); // Assuming data directly contains the contracts array
+          setContracts(data); 
           console.log(data);
         } else {
           console.error('Failed to fetch contracts');
@@ -1138,7 +1138,7 @@ const Pdf = (contract)=> {
               <Button
                 key={contract.id}
                 m={2}     
-                onClick={() =>Pdf()}
+                onClick={() =>Pdf(contract)}
                 colorScheme="blue"
               >
                 {`${contract.car_year} ${contract.car_make} ${contract.car_model}`}
