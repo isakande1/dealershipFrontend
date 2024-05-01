@@ -446,10 +446,10 @@ const CheckoutSuccess = () => {
 
   return (
     <div id="checkoutBg">
-      <h1>You Have Purchased Your Items Successfully</h1>
+      <center><h1 id='checkoutSuccessMessage'>You Have Purchased Your Items Successfully</h1></center>
       {allCars.length > 0 && <>(
       <Center>
-      <PDFViewer width="50%" height="700">
+      <PDFViewer width="50%" height="800px">
             <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>
              </Center>) </>

@@ -269,7 +269,7 @@ button:hover {
 #checkoutBg {
   background-image: linear-gradient(#000, #777);
   width: 100vw;
-  height: 100vh;
+  height: 100%;
 }
 #checkoutBg h1 {
   color: white;
@@ -363,7 +363,7 @@ button:hover {
 }
 
 #final-heading {
-  color: #3429cc;
+  color: #dfdfdf;
   margin-top: 40px;
 }
 
@@ -396,4 +396,8 @@ button:hover {
 .form-group #social_security {
   height: 42px;
   width: 100%;
+}
+
+#checkoutSuccessMessage {
+  padding: 50px 0;
 }
