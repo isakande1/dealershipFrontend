@@ -567,9 +567,9 @@ const Checkout = () => {
             <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
             <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
           </Flex>
-          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice.toFixed(2)}</Text>
           <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
-          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice.toFixed(2)}</Text>
         </Box>
         <form onSubmit={handleSubmit}>
           <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
