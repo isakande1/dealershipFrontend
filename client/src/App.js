@@ -23,8 +23,10 @@ import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
 import FinanceReport from './financeReportManager.js';
+import ReactDOMServer from 'react-dom/server';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
+import Customer_View_Contract from './Customer_View_Contract'
 import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
 import ContractPDF from './contract';
@@ -35,6 +37,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
+
+import { Document, Page, View, StyleSheet } from '@react-pdf/renderer';
 export const UserContext = createContext();
 //import CarAccessories from './carAccessories';
 // npm install react-bootstrap bootstrap
@@ -1082,31 +1086,72 @@ const Contract_View = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
-  const [itemsSold, setItemsSold] = useState([]);
+  const [contracts, setContracts] = useState([]);
 
- 
+  // Fetch contracts data based on user ID (assuming API endpoint is available)
+  useEffect(() => {
+    const fetchContracts = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/view_finance_contract/${userData.customer_id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setContracts([data]); // Assuming data directly contains the contracts array
+          console.log(data);
+        } else {
+          console.error('Failed to fetch contracts');
+        }
+      } catch (error) {
+        console.error('Error fetching contracts:', error);
+      }
+    };
+
+    if (userData && userData.customer_id) {
+      fetchContracts();
+    }
+  }, [userData]);
+
+const Pdf = (contract)=> {
+
+
+  return(
+    <div id="pdf-holder">
+    <PDFViewer width="50%" height="100%" id="viewer">
+        <Customer_View_Contract contract={contract}/>
+    </PDFViewer>
+  </div>
+  )
+}
+  
 
   return (
     <>
- 
-      <Box
-        bg='black'
-        w='100%'
-        color='white'
-        height='100vh'
-        bgGradient="linear(to-b, black, gray.600)"
-      >
+      <Box bg='black' w='100%' color='white' height='100vh' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
-            <Text fontSize="3xl" fontWeight="bold">Contracts</Text>
+            <Text fontSize="3xl" fontWeight="bold">Contracts {userData && userData.customer_id}</Text>
           </Box>
         </Flex>
 
-        
+        <Flex flexWrap="wrap" p={4}>
+          {contracts && contracts.length > 0 ? (
+            contracts.map((contract) => (
+              <Button
+                key={contract.id}
+                m={2}     
+                onClick={() =>Pdf()}
+                colorScheme="blue"
+              >
+                {`${contract.car_year} ${contract.car_make} ${contract.car_model}`}
+              </Button>
+            ))
+          ) : (
+            <Text>No contracts available</Text>
+          )}
+        </Flex>
       </Box>
     </>
   );
-}
+};
 
 
 const TestDriveHistory = () => {
