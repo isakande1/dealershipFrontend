@@ -450,10 +450,10 @@ const CheckoutSuccess = () => {
 
   return (
     <div id="checkoutBg">
-      <h1>You Have Purchased Your Items Successfully</h1>
+      <center><h1 id='checkoutSuccessMessage'>You Have Purchased Your Items Successfully</h1></center>
       {allCars.length > 0 && <>(
       <Center>
-      <PDFViewer width="50%" height="700">
+      <PDFViewer width="50%" height="800px">
             <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
              </PDFViewer>
              </Center>) </>
@@ -2633,11 +2633,11 @@ const Login = ({setIsSignedIn}) => {
               <input type="text" id="usernames" name="usernames" required />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email">Email:</label><br />
               <input type="email" id="email" name="email" required />
             </div>
             <div className="form-group">
-            <label htmlFor="social_security">Social Security:</label>
+            <label htmlFor="social_security">Social Security:</label><br />
           <input type="number" id="social_security" name="social_security" pattern="[0-9]{9}" placeholder="Enter 9 digits" required />
           </div>
             <div className="form-group">
