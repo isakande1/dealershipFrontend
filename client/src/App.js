@@ -39,6 +39,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
 
 import { Document, Page, View, StyleSheet } from '@react-pdf/renderer';
+import { use } from 'chai';
 export const UserContext = createContext();
 //import CarAccessories from './carAccessories';
 // npm install react-bootstrap bootstrap
@@ -1087,6 +1088,9 @@ const Contract_View = () => {
   const userData = location.state?.userData;
   const navigate = useNavigate();
   const [contracts, setContracts] = useState([]);
+  const [ viewerOn, setViewerOn ] = useState(false);
+  const [ currentContract, setCurrentContract ] = useState(0);
+  const [ buttonsDisplayed, setButtonsDisplayed] = useState(true);
 
   // Fetch contracts data based on user ID (assuming API endpoint is available)
   useEffect(() => {
@@ -1095,7 +1099,7 @@ const Contract_View = () => {
         const response = await fetch(`http://localhost:5000/view_finance_contract/${userData.customer_id}`);
         if (response.ok) {
           const data = await response.json();
-          setContracts([data]); // Assuming data directly contains the contracts array
+          setContracts(data); // Assuming data directly contains the contracts array
           console.log(data);
         } else {
           console.error('Failed to fetch contracts');
@@ -1110,16 +1114,15 @@ const Contract_View = () => {
     }
   }, [userData]);
 
-const Pdf = (contract)=> {
+const Pdf = (index) => {
+  setCurrentContract(index);
+  setViewerOn(true);
+  setButtonsDisplayed(false);
+}
 
-
-  return(
-    <div id="pdf-holder">
-    <PDFViewer width="50%" height="100%" id="viewer">
-        <Customer_View_Contract contract={contract}/>
-    </PDFViewer>
-  </div>
-  )
+const goBack = () => {
+  setViewerOn(false);
+  setButtonsDisplayed(true);
 }
   
 
@@ -1132,22 +1135,34 @@ const Pdf = (contract)=> {
           </Box>
         </Flex>
 
-        <Flex flexWrap="wrap" p={4}>
-          {contracts && contracts.length > 0 ? (
-            contracts.map((contract) => (
-              <Button
-                key={contract.id}
-                m={2}     
-                onClick={() =>Pdf()}
-                colorScheme="blue"
-              >
-                {`${contract.car_year} ${contract.car_make} ${contract.car_model}`}
-              </Button>
-            ))
-          ) : (
-            <Text>No contracts available</Text>
-          )}
-        </Flex>
+        {buttonsDisplayed && (
+          <Flex flexWrap="wrap" p={4}>
+            {contracts && contracts.length > 0 ? (
+              contracts.map((contract, index) => (
+                <Button
+                  key={index}
+                  m={2}     
+                  onClick={() =>Pdf(index)}
+                  colorScheme="blue"
+                >
+                  {`${contract.car_year} ${contract.car_make} ${contract.car_model} Index: ${index}`}
+                </Button>
+              ))
+            ) : (
+              <Text>No contracts available</Text>
+            )}
+          </Flex>
+        )}
+
+        {viewerOn && (
+          <div id="customerContractContainer">
+            <PDFViewer id="customerContract" width="900px" height="600px">
+              <Customer_View_Contract contract={contracts[currentContract]} />
+            </PDFViewer>
+            <Button onClick={goBack}>Go back to List</Button>
+          </div>
+        )}
+
       </Box>
     </>
   );
