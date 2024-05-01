@@ -643,75 +643,64 @@ const Checkout = () => {
 const Homepage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [allCars, setAllCars] = useState([]);
-  const [filteredCars, setFilteredCars] = useState([]);
+  const [cars, setCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
   useEffect(() => {
-    fetchCars(); // Fetch based on the current state
-  }, [currentPage, searchParams]); 
+    const fetchCars = async () => {
+      let url = 'http://localhost:5000/cars_details';
+      let data;
+      let response;
 
-  const fetchCars = async () => {
-    let url = 'http://localhost:5000/cars_details';
-    let data;
-  
-    if (Object.keys(searchParams).length > 0) {
-      // POST request to endpoint if filters are applied
-      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      if (Object.keys(searchParams).length > 0) {
+        // POST request if filters are applied
+        response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      } else {
+        // GET request for getting all cars
+        response = await axios.get(url, { params: { page: currentPage, per_page: carsPerPage } });
+      }
       data = response.data;
-    } else {
-      // GET request for getting all cars in the db
-      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
-      data = response.data;
-    }
-  
-    // Update the cars state based on the response
-    setAllCars(data.cars);
-    setTotalPages(data.total_pages);
-    setCurrentPage(data.current_page);
-  
-    // Check if any cars were found and set the message accordingly
-    if (data.cars.length === 0) {
-      alert("Sorry, no cars found with those filters")  // if no cars found, show this
-      handleSearch({ make: '', model: '', color: '', budget: '' });
-    } else {
-      setMessage('');   // if cars found after error message, set error message to blank
-    }
-  };
 
-  const handlePageClick = (pageNumber) => {
+      setCars(data.cars);
+      setTotalPages(data.total_pages);
+      setCurrentPage(data.current_page);
+
+      if (data.cars.length === 0) {
+        setMessage("Sorry, no cars found with those filters.");
+      } else {
+        setMessage('');
+      }
+    };
+
+    fetchCars();
+  }, [currentPage, JSON.stringify(searchParams)]);
+
+  const handlePageClick = pageNumber => {
     setCurrentPage(pageNumber);
   };
 
-  const handleSearch = async (filters) => {
-    // set the page to 1 when applying filters
-    setCurrentPage(1);
+  const handleSearch = (filters) => {
     setSearchParams(filters);
+    setCurrentPage(1); // Reset to first page whenever filters change
   };
 
   const handleClear = () => {
-    setSearchParams({});  // clear all search parameters
-    setCurrentPage(1);    // reset page to 1
+    setSearchParams({});
+    setCurrentPage(1); // Reset to first page
   };
 
   const handleClickCart = () => {
-    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-    if (confirmed) {
+    if (window.confirm('You need to be logged in. Proceed to login?')) {
       window.location.href = '/login';
     }
   };
 
-  const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
-
-  // get the total number of pages based on the amount of filtered cars found
-  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
-
-  // splits the cars into appropriate rows (4 in this case)
+  // Create rows of cars for display
   const rows = [];
-  for (let i = 0; i < carsToDisplay.length; i += 4) {
-    const row = carsToDisplay.slice(i, i + 4);
+  for (let i = 0; i < cars.length; i += 4) {
+    const row = cars.slice(i, i + 4);
     rows.push(row);
   }
 
@@ -800,7 +789,8 @@ const Homepage = () => {
       {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+          {/* Generate buttons for each page based on the total number of pages */}
+          {[...Array(totalPages).keys()].map((pageNumber) => (
             <Button
               key={pageNumber + 1}
               color="white"
@@ -1018,7 +1008,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
+
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>{ navigate('/carAccessories')}}> Car Accessories</Button>
