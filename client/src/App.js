@@ -1393,6 +1393,7 @@ const ServiceHistory = () => {
                 <Th>Proposed Date</Th>
                 <Th>Status</Th>
                 <Th>Car ID</Th>
+                <Th>Report</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -1404,6 +1405,7 @@ const ServiceHistory = () => {
                   <Td>{service.proposed_datetime}</Td>
                   <Td>{service.status}</Td>
                   <Td>{service.car_id}</Td>
+                  <Td>{service.report || 'N/A'}</Td>
                 </Tr>
               ))}
             </Tbody>
