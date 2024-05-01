@@ -79,6 +79,7 @@ function App() {
               <Route path="ContactPage" element={<ContactPage setIsSignedIn={setIsSignedIn}/>} />
               <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
               <Route path="makeOffer" element={<MakeOffer/>} />
+              <Route path="/contract" element={<Contract_View />} />
               <Route path="/customerManageOffers" element={<ManageOffers/>} />
               <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
               <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
@@ -869,6 +870,10 @@ const SignedInHomepage = ({setIsSignedIn}) => {
     navigate('/TestDriveHistory', { state: { userData } });
   };
 
+  const handleNavigatecontract = () => {
+    navigate('/contract', { state: { userData } });
+  };
+
   useEffect(() => {
     fetchCars(); // Fetch based on the current state
   }, [currentPage, searchParams]); 
@@ -1012,6 +1017,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>{ navigate('/carAccessories')}}> Car Accessories</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigatecontract}> Contracts</Button>
           </Flex>
         </Box>
       )}
@@ -1069,6 +1075,39 @@ const SignedInHomepage = ({setIsSignedIn}) => {
     </>
   );
 };
+
+
+
+const Contract_View = () => {
+  const location = useLocation();
+  const userData = location.state?.userData;
+  const navigate = useNavigate();
+  const [itemsSold, setItemsSold] = useState([]);
+
+ 
+
+  return (
+    <>
+ 
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100vh'
+        bgGradient="linear(to-b, black, gray.600)"
+      >
+        <Flex justifyContent="space-between" alignItems="center" p={4}>
+          <Box>
+            <Text fontSize="3xl" fontWeight="bold">Contracts</Text>
+          </Box>
+        </Flex>
+
+        
+      </Box>
+    </>
+  );
+}
+
 
 const TestDriveHistory = () => {
   const location = useLocation();
