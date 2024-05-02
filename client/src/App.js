@@ -3442,6 +3442,14 @@ const Manager = () => {
             const data = await response.json();
             console.log("Accessory added successfully:", data);
             alert("Accessory added successfully");
+            // Reset form fields after successful POST request
+            setAccessoryData({
+              name: '',
+              description: '',
+              price: '',
+              image: '',
+              category: ''
+          });
             // Optionally, you can update the UI or show a success message here
         } else {
             console.error('Error adding accessory:', response.statusText);
