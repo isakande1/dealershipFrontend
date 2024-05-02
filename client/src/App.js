@@ -13,7 +13,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
-import { PDFViewer } from '@react-pdf/renderer';
+import { PDFViewer, pdf } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -435,19 +435,31 @@ const CheckoutSuccess = () => {
   const customerSignature = location.state?.customerSignature;
   const allCars = location.state?.allCars;
   const userData = location.state?.userData;
-  const navigate = useNavigate();
+  const userEmail = userData.email;
+  console.log("dfghjkl",userEmail);
+  
+  const sendPDF = async (userEmail) => {
+    const blob = await pdf(
+      <ContractPDF isPaided={true} customerSignature={customerSignature} allCars={allCars} userData={userData} />
+    ).toBlob();
+  
+    const formData = new FormData();
+    formData.append("pdf", blob, "contract.pdf");
+    axios.post('/emailContract', formData, { params: { userEmail } })
+      .then(response => {
+        window.confirm(response.data);
+      })
+      .catch(error => {
+        console.log('Error sending contract:', error);
+      });
+  };
+  
+  useEffect(() => {
+    sendPDF(userEmail);
+  }, []);
+  
 
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(() => {
-  //     navigate('/homepage', {
-  //       state: {
-  //         userData: userData
-  //       },
-  //     });
-  //   }, 40000);
-
-  //   return () => clearTimeout(timeoutId);
-  // }, []);
+ 
 
   return (
     <div id="checkoutBg">
