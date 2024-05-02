@@ -455,7 +455,7 @@ const CheckoutSuccess = () => {
   };
   
   useEffect(() => {
-    sendPDF(userEmail);
+    allCars.length > 0 && sendPDF(userEmail);
   }, []);
   
 
