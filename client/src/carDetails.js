@@ -9,6 +9,7 @@ import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
+import PageLoader from './pageLoader';
 import './App.css';
 
 
@@ -18,7 +19,16 @@ export default function CarDetails() {
     const { car_id } = location.state; //retrive the selected car_id sent from the home page 
     const [carInfos, setCarInfos] = useState({}); //store the fecth car infos
     const [actualImage, setActualImage] = useState(""); //Image on the main frame
-   
+    const [loaderVisible, setLoaderVisible] = useState(true);
+
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        setLoaderVisible(false);
+      }, 3000);
+    
+      // Cleanup function to clear the timeout when the component unmounts
+      return () => clearTimeout(timeoutId);
+    }, []);
 
     //Get the selected car details
     useEffect(() => {
@@ -311,15 +321,21 @@ const redirectNotLoggedIn = (userData ) =>{
 
 
     return (
-      <Grid templateRows="1fr 1fr">
-          <CarImagesLayout />
+      <>
+        {loaderVisible && (
+          <PageLoader />
+        )}
+        {!loaderVisible && (
+          <Grid templateRows="1fr 1fr">
+            <CarImagesLayout />
             <Options />
-      <Routes>
-        <Route path="/carDetails/*" element={<CarDetails />} />
-        <Route path="/carDetails/schedule-test-drive/" element={<TestDriveForm />} />
-        <Route path="/carDetails/financeApplication/*" element={<FinanceApp />} />
-      </Routes>
-    </Grid>
-
+            <Routes>
+              <Route path="/carDetails/*" element={<CarDetails />} />
+              <Route path="/carDetails/schedule-test-drive/" element={<TestDriveForm />} />
+              <Route path="/carDetails/financeApplication/*" element={<FinanceApp />} />
+            </Routes>
+          </Grid>
+        )}
+      </>
     );
 }

@@ -3,6 +3,7 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import FinanceAgreementPDF from './financeAgreementPDF';
+import PageLoader from "./pageLoader";
 import './App.css';
 
 export default function FinalizeFinance () {
@@ -15,6 +16,16 @@ export default function FinalizeFinance () {
     console.log(financeTerms);
     console.log(userData);
     console.log(carInfos);
+    const [loaderVisible, setLoaderVisible] = useState(true);
+
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        setLoaderVisible(false);
+      }, 3000);
+    
+      // Cleanup function to clear the timeout when the component unmounts
+      return () => clearTimeout(timeoutId);
+    }, []);
 
     const handleSignedApp = async (e) => {
         e.preventDefault();
@@ -107,32 +118,46 @@ export default function FinalizeFinance () {
     
     if (financeTerms.status == "approved") {
         return(
-            <div id="final-bg">
-                <center><h1 id="final-heading">Finalize Finance</h1></center>
-                <div id="pdf-holder">
-                    <PDFViewer width="50%" height="100%" id="viewer">
-                        <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
-                    </PDFViewer>
-                </div>
-                <form onSubmit={handleSignedApp}>
-                    <center><p>Sign your full name below</p></center>
-                    <center id="sigContainer"><input id="signature" type="text" required /></center>
-                    <center><input id="agreement" type="checkbox" required /> I Agree</center>
-                    <center><input type="submit" value="Sign" id="finalize" className="blue-btn" /></center>
-                </form>
-            </div>
+            <>
+                {loaderVisible && (
+                    <PageLoader />
+                )}
+                {!loaderVisible && (
+                    <div id="final-bg">
+                        <center><h1 id="final-heading">Finalize Finance</h1></center>
+                        <div id="pdf-holder">
+                            <PDFViewer width="50%" height="100%" id="viewer">
+                                <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
+                            </PDFViewer>
+                        </div>
+                        <form onSubmit={handleSignedApp}>
+                            <center><p>Sign your full name below</p></center>
+                            <center id="sigContainer"><input id="signature" type="text" required /></center>
+                            <center><input id="agreement" type="checkbox" required /> I Agree</center>
+                            <center><input type="submit" value="Sign" id="finalize" className="blue-btn" /></center>
+                        </form>
+                    </div>
+                )}
+            </>
         );
     } else {
         return(
-            <div id="final-bg">
-                <center><h1 id="final-heading">Decision Disclosure</h1></center>
-                <div id="pdf-holder">
-                    <PDFViewer width="50%" height="100%" id="viewer">
-                        <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
-                    </PDFViewer>
-                </div>
-                <center><button id="finalize" className="blue-btn2">Back to Homepage</button></center>
-            </div>
+            <>
+                {loaderVisible && (
+                    <PageLoader />
+                )}
+                {!loaderVisible && (
+                    <div id="final-bg">
+                        <center><h1 id="final-heading">Decision Disclosure</h1></center>
+                        <div id="pdf-holder">
+                            <PDFViewer width="50%" height="100%" id="viewer">
+                                <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
+                            </PDFViewer>
+                        </div>
+                        <center><button id="finalize" className="blue-btn2">Back to Homepage</button></center>
+                    </div>
+                )}
+            </>
         );
     }
 }

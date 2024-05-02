@@ -1,5 +1,5 @@
 // import necessary libraries
-import React, { useState, useEffect,createContext,useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import {
@@ -31,6 +31,7 @@ import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
 import ContractPDF from './contract';
 import SalesReport from './salesReport';
+import PageLoader from './pageLoader.js';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -436,6 +437,16 @@ const CheckoutSuccess = () => {
   const allCars = location.state?.allCars;
   const userData = location.state?.userData;
   const navigate = useNavigate();
+  const [loaderVisible, setLoaderVisible] = useState(true);
+
+  useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        setLoaderVisible(false);
+      }, 3000);
+    
+      // Cleanup function to clear the timeout when the component unmounts
+      return () => clearTimeout(timeoutId);
+  }, []);
 
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
@@ -450,16 +461,23 @@ const CheckoutSuccess = () => {
   // }, []);
 
   return (
-    <div id="checkoutBg">
-      <center><h1 id='checkoutSuccessMessage'>You Have Purchased Your Items Successfully</h1></center>
-      {allCars.length > 0 && <>(
-      <Center>
-      <PDFViewer width="50%" height="800px">
-            <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
-             </PDFViewer>
-             </Center>) </>
-}
-    </div>
+    <>
+      {loaderVisible && (
+          <PageLoader />
+      )}
+      {!loaderVisible && (
+        <div id="checkoutBg">
+          <center><h1 id='checkoutSuccessMessage'>You Have Purchased Your Items Successfully</h1></center>
+          {allCars.length > 0 && <>(
+          <Center>
+          <PDFViewer width="50%" height="800px">
+                <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+                </PDFViewer>
+                </Center>) </>
+          }
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1523,6 +1541,16 @@ const CustomerCart = () => {
   const [tempCustomerSignature, setTempCustomerSignature] = useState("placeholder");
   const [signatureFieldColor, setSignatureFiledColor] = useState(null);
   const navigate = useNavigate();  
+  const [loaderVisible, setLoaderVisible] = useState(true);
+
+  useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        setLoaderVisible(false);
+      }, 3000);
+    
+      // Cleanup function to clear the timeout when the component unmounts
+      return () => clearTimeout(timeoutId);
+  }, []);
 
   console.log("The State of the Cart", location.state);
 
@@ -1603,7 +1631,10 @@ const handleCheckout = () => {
 
   return (
   <>
- 
+    {loaderVisible && (
+          <PageLoader />
+    )}
+    {!loaderVisible && (
     <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)"> 
     
       <Flex justifyContent="space-between" alignItems="center" p={4}>
@@ -1667,6 +1698,7 @@ const handleCheckout = () => {
         </ModalContent>
       </Modal>
     </Box>
+    )}
     </>
   );
 };
