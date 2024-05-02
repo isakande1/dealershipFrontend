@@ -57,6 +57,7 @@ export default function FinalizeFinance () {
                         credit_score: financeTerms.credit_score,
                         finance_decision: financeTerms.status,
                         loan_term: financeTerms.terms.loan_term,
+                        down_payment: financeTerms.terms.down_payment,
                         loan_apr: financeTerms.terms.apr,
                         loan_monthly_payment: financeTerms.terms.monthly_payment
                     }),
