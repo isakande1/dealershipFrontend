@@ -277,7 +277,7 @@ const ContactPage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -666,47 +666,52 @@ const Homepage = () => {
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
+  // useEffect to trigger fetchCars whenever currentPage or searchParams change
   useEffect(() => {
-    const fetchCars = async () => {
-      let url = 'http://localhost:5000/cars_details';
-      let data;
-      let response;
+    fetchCars();
+  }, [currentPage]); 
 
-      if (Object.keys(searchParams).length > 0) {
-        // POST request if filters are applied
-        response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
-      } else {
-        // GET request for getting all cars
-        response = await axios.get(url, { params: { page: currentPage, per_page: carsPerPage } });
-      }
-      data = response.data;
-
-      setCars(data.cars);
-      setTotalPages(data.total_pages);
-      setCurrentPage(data.current_page);
-
-      if (data.cars.length === 0) {
-        setMessage("Sorry, no cars found with those filters.");
-      } else {
-        setMessage('');
-      }
+  const fetchCars = async () => {
+    const url = 'http://localhost:5000/cars_details';
+    const method = Object.keys(searchParams).length > 0 ? 'post' : 'get';
+    const params = {
+      ...searchParams,
+      page: currentPage,
+      per_page: carsPerPage
     };
 
-    fetchCars();
-  }, [currentPage, JSON.stringify(searchParams)]);
+    try {
+      const response = await axios({
+        method: method,
+        url: url,
+        [method === 'post' ? 'data' : 'params']: params
+      });
 
-  const handlePageClick = pageNumber => {
-    setCurrentPage(pageNumber);
+      const data = response.data;
+      setCars(data.cars);
+      setTotalPages(data.total_pages);
+      setCurrentPage(prev => Math.min(prev, data.total_pages)); 
+
+      setMessage(data.cars.length === 0 ? "Sorry, no cars found with those filters." : '');
+
+    } catch (error) {
+      console.error('Error fetching cars:', error);
+      setMessage('Failed to load cars.');
+    }
   };
 
-  const handleSearch = (filters) => {
+  const handlePageClick = pageNumber => {
+    setCurrentPage(Math.min(pageNumber, totalPages));
+  };
+
+  const handleSearch = filters => {
     setSearchParams(filters);
-    setCurrentPage(1); // Reset to first page whenever filters change
+    setCurrentPage(1); // Reset to the first page whenever filters are applied
   };
 
   const handleClear = () => {
     setSearchParams({});
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1); // Reset to the first page on clear
   };
 
   const handleClickCart = () => {
@@ -1029,7 +1034,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
 
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -1045,30 +1050,23 @@ const SignedInHomepage = ({setIsSignedIn}) => {
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
-
-      {message ? (
-      <Box textAlign="center" color="white" mt="20px">
-        {message}
-      </Box>
-      ) : (
-        // if no error message, display cars
-        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
-          {rows.map((row, rowIndex) => (
-            <Flex key={rowIndex} justifyContent="flex-start">
-              {row.map((car, index) => (
-                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
-                  <CarDisplayBox car={car} />
-                </Box>
-              ))}
-            </Flex>
-          ))}
-        </Flex>
-      )}
+      <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+        {rows.map((row, rowIndex) => (
+          <Flex key={rowIndex} justifyContent="flex-start">
+            {row.map((car, index) => (
+              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                <CarDisplayBox car={car} />
+              </Box>
+            ))}
+          </Flex>
+        ))}
+      </Flex>
 
       {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+          {/* Generate buttons for each page based on the total number of pages */}
+          {[...Array(totalPages).keys()].map((pageNumber) => (
             <Button
               key={pageNumber + 1}
               color="white"
