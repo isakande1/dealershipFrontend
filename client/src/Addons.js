@@ -95,7 +95,7 @@ export default function Addons(){
    //end
     //style package box
     const packageBoxStyle = {
-      height : "350px",
+      height : "365px",
       width : "200px",
       borderRadius:"3px"
     }
@@ -103,7 +103,7 @@ export default function Addons(){
   //display the car
     const CarInfos = () =>{
         return(
-        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr" position="fixed" zIndex="2" width="100%" top="0" left="0" > 
+        <Grid bg="black" gridTemplateColumns="0.12fr 1fr 0.10fr"   width="100%" mt="5px" > 
             <Box width="140px" height="100px"> 
             <Image
                         overflow="hidden"
@@ -128,7 +128,7 @@ export default function Addons(){
   
       return(
        
-        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%" marginTop="90px" marginBottom="40px">
+        <Grid w= "70%" h="80%" gridTemplateColumns={{base : "repeat(1,1fr)", md:"repeat(2,1fr)", xl:"repeat(3,1fr)" }} rowGap="25px" marginLeft="10%"  marginBottom="40px">
           
       {/* {allpackagesInfos.map((packageInfos, index) => (
         <Package key={index} packageInfos={packageInfos} isAdded={isAdded[index]} setIsAdded={setIsAdded} />
@@ -139,7 +139,7 @@ export default function Addons(){
       { <Package  packageInfos={allpackagesInfos[2]} isAdded={isAdded2} setIsAdded={setIsAdded2} />}
       { <Package packageInfos={allpackagesInfos[3]} isAdded={isAdded3} setIsAdded={setIsAdded3} />}
       { <Package  packageInfos={allpackagesInfos[4]} isAdded={isAdded4} setIsAdded={setIsAdded4} />}
-      { <Package packageInfos={allpackagesInfos[1]} isAdded={isAdded5} setIsAdded={setIsAdded5} />}
+      { <Package packageInfos={allpackagesInfos[5]} isAdded={isAdded5} setIsAdded={setIsAdded5} />}
      
     </Grid>
     
@@ -190,7 +190,7 @@ export default function Addons(){
   
   
       return (
-          <Grid sx={{ ...packageBoxStyle, ...highlight(isAdded)}}    pos="relative">
+          <Grid sx={{ ...packageBoxStyle, ...highlight(isAdded)}}    pos="relative" >
              <Box> 
               <Image sx={imageStyle} src={packageInfos.image} />
               </Box>
@@ -220,7 +220,7 @@ export default function Addons(){
         </Flex >
        <Flex bg="rgba(0, 0, 0, 0.5)"  justifyContent="center" position="fixed" h="40px" w="100%" zIndex="2" bottom="0" left="0">
        <Button onClick={()=>AddtoCartAndOwnedService( customer_id, packageToAdd, userData, car_id)}>
-       <Text fontFamily="sans-serif">{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
+       <Text marginTop="15px" fontFamily="sans-serif">{itemsCount > 0 ? `Continue(${itemsCount})` : "Skip add-ons"} </Text>
         </Button>
         </Flex>
         </>

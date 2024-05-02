@@ -78,60 +78,8 @@ export default function CarDetails() {
 
     //Component to layout the images of the car
     const CarImagesLayout = () => {
-
-      const userData = location.state?.userData; 
-
-      const handleNavigate = (path) => {
-        navigate(path, { state: { userData } });
-      };
-        return (
+      return (
             <Grid placeItems="center" bg="gray.700">
-                {userData && (
-        <nav className="navbar">
-          <ul className="nav-list">
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-                Home
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-                Service History
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-                Schedule Service
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-                Car Accessories
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-                Modify Info
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-                Cart
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-                Past Purchase
-              </button>
-            </li>
-            <li className="nav-item">
-              <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-                Own Car
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
                 <Box w="80%" h="550px" /*transform="translateY(-25%)"*/>
                     <Image
                         overflow="hidden"
@@ -171,18 +119,26 @@ export default function CarDetails() {
     };
 
     //end
+const redirectNotLoggedIn = (userData ) =>{
+  if( typeof userData == "undefined"){
+    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
+    if (confirmed) {
+    // Redirect to login page
+    
+    navigate('/login', { state: { previousUrl: '/carDetails' , car_id : car_id} });
+    }
+    return;
+  }
+    //end prompt user to log in
+};
+
 
       
+
     const handleMakeOffer= () =>{
       const userData = location.state?.userData; 
-      if( typeof userData == "undefined"){
-        const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-        if (confirmed) {
-        // Redirect to login page
-        navigate('/login', { state: { previousUrl: '/makeOffer' , car_id : car_id} });
-        }
-        return;
-      }
+      redirectNotLoggedIn(userData);
+      if(userData){
       navigate('/makeOffer', {
            
         state: {
@@ -194,7 +150,7 @@ export default function CarDetails() {
           car_id: carInfos.car_id
         },
       });
-
+    }
     };
 
     //component for the car description and the other options 
@@ -207,17 +163,7 @@ export default function CarDetails() {
         const handleAddToCart = async () => {
             //prompt user to log in
             // console.log("id" , userData.customer_id);
-            if( typeof userData == "undefined"){
-            const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-            if (confirmed) {
-            // Redirect to login page
-            
-            navigate('/login', { state: { previousUrl: '/carDetails' , car_id : car_id} });
-            }
-            return;
-          }
-            //end prompt user to log in
-          
+            redirectNotLoggedIn(userData);
           try {
             // Send data to endpoint
             const response = await fetch('http://localhost:5000/add_to_cart', {
@@ -231,6 +177,10 @@ export default function CarDetails() {
                 item_price: carInfos.price,
                 item_name: `${carInfos.model} ${carInfos.make}`,
                 item_image: carInfos.image0,
+                accessoire_id: null,
+                service_offered_id: null,
+                service_package_id: null,
+                service_request_id: null
               }),
             });
         
@@ -277,23 +227,23 @@ export default function CarDetails() {
         };
 
         const handleNavigateTestDrive = () => {
+          redirectNotLoggedIn(userData);
+            //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/schedule-test-drive', {
               state: { userData, carInfos },
             });
-          } else {
-            console.error('userData or carInfos is undefined.');
-          }
+          } 
         };
 
         const handleFinance = () => {
+          redirectNotLoggedIn(userData);
+            //end prompt user to log in
           if (userData && carInfos) {
             navigate('/carDetails/financeApplication', {
               state: { userData, carInfos},
             });
-          } else {
-            console.error('userData or carInfos is undefined.');
-          }
+          } 
         }
         
         return (

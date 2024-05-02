@@ -1,9 +1,9 @@
 // import necessary libraries
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,createContext,useContext } from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import {
-  Center, Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
+  Center,Text, Heading, Box, HStack, Flex, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Select, Stack, Image, Modal, FormErrorMessage,
   ModalOverlay,
   ModalContent,
@@ -13,18 +13,24 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
+import { PDFViewer, pdf } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import CarDetails from './carDetails';
+import NavBar from './navBar.js';
 import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import FinalizeFinance from './financeFinalization';
+import FinanceReport from './financeReportManager.js';
+import ReactDOMServer from 'react-dom/server';
 import Addons from './Addons'
 import MakeOffer from './makeOffer'
+import Customer_View_Contract from './Customer_View_Contract'
 import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
 import ContractPDF from './contract';
+import SalesReport from './salesReport';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -32,27 +38,40 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
 
+import { Document, Page, View, StyleSheet } from '@react-pdf/renderer';
+import { use } from 'chai';
+export const UserContext = createContext();
 //import CarAccessories from './carAccessories';
 // npm install react-bootstrap bootstrap
 
 function App() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  //USE TO KEEP NAVBAR ON WHEN THE PAGE IS REFRESHED
+  useEffect(()=>{
+    if(sessionStorage.length > 0){
+      setIsSignedIn(true);
+    }
+  },[isSignedIn]);
+ 
   return (
     // this will be used to navigate to different pages in our website
-    <div>
-    {/* <NavBar/> */}
+    <div> 
     <ChakraProvider>
       <Router>
+        <>
+        <NavBar isSignedIn={isSignedIn} />
         <Flex direction="column" minHeight="100vh">
-          <Box flex="1" overflowY="auto">
+          <Box flex="1" overflowY="auto" >
             <Routes>
               <Route path="/" element={<Homepage />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn}/>} />
               <Route path="/Roles_login" element={<Roles_login />} />
-              <Route path="/homepage" element={<SignedInHomepage />} />
+              <Route path="/homepage" element={<SignedInHomepage setIsSignedIn={setIsSignedIn} />} />
               <Route path="/tech" element={<Technician />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/manager" element={<Manager />} />
-              <Route path="/ModifyInfo" element={<CustomerModifyInfo />} />
+              <Route path="/ModifyInfo" element={<CustomerModifyInfo setIsSignedIn={setIsSignedIn}/>} />
               <Route path="/Cart" element={<CustomerCart/>} />
               <Route path="/PastPurchase" element={<PastPurchase />} />
               <Route path="/OwnCar" element={<OwnCar />} />
@@ -62,26 +81,29 @@ function App() {
               <Route path="/ServiceHistory" element={<ServiceHistory />} />
               <Route path="/carAccessories" element={<CarAccessories />} />
               <Route path="/Addons" element={<Addons/>} />
-              <Route path="ContactPage" element={<ContactPage/>} />
+              <Route path="ContactPage" element={<ContactPage setIsSignedIn={setIsSignedIn}/>} />
               <Route path="TestDriveHistory" element={<TestDriveHistory/>} />
               <Route path="makeOffer" element={<MakeOffer/>} />
+              <Route path="/contract" element={<Contract_View />} />
               <Route path="/customerManageOffers" element={<ManageOffers/>} />
               <Route path="/managerManageOffers" element={<ManageOffersManager/>} />
               <Route path='/carDetails/financeApplication/*' element={<FinanceApp />}></Route>
               <Route path='/finalizeFinance' element={<FinalizeFinance />}></Route>
               <Route path='/checkout' element={<Checkout />}></Route>
               <Route path='/checkoutSuccess' element={<CheckoutSuccess />}></Route>
+              <Route path='/financeReportManager' element={<FinanceReport />}></Route>
             </Routes>
           </Box>
-        </Flex>
+        </Flex>  </>
       </Router>
+    
     </ChakraProvider>
     </div>
   )
 }
 
 // contact page that displays the email and phone number as text fields to the user
-const ContactPage = () => {
+const ContactPage = ({setIsSignedIn}) => {
   const location = useLocation();
   const [showDashboardOptions, setShowDashboardOptions] = useState(false);
   const storedData = sessionStorage?.getItem('data');
@@ -91,8 +113,10 @@ const ContactPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(customer_id != null);
   const navigate = useNavigate();
 
+
   const handleSignOut = () => {
     sessionStorage.clear(); //clear the data in the session when sign out
+    setIsSignedIn(false);
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
   };
@@ -249,11 +273,11 @@ const ContactPage = () => {
               marginBottom="10px"
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Modify Personal Information</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -320,6 +344,7 @@ const CarDisplayBox = ({ car }) => {
 
   return (
     <Box
+      id='target'
       marginTop="100px"
       marginLeft="25px"
       marginRight="25px"
@@ -348,7 +373,7 @@ const CarDisplayBox = ({ car }) => {
         marginTop="10px"
         marginRight="15px"
       >
-        <Text>{car.year} {car.make} {car.model}</Text>
+        <Text id='car-name'>{car.year} {car.make} {car.model}</Text>
         <Text>${car.price}</Text>
       </Flex>
       <Flex
@@ -392,23 +417,60 @@ const FilterCarsSearch = ({ handleSearch }) => {
   // handle selecting an option from the dropdown as well as searching and clearing dropdown selections
   return (
     <Flex>
-      <DropdownMenu title="Make" options={["Subaru", "Tesla", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "GMC"]} selected={make} onSelect={setMake} clearSelection={clearSelection} />
-      <DropdownMenu title="Model" options={["Outback", "Model 3", "Camry", "CRV", "Explorer", "Equinox", "X5", "Yukon", "Tundra", "Pilot", "Escape", "Corolla", "Civic", "F150",
+      <DropdownMenu id="makeDrop" title="Make" options={["Subaru", "Tesla", "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "GMC"]} selected={make} onSelect={setMake} clearSelection={clearSelection} />
+      <DropdownMenu id="modelDrop" title="Model" options={["Outback", "Model 3", "Camry", "CRV", "Explorer", "Equinox", "X5", "Yukon", "Tundra", "Pilot", "Escape", "Corolla", "Civic", "F150",
               "Silverado", "Sierra", "Accord", "Mustang", "Camaro", "Forester", "Model S", "X3", "Terrain", "Rav4", "Odyssey", "Fusion"]}selected={model} onSelect={setModel} clearSelection={clearSelection} />
-      <DropdownMenu title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
-      <DropdownMenu title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
-      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
+      <DropdownMenu id="colorDrop" title="Color" options={["Gray", "Purple", "White", "Blue", "Black", "Silver", "Red", "Orange", "Green", "Yellow"]}selected={color} onSelect={setColor} clearSelection={clearSelection} />
+      <DropdownMenu id="budgetDrop" title="Budget" options={["$50000-$99999", "$100000-$139999", "$140000-$149999", "$150000-$199999", "$200000+"]} selected={budget} onSelect={setBudget} clearSelection={clearSelection} />
+      <Button id="searchButton" bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={() => handleSearch({ make, model, color, budget })}>
         <Text align="center" marginTop="16px">Search</Text>
       </Button>
-      <Button bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
+      <Button id="clearButton" bg="lightgray" marginLeft="10px" marginTop="48px" textAlign="center" width="80px" height="30px" color="black" borderRadius="lg" onClick={handleClear}>Clear</Button>
     </Flex>
   );
 };
 
 const CheckoutSuccess = () => {
+  const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
+  const userData = location.state?.userData;
+  const userEmail = userData.email;
+  console.log("dfghjkl",userEmail);
+  
+  const sendPDF = async (userEmail) => {
+    const blob = await pdf(
+      <ContractPDF isPaided={true} customerSignature={customerSignature} allCars={allCars} userData={userData} />
+    ).toBlob();
+  
+    const formData = new FormData();
+    formData.append("pdf", blob, "contract.pdf");
+    axios.post('/emailContract', formData, { params: { userEmail } })
+      .then(response => {
+        window.confirm(response.data);
+      })
+      .catch(error => {
+        console.log('Error sending contract:', error);
+      });
+  };
+  
+  useEffect(() => {
+    allCars.length > 0 && sendPDF(userEmail);
+  }, []);
+  
+
+ 
+
   return (
     <div id="checkoutBg">
-      <h1>You have purchased your items successfully</h1>
+      <center><h1 id='checkoutSuccessMessage'>You Have Purchased Your Items Successfully</h1></center>
+      {allCars.length > 0 && <>(
+      <Center>
+      <PDFViewer width="50%" height="800px">
+            <ContractPDF isPaided ={true} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>
+             </Center>) </>
+}
     </div>
   );
 }
@@ -417,6 +479,8 @@ const CheckoutSuccess = () => {
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const customerSignature = location.state?.customerSignature;
+  const allCars = location.state?.allCars;
   const userData = location.state?.userData;
   const car_name = location.state?.car_name;
   const car_id = location.state?.car_id;
@@ -498,7 +562,7 @@ const Checkout = () => {
     }
 
     console.log("Form is valid, processing payment...");
-    navigate('/checkoutSuccess');
+    navigate('/checkoutSuccess', { state: { userData,customerSignature,allCars } });
   };
 
   return (
@@ -515,9 +579,9 @@ const Checkout = () => {
             <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
             <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
           </Flex>
-          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice.toFixed(2)}</Text>
           <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
-          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice.toFixed(2)}</Text>
         </Box>
         <form onSubmit={handleSubmit}>
           <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
@@ -597,75 +661,64 @@ const Checkout = () => {
 const Homepage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [allCars, setAllCars] = useState([]);
-  const [filteredCars, setFilteredCars] = useState([]);
+  const [cars, setCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
   useEffect(() => {
-    fetchCars(); // Fetch based on the current state
-  }, [currentPage, searchParams]); 
+    const fetchCars = async () => {
+      let url = 'http://localhost:5000/cars_details';
+      let data;
+      let response;
 
-  const fetchCars = async () => {
-    let url = 'http://localhost:5000/cars_details';
-    let data;
-  
-    if (Object.keys(searchParams).length > 0) {
-      // POST request to endpoint if filters are applied
-      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      if (Object.keys(searchParams).length > 0) {
+        // POST request if filters are applied
+        response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      } else {
+        // GET request for getting all cars
+        response = await axios.get(url, { params: { page: currentPage, per_page: carsPerPage } });
+      }
       data = response.data;
-    } else {
-      // GET request for getting all cars in the db
-      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
-      data = response.data;
-    }
-  
-    // Update the cars state based on the response
-    setAllCars(data.cars);
-    setTotalPages(data.total_pages);
-    setCurrentPage(data.current_page);
-  
-    // Check if any cars were found and set the message accordingly
-    if (data.cars.length === 0) {
-      alert("Sorry, no cars found with those filters")  // if no cars found, show this
-      handleSearch({ make: '', model: '', color: '', budget: '' });
-    } else {
-      setMessage('');   // if cars found after error message, set error message to blank
-    }
-  };
 
-  const handlePageClick = (pageNumber) => {
+      setCars(data.cars);
+      setTotalPages(data.total_pages);
+      setCurrentPage(data.current_page);
+
+      if (data.cars.length === 0) {
+        setMessage("Sorry, no cars found with those filters.");
+      } else {
+        setMessage('');
+      }
+    };
+
+    fetchCars();
+  }, [currentPage, JSON.stringify(searchParams)]);
+
+  const handlePageClick = pageNumber => {
     setCurrentPage(pageNumber);
   };
 
-  const handleSearch = async (filters) => {
-    // set the page to 1 when applying filters
-    setCurrentPage(1);
+  const handleSearch = (filters) => {
     setSearchParams(filters);
+    setCurrentPage(1); // Reset to first page whenever filters change
   };
 
   const handleClear = () => {
-    setSearchParams({});  // clear all search parameters
-    setCurrentPage(1);    // reset page to 1
+    setSearchParams({});
+    setCurrentPage(1); // Reset to first page
   };
 
   const handleClickCart = () => {
-    const confirmed = window.confirm('You need to be logged in. Proceed to login?');
-    if (confirmed) {
+    if (window.confirm('You need to be logged in. Proceed to login?')) {
       window.location.href = '/login';
     }
   };
 
-  const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
-
-  // get the total number of pages based on the amount of filtered cars found
-  const totalFilteredPages = Math.ceil(filteredCars.length / carsPerPage);
-
-  // splits the cars into appropriate rows (4 in this case)
+  // Create rows of cars for display
   const rows = [];
-  for (let i = 0; i < carsToDisplay.length; i += 4) {
-    const row = carsToDisplay.slice(i, i + 4);
+  for (let i = 0; i < cars.length; i += 4) {
+    const row = cars.slice(i, i + 4);
     rows.push(row);
   }
 
@@ -754,7 +807,8 @@ const Homepage = () => {
       {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+          {/* Generate buttons for each page based on the total number of pages */}
+          {[...Array(totalPages).keys()].map((pageNumber) => (
             <Button
               key={pageNumber + 1}
               color="white"
@@ -780,7 +834,7 @@ const Homepage = () => {
 };
 
 // this will be the homepage for when the user has logged in to their account
-const SignedInHomepage = () => {
+const SignedInHomepage = ({setIsSignedIn}) => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
@@ -793,9 +847,11 @@ const SignedInHomepage = () => {
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
+
   const handleSignOut = () => {
-    sessionStorage.clear(); //clear the data in the session when sign out
+    sessionStorage.clear(); //remove data in session
     localStorage.removeItem('accessToken');
+    setIsSignedIn(false);
     navigate('/', { replace: true });
   };
 
@@ -829,6 +885,10 @@ const SignedInHomepage = () => {
   
   const handleNavigateToTestDrive = () => {
     navigate('/TestDriveHistory', { state: { userData } });
+  };
+
+  const handleNavigatecontract = () => {
+    navigate('/contract', { state: { userData } });
   };
 
   useEffect(() => {
@@ -933,8 +993,8 @@ const SignedInHomepage = () => {
             <path fill="url(#f)" d="M0 0h1230v769H0V0Z"/>
             <defs>
               <linearGradient id="e" x1="1260.15" x2="258.334" y1="262.616" y2="883.984" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#000A61"/>
-                <stop offset="1" stop-color="#A8A8A8"/>
+                <stop stopColor="#000A61"/>
+                <stop offset="1" stopColor="#A8A8A8"/>
               </linearGradient>
               <pattern id="f" width="1" height="1" patternContentUnits="objectBoundingBox">
                 <use href="#g" transform="scale(.00158 .00253)"/>
@@ -965,14 +1025,16 @@ const SignedInHomepage = () => {
               marginBottom="10px"
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Modify Personal Information</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add own car </Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>{ navigate('/carAccessories')}}> Car Accessories</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigatecontract}> Contracts</Button>
           </Flex>
         </Box>
       )}
@@ -1031,6 +1093,94 @@ const SignedInHomepage = () => {
   );
 };
 
+
+
+const Contract_View = () => {
+  const location = useLocation();
+  const userData = location.state?.userData;
+  const navigate = useNavigate();
+  const [contracts, setContracts] = useState([]);
+  const [ viewerOn, setViewerOn ] = useState(false);
+  const [ currentContract, setCurrentContract ] = useState(0);
+  const [ buttonsDisplayed, setButtonsDisplayed] = useState(true);
+
+  // Fetch contracts data based on user ID (assuming API endpoint is available)
+  useEffect(() => {
+    const fetchContracts = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/view_finance_contract/${userData.customer_id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setContracts(data); 
+          console.log(data);
+        } else {
+          console.error('Failed to fetch contracts');
+        }
+      } catch (error) {
+        console.error('Error fetching contracts:', error);
+      }
+    };
+
+    if (userData && userData.customer_id) {
+      fetchContracts();
+    }
+  }, [userData]);
+
+const Pdf = (index) => {
+  setCurrentContract(index);
+  setViewerOn(true);
+  setButtonsDisplayed(false);
+}
+
+const goBack = () => {
+  setViewerOn(false);
+  setButtonsDisplayed(true);
+}
+  
+
+  return (
+    <>
+      <Box bg='black' w='100%' color='white' height='100vh' bgGradient="linear(to-b, black, gray.600)">
+        <Flex justifyContent="space-between" alignItems="center" p={4}>
+          <Box>
+            <Text fontSize="3xl" fontWeight="bold">Contracts {userData && userData.customer_id}</Text>
+          </Box>
+        </Flex>
+
+        {buttonsDisplayed && (
+          <Flex flexWrap="wrap" p={4}>
+            {contracts && contracts.length > 0 ? (
+              contracts.map((contract, index) => (
+                <Button
+                  key={index}
+                  m={2}     
+                  onClick={() =>Pdf(index)}
+                  colorScheme="blue"
+                >
+                  {`${contract.car_year} ${contract.car_make} ${contract.car_model} Index: ${index}`}
+                </Button>
+              ))
+            ) : (
+              <Text>No contracts available</Text>
+            )}
+          </Flex>
+        )}
+
+        {viewerOn && (
+          <div id="customerContractContainer">
+            <PDFViewer id="customerContract" width="900px" height="600px">
+              <Customer_View_Contract contract={contracts[currentContract]} />
+            </PDFViewer>
+            <Button onClick={goBack}>Go back to List</Button>
+          </div>
+        )}
+
+      </Box>
+    </>
+  );
+};
+
+
 const TestDriveHistory = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -1060,50 +1210,7 @@ const TestDriveHistory = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-      </ul>
-    </nav>
+   
       <Box
         bg='black'
         w='100%'
@@ -1242,50 +1349,7 @@ const OwnCar = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
+   
     <Box
           bgGradient="linear(to-b, black, gray.600)"
           position='fixed'
@@ -1304,7 +1368,7 @@ const OwnCar = () => {
           overflowY='scroll' // Enable vertical scrolling
         >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="3xl" fontWeight="bold">Add Own Car</Text>
+          <Text fontSize="3xl" fontWeight="bold">Add your Car</Text>
         </Flex>
         <form onSubmit={handleSubmit}>
           <Box mt={8}>
@@ -1336,6 +1400,15 @@ const OwnCar = () => {
               mb={4}
               style={{ width: '200px' }}
             /> <br></br>
+              <Input
+              placeholder="year"
+              name="year"
+              required
+              value={formData.year}
+              onChange={handleInputChange}
+              mb={4}
+              style={{ width: '200px' }}
+            /> <br></br>
             
             <Button type="submit" colorScheme="teal">
               Submit
@@ -1346,7 +1419,7 @@ const OwnCar = () => {
           </Box>
         </form>
         <Box mt={8}>
-          <Heading size="md">Customer own Cars</Heading>
+          <Heading size="md">Your Cars</Heading>
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
               customerCars.map((car) => (
@@ -1354,11 +1427,12 @@ const OwnCar = () => {
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
+                <Text color="black">{`Model: ${car.year}`}</Text>
                   <Button colorScheme="red" onClick={() => handleRemoveCar(car.car_id)}>Remove</Button>
                 </Box>
               ))
             ) : (
-              <Text>No cars added by this customer.</Text>
+              <Text>No cars added.</Text>
             )}
           </VStack>
         </Box>
@@ -1395,50 +1469,7 @@ const ServiceHistory = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-          <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-        </li>
-      </ul>
-    </nav>
+
       <Box
         bg='black'
         w='100%'
@@ -1463,6 +1494,7 @@ const ServiceHistory = () => {
                 <Th>Proposed Date</Th>
                 <Th>Status</Th>
                 <Th>Car ID</Th>
+                <Th>Report</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -1474,6 +1506,7 @@ const ServiceHistory = () => {
                   <Td>{service.proposed_datetime}</Td>
                   <Td>{service.status}</Td>
                   <Td>{service.car_id}</Td>
+                  <Td>{service.report || 'N/A'}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -1485,6 +1518,7 @@ const ServiceHistory = () => {
 };
 
 const CustomerCart = () => {
+
   const location = useLocation();
   const userData = location.state?.userData;
   const customer_id = userData?.customer_id;
@@ -1496,9 +1530,10 @@ const CustomerCart = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [allCars, setAllCars] = useState([]);
-  const [isSigned, setIsSigned] = useState(false);
   const [showContract, setShowContract] = useState(null);
-  const [customerSignature, setCustomerSignature] = useState();
+  const [customerSignature, setCustomerSignature] = useState(undefined);
+  const [tempCustomerSignature, setTempCustomerSignature] = useState("placeholder");
+  const [signatureFieldColor, setSignatureFiledColor] = useState(null);
   const navigate = useNavigate();  
 
   console.log("The State of the Cart", location.state);
@@ -1527,7 +1562,7 @@ const CustomerCart = () => {
       setError('Error fetching cart items. Please try again later.');
     }
   };
-
+console.log("allcars", allCars);
   const calculateTotalPrice = (items) => {
     const total = items.reduce((acc, item) => acc + parseFloat(item.item_price), 0);
     setTotalPrice(total);
@@ -1569,58 +1604,20 @@ const handleNavigate = (path) => {
 };
 
 const handleCheckout = () => {
-  navigate('/checkout', { state: { userData, car_id, car_name, totalPrice } });
+  if(!customerSignature && allCars.length > 0){
+    setSignatureFiledColor("red");
+    window.confirm('Missing signature on car(s) purchase contract!');
+  }else{
+    navigate('/checkout', { state: { userData, car_id, car_name, totalPrice,customerSignature,allCars } });
+  }
 };
-// console.log("cars    ", allCars);
+
 
   return (
   <>
  
-    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)">
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)"> 
+    
       <Flex justifyContent="space-between" alignItems="center" p={4}>
         <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
         <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
@@ -1642,21 +1639,25 @@ const handleCheckout = () => {
                 <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
               </Flex>
             ))}
-           {/* contract section */}
-           {showContract === false ? 
-            <Text onClick={() => setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
-          : 
-          <Text onClick={() => setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-         {showContract && <ContractPDF isSigned={isSigned} customerSignature={customerSignature} allCars={allCars} userData={userData}/>}
-            {allCars && (
-           <>
-           <form onSubmit={(e) => {e.preventDefault(); setIsSigned(true)}}> 
-            <input type="text" name="fullName" placeholder=' Enter Fullname' value={customerSignature} onChange={(e) => setCustomerSignature(e.target.value)} /> 
-            <Button type="submit">Sign</Button>
-        </form>
-           </>
-)}
-{/* end contract section */}
+                        {/* contract section */}
+               {allCars.length > 0 && (<>         
+             {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+             : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+             <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
+            <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+             </PDFViewer>}
+             </Center>
+            
+            <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
+             <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
+            <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
+            onChange={(e)=>setTempCustomerSignature(e.target.value)} />
+            </Box>
+            <Button  type="submit"  onClick={()=>{setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
+          </Flex>
+
+            </>)}
+ {/* end contract section */}
             
             <Text fontSize="2xl" fontWeight="bold">
               Total Price: ${totalPrice.toFixed(2)}
@@ -1790,50 +1791,7 @@ const CustomerSerivceAppointment = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-           Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
+ 
       <Box
         bg='black'
         w='100%'
@@ -1943,50 +1901,7 @@ const PastPurchase = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive Status
-          </button>
-        </li>
-      </ul>
-    </nav>
+ 
       <Box
         bg='black'
         w='100%'
@@ -2258,50 +2173,6 @@ const CarAccessories = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ModifyInfo')}>
-            Modify Info
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>
-      </ul>
-    </nav>
     <Box
           bgGradient="linear(to-b, black, gray.600)"
           position='fixed'
@@ -2427,11 +2298,12 @@ const CarAccessories = () => {
   );
 };
 
-const CustomerModifyInfo = () => {
+const CustomerModifyInfo = ({setIsSignedIn}) => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
   const [EditMessage, setEditMessage] = useState('');
+  const [credit_score_Message, setscoreMessage] = useState('');
   const [bankInfo, setBankInfo] = useState({
     bank_name: '',
     account_number: '',
@@ -2439,10 +2311,10 @@ const CustomerModifyInfo = () => {
   });
   const [loading, setLoading] = useState(true);
 
-
   const handleSignOut = () => {
     sessionStorage.clear(); //remove data in session
     localStorage.removeItem('accessToken');
+    setIsSignedIn(false);
     navigate('/', { replace: true });
   };
 
@@ -2516,11 +2388,11 @@ const CustomerModifyInfo = () => {
       });
       const data = await response.json();
       console.log(data);
-      setEditMessage('Edit successful');
+      setEditMessage('successful');
       setTimeout(() => setEditMessage(''), 4000);
     } catch (error) {
       console.error('Error:', error);
-      setEditMessage('Edit not successful');
+      setEditMessage('not successful');
       setTimeout(() => setEditMessage(''), 4000);
     }
   };
@@ -2531,50 +2403,7 @@ const CustomerModifyInfo = () => {
 
   return (
     <>
-    <nav className="navbar">
-      <ul className="nav-list">
-      <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
-            Home
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
-            Service History
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Service')}>
-           Sheducle Service 
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/carAccessories')}>
-            Car Accessories
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
-            Past Purchase
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/OwnCar')}>
-            Own Car
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/TestDriveHistory')}>
-            Test Drive status
-          </button>
-        </li>  
-      </ul>
-    </nav>
+  
     <Box
       bg='black'
       w='100%'
@@ -2585,9 +2414,9 @@ const CustomerModifyInfo = () => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      overflowY="auto"
+      overflowY="hidden"
     >
-      <Flex direction="column" p={5} rounded="md" bg="white" height="95vh" shadow="sm" width="90%" maxWidth="500px" mx="auto" my={6} color="gray.800">
+      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto">
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
         <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>
@@ -2598,69 +2427,75 @@ const CustomerModifyInfo = () => {
       
 
       <form>
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* First and Last Name */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
-            <Input id='first_name' type='text'  color='red' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
-            <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-        </Flex>
-        <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='social_security' color='black'>Social Security</FormLabel>
-            <Input id='social_security' type='text' color='red' name='social_security' value={editedData.social_security} onChange={handleInputChange} isReadOnly />
-          </FormControl>
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* User Name and Email */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
-            <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='email' color='black'>Email</FormLabel>
-            <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
-          </FormControl>
-        </Flex>
+      <Flex direction="column" p={4} border="1px solid #ccc" borderRadius="md">
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* First and Last Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='first_name' color='black'>First Name</FormLabel>
+          <Input id='first_name' type='text' color='red' name='first_name' value={editedData.first_name} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='last_name' color='black'>Last Name</FormLabel>
+          <Input id='last_name' type='text' color='red' name='last_name' value={editedData.last_name} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+      </Flex>
 
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          {/* Phone and Address */}
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
-            <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
-            <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
-          </FormControl>
-          <FormControl pl={{ base: 0, sm: 2 }} flex="1">
-            <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
-            <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
-          </FormControl>
-        </Flex>
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Social Security and User Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='social_security' color='black'>Social Security</FormLabel>
+          <Input id='social_security' type='text' color='red' name='social_security' value={editedData.social_security} onChange={handleInputChange} isReadOnly />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='usernames' color='black'>User Name</FormLabel>
+          <Input id='usernames' type='text' name='usernames' value={editedData.usernames} onChange={handleInputChange} />
+        </FormControl>
+      </Flex>
 
-        <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
-          
-          <FormControl pr={{ base: 0, sm: 2 }} mb={{ base: 4, sm: 0 }} flex="1">
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Email and Phone */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='email' color='black'>Email</FormLabel>
+          <Input id='email' type='email' name='email' value={editedData.email} onChange={handleInputChange} />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='phone' color='black'>Phone</FormLabel>
+          <Input id='phone' type='tel' name='phone' value={editedData.phone} onChange={handleInputChange} />
+        </FormControl>
+      </Flex>
+        <h6>Your credit score is: {bankInfo.credit_score || ' HAS NOT BEEN DISCLOSED YET'} </h6>
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Address and Bank Name */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='Address' color='black'>Address</FormLabel>
+          <Input id='Address' type='text' name='Address' value={editedData.Address} onChange={handleInputChange} />
+        </FormControl>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
           <FormLabel htmlFor='bank_name' color='black'>Bank Name</FormLabel>
           <Input id='bank_name' type='text' name='bank_name' value={bankInfo.bank_name || ''} onChange={(e) => setBankInfo({ ...bankInfo, bank_name: e.target.value })} />
         </FormControl>
-        <FormControl mb={4}>
-          <FormLabel htmlFor='account_number' color='black'>Account Number  (16 digts) </FormLabel>
+      </Flex>
+
+      <Flex direction={{ base: "column", sm: "row" }} wrap="wrap" mb={4}>
+        {/* Account Number and Routing Number */}
+        <FormControl isRequired pr={{ base: 0, sm: 2 }} mb={4} flex="1">
+          <FormLabel htmlFor='account_number' color='black'>Account Number</FormLabel>
           <Input id='account_number' type='text' name='account_number' value={bankInfo.account_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, account_number: e.target.value })} />
         </FormControl>
-        </Flex>
-
-        <FormControl mb={1}>
-          <FormLabel htmlFor='routing_number' color='black'>Routing Number ( 9 digits)</FormLabel>
+        <FormControl isRequired pl={{ base: 0, sm: 2 }} flex="1">
+          <FormLabel htmlFor='routing_number' color='black'>Routing Number</FormLabel>
           <Input id='routing_number' type='text' name='routing_number' value={bankInfo.routing_number || ''} onChange={(e) => setBankInfo({ ...bankInfo, routing_number: e.target.value })} />
         </FormControl>
-     
-        <FormControl mb={1}>
-          <FormLabel htmlFor='password' color='black'>Password</FormLabel>
-          <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
-        </FormControl>
+      </Flex>
 
-        {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
-        <Button colorScheme='blue' width="20%" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
+      <FormControl isRequired mb={4}>
+        <FormLabel htmlFor='password' color='black'>Password</FormLabel>
+        <Input id='password' type='password' name='password' value={editedData.password} onChange={handleInputChange} />
+      </FormControl>
+
+      {EditMessage && <Text color="red.500" mb={3}>{EditMessage}</Text>}
+      <Button colorScheme='blue' width="full" onClick={() => { handleEdit(); handleBankInfoSubmission(); }}>Save</Button>
+      </Flex>
       </form>
     </Flex>
     </Box>
@@ -2668,12 +2503,16 @@ const CustomerModifyInfo = () => {
   );
 };
 
-const Login = () => {
+
+
+
+const Login = ({setIsSignedIn}) => {
   const [showCreateUserForm, setShowCreateUserForm] = useState(false);
   const [showCreateCustomerForm, setShowCreateCustomerForm] = useState(false);
   const [EditMessage, setEditMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
 
   const handleCreateCustomerClick = () => {
     setShowCreateCustomerForm(!showCreateCustomerForm);
@@ -2703,6 +2542,7 @@ const Login = () => {
         previousUrl ? navigate(previousUrl, { state: { car_id: car_id, userData: data } }) : navigate('/homepage', { state: { userData: data } });
         // Storing the data object as a string
         sessionStorage.setItem('data', JSON.stringify(data));
+        setIsSignedIn(true);
         // Reset form state and collapse sign-up form
         setShowCreateCustomerForm(false);
         setShowCreateUserForm(false);
@@ -2717,6 +2557,7 @@ const Login = () => {
       console.error('Error:', error);
     }
   };
+
 
   const handleCreateCustomerSubmit = async (event) => {
     event.preventDefault();
@@ -2764,6 +2605,8 @@ const Login = () => {
       console.error('Error:', error);
     }
   };
+
+ 
 
   return (
     <div className='master-form-container' style={{
@@ -2817,11 +2660,11 @@ const Login = () => {
               <input type="text" id="usernames" name="usernames" required />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email">Email:</label><br />
               <input type="email" id="email" name="email" required />
             </div>
             <div className="form-group">
-            <label htmlFor="social_security">Social Security:</label>
+            <label htmlFor="social_security">Social Security:</label><br />
           <input type="number" id="social_security" name="social_security" pattern="[0-9]{9}" placeholder="Enter 9 digits" required />
           </div>
             <div className="form-group">
@@ -2843,6 +2686,7 @@ const Login = () => {
       </div>
       <div className='circle-top-left'></div>
       <div className='circle-bottom-right'></div>
+
     </div>
   );
 };
@@ -3094,7 +2938,7 @@ const AssignTechnicians = () => {
     setIsDateSelected(!!selectedRequest);
 
     if (selectedRequest) {
-      axios.get(`/get_available_technicians?date=${selectedRequest.date}`)
+      axios.get(`http://localhost:5000/get_available_technicians?date=${selectedRequest.date}`)
         .then(response => {
           setAvailableTechnicians(response.data);
         })
@@ -3113,7 +2957,7 @@ const AssignTechnicians = () => {
       return;
     }
 
-    axios.post('/assign_technicians', {
+    axios.post('http://localhost:5000/assign_technicians', {
       technician_id: selectedTechnician,
       service_request_id: selectedServiceRequest
     }).then(response => {
@@ -3163,7 +3007,6 @@ const AssignTechnicians = () => {
     </Box>
   );
 };
-
 // component for displaying the manager dashboard ui
 const Manager = () => {
   const location = useLocation();
@@ -3175,6 +3018,8 @@ const Manager = () => {
   const [showRemoveMiscellaneous, setShowRemoveMiscellaneous] = useState(false);
   const [showServiceRequests, setShowServiceRequests] = useState(false);
   const [showTestDriveRequests, setShowTestDriveRequests] = useState(false);
+  const [showSalesReport, setShowSalesReport] = useState(false);
+  const [salesReport, setSalesReport] = useState([]);
   const [showAssignTech, setShowAssignTech] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -3213,6 +3058,36 @@ const Manager = () => {
   // const [selectedModel, setSelectedModel] = useState("");
 
   useEffect(() => {
+    if (showSalesReport) {
+      getSalesReport()
+    }
+  }, [showSalesReport]);
+
+  const getSalesReport = async () => {
+    try{
+      const response = await axios.get('http://localhost:5000/getMonthlySales');
+      console.log(response.data);
+      setSalesReport(response.data);
+      console.log(salesReport);
+      //const data = await response.data;
+      //console.log(data);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getSalesReport();
+  }, []);
+
+  useEffect(() => {
+    if (salesReport.length > 0) {
+      console.log(salesReport);
+    }
+  }, [salesReport]);
+
+  useEffect(() => {
     if (showServiceRequests) {
       fetchServiceRequests();
     } else if (showTestDriveRequests) {
@@ -3225,7 +3100,7 @@ const Manager = () => {
       status: 'Awaiting Customer Payment'
     };
   
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3242,12 +3117,13 @@ const Manager = () => {
     const formData = {
       customer_id: serviceRequest.customer_id,
       item_price: serviceRequest.service_price,
-      item_image: 'https://ibb.co/b64Kdyh',
+      item_image: 'imagePlaceHolder',
       item_name: serviceRequest.service_name,
       car_id: serviceRequest.car_id,
-      service_offered_id: serviceRequest.service_offered_id
+      service_offered_id: serviceRequest.service_offered_id,
+      service_request_id: serviceRequest.service_request_id
     }
-    axios.post('/add_to_cart', formData)
+    axios.post('http://localhost:5000/add_to_cart', formData)
       .then(response => {
         // Handle success response
         alert('Service successfully added to cart');
@@ -3266,7 +3142,7 @@ const Manager = () => {
       status: 'declined'
     };
   
-    axios.patch(`/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request declined:', response.data);
@@ -3278,7 +3154,7 @@ const Manager = () => {
   };
 
   const fetchServiceRequests = () => {
-    axios.get('/show_customer_service_requests/')
+    axios.get('http://localhost:5000/show_customer_service_requests/')
     .then(response => {
       setServiceRequests(response.data);
     })
@@ -3292,7 +3168,7 @@ const Manager = () => {
       status: 'accepted'
     };
   
-    axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+    axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3308,7 +3184,7 @@ const Manager = () => {
         status: 'declined'
       };
     
-      axios.patch(`/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+      axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
         .then(response => {
           // Update UI if necessary
           console.log('Service request declined:', response.data);
@@ -3320,7 +3196,7 @@ const Manager = () => {
   };
   
   const fetchTestDriveRequests = () => {
-    axios.get('/show_test_drive_appointments')
+    axios.get('http://localhost:5000/show_test_drive_appointments')
         .then(response => {
           setTestDriveRequests(response.data);
         })
@@ -3534,6 +3410,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'assignTechnician':
         setShowAssignTech(true);
@@ -3544,6 +3421,7 @@ const Manager = () => {
         setShowServiceRequests(false);
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
+        setShowSalesReport(false);
         break;
       case 'addCars':
         setShowAddCars(true);
@@ -3554,6 +3432,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'removeCars':
         setShowAddCars(false);
@@ -3564,6 +3443,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'manageServiceRequests':
         setShowServiceRequests(true);
@@ -3574,6 +3454,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'removeMiscellaneous':
         setShowServiceRequests(false);
@@ -3584,6 +3465,7 @@ const Manager = () => {
         setShowRemoveMiscellaneous(true);
         setShowAddMiscellaneous(false);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'addMiscellaneous':
         setShowServiceRequests(false);
@@ -3594,10 +3476,23 @@ const Manager = () => {
         setShowRemoveMiscellaneous(false);
         setShowAddMiscellaneous(true);
         setShowAssignTech(false);
+        setShowSalesReport(false);
         break;
       case 'manageTestDriveRequests':
         setShowServiceRequests(false);
         setShowTestDriveRequests(true);
+        setShowTechnicianForm(false);
+        setShowAddCars(false);
+        setShowRemoveCars(false);
+        setShowRemoveMiscellaneous(false);
+        setShowAddMiscellaneous(false);
+        setShowAssignTech(false);
+        setShowSalesReport(false);
+        break;
+      case 'generateReport':
+        setShowSalesReport(true);
+        setShowServiceRequests(false);
+        setShowTestDriveRequests(false);
         setShowTechnicianForm(false);
         setShowAddCars(false);
         setShowRemoveCars(false);
@@ -3769,6 +3664,16 @@ const Manager = () => {
           </Flex>
         </Flex>
       </Box>
+
+      {/* This section is for the current months sales report */}
+      {console.log(showSalesReport)}
+      {showSalesReport && (
+        <div id="salesReportContainer">
+          <PDFViewer id="salesReport" width="60%" height="80%">
+            <SalesReport salesReportContent={salesReport} />
+          </PDFViewer>
+        </div>
+      )}
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
@@ -4158,11 +4063,11 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addCars')}>Add Cars to Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageTestDriveRequests')}>Test Drive Requests</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Generate Report</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('generateReport')}>Generate Report</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Accessories</Button>
+          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/financeReportManager') }>Customers Finance Reports</Button>
         </Flex>
       </Box>
       {showAddCars && <HandleAddCars managerId={userData.manager_id} />}
@@ -4175,8 +4080,8 @@ const Admin = () => {
   const location = useLocation();
   const userData = location.state?.userData;
   const navigate = useNavigate();
-  /*Create Technician Form Hooks and Variables*/
   const [showTechnicianForm, setShowTechnicianForm] = useState(false);
+  const [showManagerForm, setShowManagerForm] = useState(false);
   const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
   const [technicianFormData, setTechnicianFormData] = useState({
     firstName: '',  
@@ -4187,10 +4092,7 @@ const Admin = () => {
     password: '',
     admin_id: userData.admin_id
   });
-  /*End Of: Create Technician Form Hooks and Variables*/
 
-  /*Create Manager Form Hooks and Variables*/
-  const [showManagerForm, setShowManagerForm] = useState(false);
   const [managerFormData, setManagerFormData] = useState({
     firstName: '',  
     lastName: '',  
@@ -4212,6 +4114,7 @@ const Admin = () => {
     axios.post('/add_technician', formData)
       .then(response => {
         console.log('Technician added successfully');
+        alert('Technician account created successfully!');  // display an alert on success
         setTechnicianFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4242,6 +4145,7 @@ const Admin = () => {
     axios.post('/add_manager', formData)
       .then(response => {
         console.log('Manager added successfully');
+        alert('Manager account created successfully!');  // display an alert on success
         setManagerFormData({  // Reset all form fields to blank
           firstName: '',  
           lastName: '',  
@@ -4305,7 +4209,11 @@ const Admin = () => {
 
       {/* Form with information required to create a technician account */}
       {showTechnicianForm && (
-        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+      <>
+        <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="41%" transform="translateX(-50%)" zIndex="1000" color="white">
+          Create Technician Account
+        </Text>
+        <form onSubmit={handleSubmitTechnicianForm} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
           <Flex flexDirection="row" justifyContent="space-between">
             <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
               <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4368,11 +4276,16 @@ const Admin = () => {
           </Flex>
           <Button type="submit" colorScheme="green" marginTop="10px">Create Technician</Button>
         </form>
+      </>
       )}
 
       {/* Conditional Rendering of the Create Manager Account Form */}
       {showManagerForm && (
-            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '150px', left: '500px' }}>
+        <>
+          <Text fontWeight="bold" fontSize="5xl" position="fixed" top="70px" left="40%" transform="translateX(-50%)" zIndex="1000" color="white">
+            Create Manager Account
+          </Text>
+            <form onSubmit={handleManagerFormSubmit} style={{ position: 'absolute', width: '50%', top: '180px', left: '500px' }}>
             <Flex flexDirection="row" justifyContent="space-between">
               <Flex flexDirection="column" justifyContent="flex-start" flex="1" marginRight="30px">
                 <FormControl id="firstName" isRequired marginBottom="20px">
@@ -4435,13 +4348,7 @@ const Admin = () => {
             </Flex>
             <Button type="submit" colorScheme="green" marginTop="10px">Create Manager</Button>
           </form>
-      )}
-
-      { /* if the account is successfully created, display a success message to the user */}
-      {accountCreationSuccess && (
-        <Box position="absolute" top="80%" left="46%" transform="translate(-50%, -50%)" color="white" p="4" borderRadius="md">
-          Technician account created successfully!
-        </Box>
+        </>
       )}
 
       {/* dashboard options shown to admin upon signing in */}
@@ -4458,8 +4365,14 @@ const Admin = () => {
       >
         { /* options for the admin to choose from */}
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => setShowManagerForm(true)}>Create Manager Account</Button>
-          <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('createTechnician')}>Create Technician Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(false);
+            setShowManagerForm(true);
+            }}>Create Manager Account</Button>
+          <Button variant="green" color="white" marginBottom="10px" onClick={() => {
+            setShowTechnicianForm(true);
+            setShowManagerForm(false);
+          }}>Create Technician Account</Button>
         </Flex>
       </Box>
     </>
@@ -4493,7 +4406,7 @@ const Technician = () => {
     try {
         
         console.log("assigned service id", service.assigned_service_id);
-        const response = await axios.get(`/view_customer_service_details/${service.assigned_service_id}`);
+        const response = await axios.get(`http://localhost:5000/view_customer_service_details/${service.assigned_service_id}`);
 
        
         const details = response.data;
@@ -4523,7 +4436,7 @@ const handleSubmitReport = () => {
 const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
   // Perform an HTTP request to send the report value and assigned_service_id to the backend
   // Example using Fetch API:
-  fetch('/submitReport', {
+  fetch('http://localhost:5000/submitReport', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -4547,37 +4460,8 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
     window.alert('Failed to save feedback. Please try again later.');
   });
 };
-
-
-  // const TicketDetails = () =>{
-  //   return (
-  //        <Box bg='black' w='100%' color='white' height='100vh'>
-  //          <Modal isOpen={detailsModal} onClose={handleCloseModal}>
-  //             <ModalHeader>Customer Details</ModalHeader>
-  //             <ModalCloseButton />
-  //             <ModalBody>
-  //             <FormControl mt={4}>
-  //               <FormLabel color="white" >Description</FormLabel>
-  //               <Input
-  //                   type="text"
-  //                   //value={}
-  //                   //onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
-  //                   color="white"
-  //                 />
-  //             </FormControl>
-  //             </ModalBody>
-  //             <ModalFooter>
-  //               <Button variant="secondary" onClick={handleCloseModal}>
-  //                   Close
-  //               </Button>
-  //             </ModalFooter>
-  //           </Modal>
-  //        </Box>
-  //   )
-  // };
-
   const fetchAssignedServices = () => {
-    axios.get(`/show_assigned_services/${userData.technicians_id}`)
+    axios.get(`http://localhost:5000/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
         console.log(response.data); 
         setAssignedServices(response.data);
@@ -4586,8 +4470,6 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
         console.error('Error fetching assigned services:', error);
       });
   };
-
-  // when technician clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
@@ -4624,13 +4506,12 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
       <Box bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="600px" position="fixed" left="0" top="0" marginTop="90px" borderRadius="xl">
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('checkAssignedWork')}>Assigned Work</Button>
-          <Button variant="green" color="white" marginBottom="10px">Send Service Report</Button>
         </Flex>
       </Box>
 
       {showAssignedServices && (
         <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
-          <h1 style={{paddingBottom:'10px'}}><strong>Assigned Work</strong></h1>
+          <h1 style={{paddingBottom:'10px', marginLeft:'40px', marginTop:'10px'}}><strong>Assigned Work</strong></h1>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -4659,7 +4540,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
       )}
 
       {showTicketDetails && selectedService && serviceDetails && (
-        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '80%', top:'10%', right: 'calc(2% + 0px)'}}>
+        <Box position="absolute" style={{ color:'white', position: 'absolute', width: '76%', top:'13%', right: 'calc(2% + 0px)'}}>
           {/* what we need to pass now is assigned_service_id to the backend with the feed back, but display the rest of the info */}
           <Heading as="h1" size="lg">Ticket Details</Heading>
           <Text>Technician Name: {`${selectedService.technician_first_name} ${selectedService.technician_last_name}`}</Text>
@@ -4669,6 +4550,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
           <Text>Service ID: {serviceDetails[0]?.service_request_id}</Text>
           <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
           <Text>Price: ${serviceDetails[0]?.service_price}</Text>
+          <Text>Report: {serviceDetails[0]?.report || 'N/A'}</Text>
           <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
           <Input
               id="report"
