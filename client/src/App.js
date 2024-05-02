@@ -1138,10 +1138,10 @@ const goBack = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' color='white' height='100vh' bgGradient="linear(to-b, black, gray.600)">
+      <Box bg='black' w='100%' color='white'   minH="100vh" height='100vh' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
-            <Text fontSize="3xl" fontWeight="bold">Contracts {userData && userData.customer_id}</Text>
+            <Text fontSize="3xl" fontWeight="bold">Finance contracts</Text>
           </Box>
         </Flex>
 
@@ -1155,7 +1155,7 @@ const goBack = () => {
                   onClick={() =>Pdf(index)}
                   colorScheme="blue"
                 >
-                  {`${contract.car_year} ${contract.car_make} ${contract.car_model} Index: ${index}`}
+                  {`${contract.car_year} ${contract.car_make} ${contract.car_model}`}
                 </Button>
               ))
             ) : (
@@ -1164,14 +1164,20 @@ const goBack = () => {
           </Flex>
         )}
 
-        {viewerOn && (
-          <div id="customerContractContainer">
-            <PDFViewer id="customerContract" width="900px" height="600px">
-              <Customer_View_Contract contract={contracts[currentContract]} />
-            </PDFViewer>
-            <Button onClick={goBack}>Go back to List</Button>
-          </div>
-        )}
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  {viewerOn && (
+    
+    <div id="customerContractContainer">
+      <Button onClick={goBack}>Go back to List</Button>
+      <br></br>
+      <br></br>
+      <PDFViewer id="customerContract" width="900px" height="600px">
+        <Customer_View_Contract contract={contracts[currentContract]} />
+      </PDFViewer>
+
+    </div>
+  )}
+</div>
 
       </Box>
     </>
