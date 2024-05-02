@@ -23,10 +23,16 @@ return(
     <nav className="navbar" >
       <ul className="nav-list">
         <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/homepage')}>
+          <button  style= {{color:'red'}} className="nav-button" onClick={() => handleNavigate('/homepage')}>
             Home
           </button>
         </li>
+        <li className="nav-item">
+          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
+            Cart
+          </button>
+        </li>
+
         <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/ServiceHistory')}>
             Service History
@@ -48,11 +54,6 @@ return(
           </button>
         </li>
         <li className="nav-item">
-          <button className="nav-button" onClick={() => handleNavigate('/Cart')}>
-            Cart
-          </button>
-        </li>
-        <li className="nav-item">
           <button className="nav-button" onClick={() => handleNavigate('/PastPurchase')}>
             Past Purchase
           </button>
@@ -67,6 +68,13 @@ return(
             Test Drive status
           </button>
         </li>
+        <button className="nav-button" onClick={() => handleNavigate('/contract')}>
+            Finance contracts 
+        </button>
+
+        <button className="nav-button" onClick={() => handleNavigate('/customerManageOffers')}>
+            Manage offer
+        </button>
       </ul>
       </nav>
       </Box>
