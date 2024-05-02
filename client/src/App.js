@@ -567,9 +567,9 @@ const Checkout = () => {
             <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
             <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
           </Flex>
-          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice.toFixed(2)}</Text>
           <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
-          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice}</Text>
+          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice.toFixed(2)}</Text>
         </Box>
         <form onSubmit={handleSubmit}>
           <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
@@ -4044,7 +4044,6 @@ const Manager = () => {
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeCars')}>Remove Cars From Dealership</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('manageTestDriveRequests')}>Test Drive Requests</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('generateReport')}>Generate Report</Button>
-          <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px">Send Service Reports</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() =>navigate('/managerManageOffers') }>Manage Offers</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('addMiscellaneous')}>Add Accessories</Button>
           <Button variant="liquid" colorScheme="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('removeMiscellaneous')}>Remove Accessories</Button>
@@ -4441,35 +4440,6 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
     window.alert('Failed to save feedback. Please try again later.');
   });
 };
-
-
-  // const TicketDetails = () =>{
-  //   return (
-  //        <Box bg='black' w='100%' color='white' height='100vh'>
-  //          <Modal isOpen={detailsModal} onClose={handleCloseModal}>
-  //             <ModalHeader>Customer Details</ModalHeader>
-  //             <ModalCloseButton />
-  //             <ModalBody>
-  //             <FormControl mt={4}>
-  //               <FormLabel color="white" >Description</FormLabel>
-  //               <Input
-  //                   type="text"
-  //                   //value={}
-  //                   //onChange={(e) => setManagerFormData({ ...managerFormData, username: e.target.value })}
-  //                   color="white"
-  //                 />
-  //             </FormControl>
-  //             </ModalBody>
-  //             <ModalFooter>
-  //               <Button variant="secondary" onClick={handleCloseModal}>
-  //                   Close
-  //               </Button>
-  //             </ModalFooter>
-  //           </Modal>
-  //        </Box>
-  //   )
-  // };
-
   const fetchAssignedServices = () => {
     axios.get(`http://localhost:5000/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
@@ -4480,8 +4450,6 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
         console.error('Error fetching assigned services:', error);
       });
   };
-
-  // when technician clicks on sign out, gets redirected to the homepage
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
     navigate('/', { replace: true });
@@ -4518,7 +4486,6 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
       <Box bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="600px" position="fixed" left="0" top="0" marginTop="90px" borderRadius="xl">
         <Flex flexDirection="column" alignItems="flex-start" p={4}>
           <Button variant="green" color="white" marginBottom="10px" onClick={() => handleButtonClick('checkAssignedWork')}>Assigned Work</Button>
-          <Button variant="green" color="white" marginBottom="10px">Send Service Report</Button>
         </Flex>
       </Box>
 
@@ -4563,6 +4530,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
           <Text>Service ID: {serviceDetails[0]?.service_request_id}</Text>
           <Text>Service Requested: {`${selectedService.service_name}`}: {`${selectedService.service_description}`}</Text>
           <Text>Price: ${serviceDetails[0]?.service_price}</Text>
+          <Text>Report: {serviceDetails[0]?.report || 'N/A'}</Text>
           <Flex size="sm" style={{ marginTop: '10px', width: '30%', marginBottom: '10px'}}>
           <Input
               id="report"
