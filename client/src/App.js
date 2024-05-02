@@ -661,57 +661,58 @@ const Checkout = () => {
 const Homepage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [cars, setCars] = useState([]);
+  const [allCars, setAllCars] = useState([]);
+  const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
   // useEffect to trigger fetchCars whenever currentPage or searchParams change
   useEffect(() => {
-    fetchCars();
-  }, [currentPage]); 
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
-    const url = 'http://localhost:5000/cars_details';
-    const method = Object.keys(searchParams).length > 0 ? 'post' : 'get';
-    const params = {
-      ...searchParams,
-      page: currentPage,
-      per_page: carsPerPage
-    };
-
-    try {
-      const response = await axios({
-        method: method,
-        url: url,
-        [method === 'post' ? 'data' : 'params']: params
-      });
-
-      const data = response.data;
-      setCars(data.cars);
-      setTotalPages(data.total_pages);
-      setCurrentPage(prev => Math.min(prev, data.total_pages)); 
-
-      setMessage(data.cars.length === 0 ? "Sorry, no cars found with those filters." : '');
-
-    } catch (error) {
-      console.error('Error fetching cars:', error);
-      setMessage('Failed to load cars.');
+    let url = 'http://localhost:5000/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // POST request to endpoint if filters are applied
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
+      data = response.data;
+    } else {
+      // GET request for getting all cars in the db
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      alert("Sorry, no cars found with those filters")  // if no cars found, show this
+      handleSearch({ make: '', model: '', color: '', budget: '' });
+    } else {
+      setMessage('');   // if cars found after error message, set error message to blank
     }
   };
 
-  const handlePageClick = pageNumber => {
-    setCurrentPage(Math.min(pageNumber, totalPages));
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  const handleSearch = filters => {
+  const handleSearch = async (filters) => {
+    // set the page to 1 when applying filters
+    setCurrentPage(1);
     setSearchParams(filters);
-    setCurrentPage(1); // Reset to the first page whenever filters are applied
   };
 
   const handleClear = () => {
-    setSearchParams({});
-    setCurrentPage(1); // Reset to the first page on clear
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
   };
 
   const handleClickCart = () => {
@@ -720,10 +721,12 @@ const Homepage = () => {
     }
   };
 
+  const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
   // Create rows of cars for display
   const rows = [];
-  for (let i = 0; i < cars.length; i += 4) {
-    const row = cars.slice(i, i + 4);
+  for (let i = 0; i < carsToDisplay.length; i += 4) {
+    const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
   }
 
