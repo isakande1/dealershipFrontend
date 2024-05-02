@@ -13,7 +13,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown, FaPhone, FaEnvelope, FaFolderOpen, FaShoppingCart } from 'react-icons/fa';
-import { PDFViewer } from '@react-pdf/renderer';
+import { PDFViewer, pdf } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
@@ -278,7 +278,7 @@ const ContactPage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToCarAccessories}>View Additional Accessories</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -437,6 +437,30 @@ const CheckoutSuccess = () => {
   const allCars = location.state?.allCars;
   const userData = location.state?.userData;
   const navigate = useNavigate();
+
+  const userEmail = userData.email;
+  console.log("dfghjkl",userEmail);
+  
+  const sendPDF = async (userEmail) => {
+    const blob = await pdf(
+      <ContractPDF isPaided={true} customerSignature={customerSignature} allCars={allCars} userData={userData} />
+    ).toBlob();
+  
+    const formData = new FormData();
+    formData.append("pdf", blob, "contract.pdf");
+    axios.post('/emailContract', formData, { params: { userEmail } })
+      .then(response => {
+        window.confirm(response.data);
+      })
+      .catch(error => {
+        console.log('Error sending contract:', error);
+      });
+  };
+  
+  useEffect(() => {
+    allCars.length > 0 && sendPDF(userEmail);
+  }, []);
+
   const [loaderVisible, setLoaderVisible] = useState(true);
 
   useEffect(() => {
@@ -667,52 +691,58 @@ const Checkout = () => {
 const Homepage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [cars, setCars] = useState([]);
+  const [allCars, setAllCars] = useState([]);
+  const [filteredCars, setFilteredCars] = useState([]);
   const [searchParams, setSearchParams] = useState({});
   const [message, setMessage] = useState('');
   const carsPerPage = 12;
 
+  // useEffect to trigger fetchCars whenever currentPage or searchParams change
   useEffect(() => {
-    const fetchCars = async () => {
-      let url = 'http://localhost:5000/cars_details';
-      let data;
-      let response;
+    fetchCars(); // Fetch based on the current state
+  }, [currentPage, searchParams]); 
 
-      if (Object.keys(searchParams).length > 0) {
-        // POST request if filters are applied
-        response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
-      } else {
-        // GET request for getting all cars
-        response = await axios.get(url, { params: { page: currentPage, per_page: carsPerPage } });
-      }
+  const fetchCars = async () => {
+    let url = 'http://localhost:5000/cars_details';
+    let data;
+  
+    if (Object.keys(searchParams).length > 0) {
+      // POST request to endpoint if filters are applied
+      const response = await axios.post(url, { ...searchParams, page: currentPage, per_page: carsPerPage });
       data = response.data;
+    } else {
+      // GET request for getting all cars in the db
+      const response = await axios.get(`${url}?page=${currentPage}&per_page=${carsPerPage}`);
+      data = response.data;
+    }
+  
+    // Update the cars state based on the response
+    setAllCars(data.cars);
+    setTotalPages(data.total_pages);
+    setCurrentPage(data.current_page);
+  
+    // Check if any cars were found and set the message accordingly
+    if (data.cars.length === 0) {
+      alert("Sorry, no cars found with those filters")  // if no cars found, show this
+      handleSearch({ make: '', model: '', color: '', budget: '' });
+    } else {
+      setMessage('');   // if cars found after error message, set error message to blank
+    }
+  };
 
-      setCars(data.cars);
-      setTotalPages(data.total_pages);
-      setCurrentPage(data.current_page);
-
-      if (data.cars.length === 0) {
-        setMessage("Sorry, no cars found with those filters.");
-      } else {
-        setMessage('');
-      }
-    };
-
-    fetchCars();
-  }, [currentPage, JSON.stringify(searchParams)]);
-
-  const handlePageClick = pageNumber => {
+  const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const handleSearch = (filters) => {
+  const handleSearch = async (filters) => {
+    // set the page to 1 when applying filters
+    setCurrentPage(1);
     setSearchParams(filters);
-    setCurrentPage(1); // Reset to first page whenever filters change
   };
 
   const handleClear = () => {
-    setSearchParams({});
-    setCurrentPage(1); // Reset to first page
+    setSearchParams({});  // clear all search parameters
+    setCurrentPage(1);    // reset page to 1
   };
 
   const handleClickCart = () => {
@@ -721,10 +751,12 @@ const Homepage = () => {
     }
   };
 
+  const carsToDisplay = filteredCars.length > 0 ? filteredCars : allCars;
+
   // Create rows of cars for display
   const rows = [];
-  for (let i = 0; i < cars.length; i += 4) {
-    const row = cars.slice(i, i + 4);
+  for (let i = 0; i < carsToDisplay.length; i += 4) {
+    const row = carsToDisplay.slice(i, i + 4);
     rows.push(row);
   }
 
@@ -1035,7 +1067,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
-            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add personnal car </Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToAddownCar}>Add Personal Car </Button>
 
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToTestDrive}>View Test Drive Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/customerManageOffers') }>Manage Offers</Button>
@@ -1051,30 +1083,23 @@ const SignedInHomepage = ({setIsSignedIn}) => {
           <FilterCarsSearch handleSearch={handleSearch} handleClear={handleClear} />
         </Box>
       </Flex>
-
-      {message ? (
-      <Box textAlign="center" color="white" mt="20px">
-        {message}
-      </Box>
-      ) : (
-        // if no error message, display cars
-        <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
-          {rows.map((row, rowIndex) => (
-            <Flex key={rowIndex} justifyContent="flex-start">
-              {row.map((car, index) => (
-                <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
-                  <CarDisplayBox car={car} />
-                </Box>
-              ))}
-            </Flex>
-          ))}
-        </Flex>
-      )}
+      <Flex flexDirection="column" alignItems="center" marginTop="-10px" marginBottom="20px">
+        {rows.map((row, rowIndex) => (
+          <Flex key={rowIndex} justifyContent="flex-start">
+            {row.map((car, index) => (
+              <Box key={index} marginRight={index === row.length - 1 ? 0 : "10px"} marginBottom="10px">
+                <CarDisplayBox car={car} />
+              </Box>
+            ))}
+          </Flex>
+        ))}
+      </Flex>
 
       {/* Pagination */}
       <Box height="40px">
         <Flex justifyContent="center" alignItems="center">
-          {[...Array(searchParams.make ? totalFilteredPages : totalPages).keys()].map((pageNumber) => (
+          {/* Generate buttons for each page based on the total number of pages */}
+          {[...Array(totalPages).keys()].map((pageNumber) => (
             <Button
               key={pageNumber + 1}
               color="white"
@@ -1146,10 +1171,10 @@ const goBack = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' color='white' height='100vh' bgGradient="linear(to-b, black, gray.600)">
+      <Box bg='black' w='100%' color='white'   minH="100vh" height='100vh' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
-            <Text fontSize="3xl" fontWeight="bold">Contracts {userData && userData.customer_id}</Text>
+            <Text fontSize="3xl" fontWeight="bold">Finance contracts</Text>
           </Box>
         </Flex>
 
@@ -1163,7 +1188,7 @@ const goBack = () => {
                   onClick={() =>Pdf(index)}
                   colorScheme="blue"
                 >
-                  {`${contract.car_year} ${contract.car_make} ${contract.car_model} Index: ${index}`}
+                  {`${contract.car_year} ${contract.car_make} ${contract.car_model}`}
                 </Button>
               ))
             ) : (
@@ -1172,14 +1197,20 @@ const goBack = () => {
           </Flex>
         )}
 
-        {viewerOn && (
-          <div id="customerContractContainer">
-            <PDFViewer id="customerContract" width="900px" height="600px">
-              <Customer_View_Contract contract={contracts[currentContract]} />
-            </PDFViewer>
-            <Button onClick={goBack}>Go back to List</Button>
-          </div>
-        )}
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  {viewerOn && (
+    
+    <div id="customerContractContainer">
+      <Button onClick={goBack}>Go back to List</Button>
+      <br></br>
+      <br></br>
+      <PDFViewer id="customerContract" width="900px" height="600px">
+        <Customer_View_Contract contract={contracts[currentContract]} />
+      </PDFViewer>
+
+    </div>
+  )}
+</div>
 
       </Box>
     </>
@@ -3338,6 +3369,14 @@ const Manager = () => {
             const data = await response.json();
             console.log("Accessory added successfully:", data);
             alert("Accessory added successfully");
+            // Reset form fields after successful POST request
+            setAccessoryData({
+              name: '',
+              description: '',
+              price: '',
+              image: '',
+              category: ''
+          });
             // Optionally, you can update the UI or show a success message here
         } else {
             console.error('Error adding accessory:', response.statusText);
