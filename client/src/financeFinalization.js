@@ -3,7 +3,7 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import FinanceAgreementPDF from './financeAgreementPDF';
-import PageLoader from "./pageLoader";
+import FinanceLoader from "./financeLoader";
 import './App.css';
 
 export default function FinalizeFinance () {
@@ -17,11 +17,17 @@ export default function FinalizeFinance () {
     console.log(userData);
     console.log(carInfos);
     const [loaderVisible, setLoaderVisible] = useState(true);
+    const onLoadMessages = [
+        "Sending your information...",
+        "Determing affordability...",
+        "Analyzing credit history...",
+        "Decision Received!",
+      ];
 
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         setLoaderVisible(false);
-      }, 3000);
+      }, 4000);
     
       // Cleanup function to clear the timeout when the component unmounts
       return () => clearTimeout(timeoutId);
@@ -120,7 +126,7 @@ export default function FinalizeFinance () {
         return(
             <>
                 {loaderVisible && (
-                    <PageLoader />
+                    <FinanceLoader messages={onLoadMessages} />
                 )}
                 {!loaderVisible && (
                     <div id="final-bg">
@@ -144,7 +150,7 @@ export default function FinalizeFinance () {
         return(
             <>
                 {loaderVisible && (
-                    <PageLoader />
+                    <FinanceLoader messages={onLoadMessages} />
                 )}
                 {!loaderVisible && (
                     <div id="final-bg">
