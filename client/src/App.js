@@ -1945,8 +1945,9 @@ const PastPurchase = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
+        id='pastPurchaseBox'
       >
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
@@ -2455,7 +2456,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       alignItems="center"
       overflowY="hidden"
     >
-      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto">
+      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto" id='modifyInfoBox'>
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
         <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>

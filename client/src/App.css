@@ -614,3 +614,11 @@ button:hover {
   justify-content: center;
   align-items: center;
 }
+
+#modifyInfoBox {
+  animation: fadeIn 1s ease-in-out;
+}
+
+#pastPurchaseBox {
+  min-height: 100vh;
+}
