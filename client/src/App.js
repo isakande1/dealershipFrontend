@@ -450,7 +450,7 @@ const CheckoutSuccess = () => {
     formData.append("pdf", blob, "contract.pdf");
     axios.post('/emailContract', formData, { params: { userEmail } })
       .then(response => {
-        window.confirm(response.data);
+        alert(response.data);
       })
       .catch(error => {
         console.log('Error sending contract:', error);
@@ -458,7 +458,9 @@ const CheckoutSuccess = () => {
   };
   
   useEffect(() => {
-    allCars.length > 0 && sendPDF(userEmail);
+    if (allCars.length > 0 ){
+      sendPDF(userEmail);
+    };
   }, []);
 
   const [loaderVisible, setLoaderVisible] = useState(true);
