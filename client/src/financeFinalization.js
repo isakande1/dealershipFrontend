@@ -45,7 +45,7 @@ export default function FinalizeFinance () {
                 body: JSON.stringify({
                     customer_id: userData.customer_id,
                     car_id: carInfos.car_id,
-                    item_price: carInfos.price,
+                    item_price: financeTerms.terms.down_payment,
                     item_name: `${carInfos.make} ${carInfos.model}`,
                     item_image: carInfos.image0
                 }),
@@ -91,9 +91,10 @@ export default function FinalizeFinance () {
                 navigate('/Addons', {
                     state: {
                         userData: userData,
+                        carInfos: carInfos,
                         car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
                         car_image: carInfos.image0,
-                        car_price: carInfos.price,
+                        car_price: financeTerms.terms.down_payment,
                         car_id: carInfos.car_id
                     },
                 });
