@@ -1256,9 +1256,10 @@ const TestDriveHistory = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
+        id="testDriveHistoryBox"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Test Drive Appointments</Text>
@@ -1463,8 +1464,8 @@ const OwnCar = () => {
           <Heading size="md">Your Cars</Heading>
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
-              customerCars.map((car) => (
-                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md">
+              customerCars.map((car, index) => (
+                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md" style={{ animationDelay: `${index * 275}ms` }} className="ownCarsFade">
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
@@ -1515,9 +1516,10 @@ const ServiceHistory = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
+        id='serviceHistoryBox'
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Service History</Text>
@@ -1841,7 +1843,7 @@ const CustomerSerivceAppointment = () => {
         alignItems="center" 
         justifyContent="center"
       >
-        <Box mx="auto" maxW="400px">
+        <Box mx="auto" maxW="400px" id="serviceRequestBox">
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '10px' }}>
             <Box>
               <Text fontSize="lg" fontWeight="bold" color='black' marginTop='-20px'>Schedule Service Appointment</Text>
@@ -2317,7 +2319,7 @@ const CarAccessories = () => {
         </Thead>
         <Tbody>
           {accessories.map((accessory, index) => (
-            <Tr key={index}>
+            <Tr key={index} className='accessoryFade' style={{ animationDelay: `${index * 200}ms` }}>
               <Td>{accessory.accessoire_id}</Td>
               <Td>{accessory.name}</Td>
               <Td>{accessory.description}</Td>

@@ -622,3 +622,30 @@ button:hover {
 #pastPurchaseBox {
   min-height: 100vh;
 }
+
+#serviceRequestBox {
+  animation: fadeIn 1s ease-in-out;
+}
+
+#serviceHistoryBox {
+  min-height: 100vh;
+}
+
+.ownCarsFade {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+#testDriveHistoryBox {
+  min-height: 100vh;
+}
+
+.offersFade {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.accessoryFade {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}

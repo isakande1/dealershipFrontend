@@ -20,7 +20,7 @@ const customer_id =location.state?.customer_id;
 const [offerValue, setOfferValue] = useState("")
  console.log(car_image);
     const sendOffer = (customer_id, car_id, offer,status) => {
-        axios.post('/makeOffer',{customer_id, car_id, offer,status})
+        axios.post('http://localhost:5000/makeOffer',{customer_id, car_id, offer,status})
             .then(response => {
                 console.log('offer response:', response.data);
                 SetIsOfferSent(true)

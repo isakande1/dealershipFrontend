@@ -20,7 +20,7 @@ export default function ManageOffers(){
     // console.log(customer_id)
    
     const fetchOffers =()=>{
-    axios.post('/fetchOffers',{customer_id,category} )
+    axios.post('http://localhost:5000/fetchOffers',{customer_id,category} )
     .then( (response) =>{
         setFetchedData(response.data);
         // console.log("data fetched", response.data)
@@ -36,7 +36,7 @@ export default function ManageOffers(){
 }, [category,status]);
 
 const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=>{
-    axios.post('/acceptOffer',{customer_id,offer_id,car_id,offer_price,car_name,car_image} )
+    axios.post('http://localhost:5000/acceptOffer',{customer_id,offer_id,car_id,offer_price,car_name,car_image} )
     .then( (response) =>{
         setStatus((prev)=>!prev);
     }
@@ -47,7 +47,7 @@ const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=
 };
     const rejectOffer =(offer_id)=>{
         console.log("data smalle fetched", offer_id)
-        axios.post('/rejectOffer',{offer_id} )
+        axios.post('http://localhost:5000/rejectOffer',{offer_id} )
         .then( (response) =>{
             setStatus((prev)=>!prev);
         }
@@ -135,7 +135,7 @@ return(
         <Button sx={{...buttonStyle,...highlight("rejected",category)}}  onClick={()=>{setCategory("declined");setMessage("Declined offers")}}>Declined offers</Button>
         </Flex>
         <Flex marginLeft="350px"  flexDirection="column" marginTop="90px" overflowy="auto" w="70%"> 
-        {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox key={index} data={data} /> ))) : (<Text margin= "100px" color="white">No active {message} </Text> )}
+        {fetchedData.length > 0 ? (fetchedData.map((data, index) => ( <OfferBox  key={index} data={data} style={{ animationDelay: `${index * 200}ms` }} className="offersFade" /> ))) : (<Text margin= "100px" color="white">No active {message} </Text> )}
         </Flex>
     </Grid>
     </Box>
