@@ -1175,7 +1175,7 @@ const goBack = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' color='white'   minH="100vh" height='100vh' bgGradient="linear(to-b, black, gray.600)">
+      <Box bg='black' w='100%' color='white'   minH="100vh" height='100%' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
             <Text fontSize="3xl" fontWeight="bold">Finance contracts</Text>
