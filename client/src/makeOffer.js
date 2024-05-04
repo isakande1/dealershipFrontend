@@ -34,7 +34,7 @@ const [offerValue, setOfferValue] = useState("")
 // console.log(offerValue);
     return(
         <Flex minH="100vh" minW="100vh" bg='black' bgGradient="linear(to-b, black, gray.600)" justifyContent="center" alignItems="center" >
-        <Grid  bg="rgba(128, 128, 128, 0.15)" color="white" w="900px" h="400px" borderRadius="md" gridTemplateColumns="1fr 1fr">
+        <Grid  bg="rgba(128, 128, 128, 0.15)" color="white" w="900px" h="400px" borderRadius="md" gridTemplateColumns="1fr 1fr" id="makeOfferBox">
             <Box>
                 <Text fontFamily="sans-serif"> {car_name} </Text> 
              <Image     overflow="hidden" w="100%" h="80" alt="car" objectFit='cover' src={car_image}/>
