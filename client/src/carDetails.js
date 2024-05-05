@@ -24,7 +24,7 @@ export default function CarDetails() {
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         setLoaderVisible(false);
-      }, 3000);
+      }, 1500);
     
       // Cleanup function to clear the timeout when the component unmounts
       return () => clearTimeout(timeoutId);
@@ -323,7 +323,7 @@ const redirectNotLoggedIn = (userData ) =>{
     return (
       <>
         {loaderVisible && (
-          <PageLoader />
+          <PageLoader message={`Loading Details For ${carInfos.year} ${carInfos.make} ${carInfos.model}`} />
         )}
         {!loaderVisible && (
           <Grid templateRows="1fr 1fr">

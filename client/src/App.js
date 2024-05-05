@@ -31,7 +31,7 @@ import ManageOffers from './customerManageOffers';
 import ManageOffersManager from './managerManageOffers';
 import ContractPDF from './contract';
 import SalesReport from './salesReport';
-import PageLoader from './pageLoader.js';
+import CheckoutLoader from './checkoutLoader.js';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -450,7 +450,7 @@ const CheckoutSuccess = () => {
     formData.append("pdf", blob, "contract.pdf");
     axios.post('/emailContract', formData, { params: { userEmail } })
       .then(response => {
-        window.confirm(response.data);
+        alert(response.data);
       })
       .catch(error => {
         console.log('Error sending contract:', error);
@@ -458,7 +458,9 @@ const CheckoutSuccess = () => {
   };
   
   useEffect(() => {
-    allCars.length > 0 && sendPDF(userEmail);
+    if (allCars.length > 0 ){
+      sendPDF(userEmail);
+    };
   }, []);
 
   const [loaderVisible, setLoaderVisible] = useState(true);
@@ -487,7 +489,7 @@ const CheckoutSuccess = () => {
   return (
     <>
       {loaderVisible && (
-          <PageLoader />
+          <CheckoutLoader />
       )}
       {!loaderVisible && (
         <div id="checkoutBg">
@@ -604,84 +606,86 @@ const Checkout = () => {
         height="100vh"
         bgGradient="linear(to-b, black, gray.600)"
       >
-        <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="20%" marginLeft="75%" height="90vh" position="absolute" marginTop="35px" borderRadius="xl">
-          <Flex justifyContent="center">
-            <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
-            <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
-          </Flex>
-          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice.toFixed(2)}</Text>
-          <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
-          <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice.toFixed(2)}</Text>
-        </Box>
-        <form onSubmit={handleSubmit}>
-          <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
-            <Text fontWeight="bold" fontSize="5xl" marginLeft="30px" color="black">Checkout</Text>
-            <Box p="6">
-              <Flex wrap="wrap" justifyContent="space-between" marginTop="-20px">
-                <Flex width="100%" justifyContent="space-between" mb={1}>
-                  <FormControl isInvalid={!!errors.name} flexBasis="48%">
-                    <FormLabel color="black">Name</FormLabel>
-                    <Input type="text" color="black" value={`${userData.first_name} ${userData.last_name}`} name="name" style={{borderColor:"black"}} required readOnly />
-                    {!!errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
-                  </FormControl>
-                  <FormControl isInvalid={!!errors.email} flexBasis="48%">
-                    <FormLabel color="black">Email</FormLabel>
-                    <Input type="email" color="black" value={userData.email} name="email" style={{borderColor:"black"}} required readOnly />
-                    {!!errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
-                  </FormControl>
-                </Flex>
-                <Flex width="100%" justifyContent="space-between" mb={1}>
-                  <FormControl isInvalid={!!errors.phone} flexBasis="48%">
-                    <FormLabel color="black">Phone number</FormLabel>
-                    <Input type="tel" color="black" value={userData.phone} name="phone" style={{borderColor:"black"}} required readOnly />
-                    {!!errors.phone && <FormErrorMessage>{errors.phone}</FormErrorMessage>}
-                  </FormControl>
-                  <FormControl isInvalid={!!errors.address} flexBasis="48%">
-                    <FormLabel color="black">Address</FormLabel>
-                    <Input type="text" color="black" value={userData.Address} name="address" style={{borderColor:"black"}} required readOnly />
-                    {!!errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
-                  </FormControl>
-                </Flex>
-                <Flex width="100%" justifyContent="space-between" mb={1}>
-                  <FormControl isInvalid={!!errors.city} flexBasis="48%">
-                    <FormLabel color="black">City</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.city} name="city" style={{borderColor:"black"}}  required />
-                    {!!errors.city && <FormErrorMessage>{errors.city}</FormErrorMessage>}
-                  </FormControl>
-                  <FormControl isInvalid={!!errors.zip} flexBasis="48%">
-                    <FormLabel color="black">Zip Code</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.zip} name="zip" style={{borderColor:"black"}} required />
-                    {!!errors.zip && <FormErrorMessage>{errors.zip}</FormErrorMessage>}
-                  </FormControl>
-                </Flex>
-                <Flex width="100%" justifyContent="space-between" mb={1}>
-                  <FormControl isInvalid={!!errors.state} flexBasis="48%">
-                    <FormLabel color="black">State</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.state} name="state" style={{borderColor:"black"}} required />
-                    {!!errors.state && <FormErrorMessage>{errors.state}</FormErrorMessage>}
-                  </FormControl>
-                  <FormControl isInvalid={!!errors.country} flexBasis="48%">
-                    <FormLabel color="black">Country</FormLabel>
-                    <Input type="text" color="black" onChange={handleInputChange} value={formData.country} name="country" style={{borderColor:"black"}} required />
-                    {!!errors.country && <FormErrorMessage>{errors.country}</FormErrorMessage>}
-                  </FormControl>
-                </Flex>
-                <FormControl isInvalid={!!errors.paymentMethod} width="100%">
-                  <FormLabel color="black">Payment Method</FormLabel>
-                  <Select placeholder="Select account" color="black" onChange={handleInputChange} value={formData.paymentMethod} name="paymentMethod" style={{borderColor:"black"}}  required >
-                    {bankAccounts.length > 0 && bankAccounts.map(account => (
-                      <option key={account.bank_detail_id} value={account.account_number}>
-                        {account.account_number} - {account.bank_name}
-                      </option>
-                    ))}
-                  </Select>
-                  {!!errors.paymentMethod && <FormErrorMessage>{errors.paymentMethod}</FormErrorMessage>}
-                </FormControl>
-              </Flex>
-              <Button mt={4} colorScheme="blue" type="submit">Purchase</Button>
-            </Box>
+        <div id="checkout-container">
+          <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="20%" marginLeft="75%" height="90vh" position="absolute" marginTop="35px" borderRadius="xl">
+            <Flex justifyContent="center">
+              <FaShoppingCart style={{ color:"black", fontSize:'2rem', marginTop:'8px', marginRight:'10px'}} />
+              <Text color="black" fontWeight='bold' fontSize='3xl' >Your Order</Text>
+            </Flex>
+            <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Subtotal: ${totalPrice.toFixed(2)}</Text>
+            <Text fontWeight="bold" fontSize="xl" marginLeft="20px" color="black">Tax: FREE!</Text>
+            <Text fontWeight="bold" fontSize="2xl" marginLeft="20px" color="black" marginTop="50px">Total: ${totalPrice.toFixed(2)}</Text>
           </Box>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <Box bg="linear-gradient(to bottom, #85C1E9, #ffffff)" width="70%" height="90vh" marginTop="35px" marginLeft='35px' position="absolute" borderRadius="xl">
+              <Text fontWeight="bold" fontSize="5xl" marginLeft="30px" color="black">Checkout</Text>
+              <Box p="6">
+                <Flex wrap="wrap" justifyContent="space-between" marginTop="-20px">
+                  <Flex width="100%" justifyContent="space-between" mb={1}>
+                    <FormControl isInvalid={!!errors.name} flexBasis="48%">
+                      <FormLabel color="black">Name</FormLabel>
+                      <Input type="text" color="black" value={`${userData.first_name} ${userData.last_name}`} name="name" style={{borderColor:"black"}} required readOnly />
+                      {!!errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.email} flexBasis="48%">
+                      <FormLabel color="black">Email</FormLabel>
+                      <Input type="email" color="black" value={userData.email} name="email" style={{borderColor:"black"}} required readOnly />
+                      {!!errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
+                    </FormControl>
+                  </Flex>
+                  <Flex width="100%" justifyContent="space-between" mb={1}>
+                    <FormControl isInvalid={!!errors.phone} flexBasis="48%">
+                      <FormLabel color="black">Phone number</FormLabel>
+                      <Input type="tel" color="black" value={userData.phone} name="phone" style={{borderColor:"black"}} required readOnly />
+                      {!!errors.phone && <FormErrorMessage>{errors.phone}</FormErrorMessage>}
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.address} flexBasis="48%">
+                      <FormLabel color="black">Address</FormLabel>
+                      <Input type="text" color="black" value={userData.Address} name="address" style={{borderColor:"black"}} required readOnly />
+                      {!!errors.address && <FormErrorMessage>{errors.address}</FormErrorMessage>}
+                    </FormControl>
+                  </Flex>
+                  <Flex width="100%" justifyContent="space-between" mb={1}>
+                    <FormControl isInvalid={!!errors.city} flexBasis="48%">
+                      <FormLabel color="black">City</FormLabel>
+                      <Input type="text" color="black" onChange={handleInputChange} value={formData.city} name="city" style={{borderColor:"black"}}  required />
+                      {!!errors.city && <FormErrorMessage>{errors.city}</FormErrorMessage>}
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.zip} flexBasis="48%">
+                      <FormLabel color="black">Zip Code</FormLabel>
+                      <Input type="text" color="black" onChange={handleInputChange} value={formData.zip} name="zip" style={{borderColor:"black"}} required />
+                      {!!errors.zip && <FormErrorMessage>{errors.zip}</FormErrorMessage>}
+                    </FormControl>
+                  </Flex>
+                  <Flex width="100%" justifyContent="space-between" mb={1}>
+                    <FormControl isInvalid={!!errors.state} flexBasis="48%">
+                      <FormLabel color="black">State</FormLabel>
+                      <Input type="text" color="black" onChange={handleInputChange} value={formData.state} name="state" style={{borderColor:"black"}} required />
+                      {!!errors.state && <FormErrorMessage>{errors.state}</FormErrorMessage>}
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.country} flexBasis="48%">
+                      <FormLabel color="black">Country</FormLabel>
+                      <Input type="text" color="black" onChange={handleInputChange} value={formData.country} name="country" style={{borderColor:"black"}} required />
+                      {!!errors.country && <FormErrorMessage>{errors.country}</FormErrorMessage>}
+                    </FormControl>
+                  </Flex>
+                  <FormControl isInvalid={!!errors.paymentMethod} width="100%">
+                    <FormLabel color="black">Payment Method</FormLabel>
+                    <Select placeholder="Select account" color="black" onChange={handleInputChange} value={formData.paymentMethod} name="paymentMethod" style={{borderColor:"black"}}  required >
+                      {bankAccounts.length > 0 && bankAccounts.map(account => (
+                        <option key={account.bank_detail_id} value={account.account_number}>
+                          {account.account_number} - {account.bank_name}
+                        </option>
+                      ))}
+                    </Select>
+                    {!!errors.paymentMethod && <FormErrorMessage>{errors.paymentMethod}</FormErrorMessage>}
+                  </FormControl>
+                </Flex>
+                <Button mt={4} colorScheme="blue" type="submit">Purchase</Button>
+              </Box>
+            </Box>
+          </form>
+        </div>
       </Box>
     </>
   )
@@ -1171,7 +1175,7 @@ const goBack = () => {
 
   return (
     <>
-      <Box bg='black' w='100%' color='white'   minH="100vh" height='100vh' bgGradient="linear(to-b, black, gray.600)">
+      <Box bg='black' w='100%' color='white'   minH="100vh" height='100%' bgGradient="linear(to-b, black, gray.600)">
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
             <Text fontSize="3xl" fontWeight="bold">Finance contracts</Text>
@@ -1252,9 +1256,10 @@ const TestDriveHistory = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
+        id="testDriveHistoryBox"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Test Drive Appointments</Text>
@@ -1459,8 +1464,8 @@ const OwnCar = () => {
           <Heading size="md">Your Cars</Heading>
           <VStack align="stretch" mt={4}>
             {customerCars.length > 0 ? (
-              customerCars.map((car) => (
-                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md">
+              customerCars.map((car, index) => (
+                <Box key={car.car_id} bg="gray.200" p={2} borderRadius="md" style={{ animationDelay: `${index * 275}ms` }} className="ownCarsFade">
                   <Text color="black">{`Car ID: ${car.car_id}`}</Text>
                  <Text color="black">{`Make: ${car.make}`}</Text>
                 <Text color="black">{`Model: ${car.model}`}</Text>
@@ -1511,9 +1516,10 @@ const ServiceHistory = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
         p={4}
+        id='serviceHistoryBox'
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="3xl" fontWeight="bold">Service History</Text>
@@ -1571,17 +1577,7 @@ const CustomerCart = () => {
   const [customerSignature, setCustomerSignature] = useState(undefined);
   const [tempCustomerSignature, setTempCustomerSignature] = useState("placeholder");
   const [signatureFieldColor, setSignatureFiledColor] = useState(null);
-  const navigate = useNavigate();  
-  const [loaderVisible, setLoaderVisible] = useState(true);
-
-  useEffect(() => {
-      const timeoutId = setTimeout(() => {
-        setLoaderVisible(false);
-      }, 3000);
-    
-      // Cleanup function to clear the timeout when the component unmounts
-      return () => clearTimeout(timeoutId);
-  }, []);
+  const navigate = useNavigate();
 
   console.log("The State of the Cart", location.state);
 
@@ -1661,76 +1657,70 @@ const handleCheckout = () => {
 
 
   return (
-  <>
-    {loaderVisible && (
-          <PageLoader />
-    )}
-    {!loaderVisible && (
-    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)"> 
-    
-      <Flex justifyContent="space-between" alignItems="center" p={4}>
-        <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
-        <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
-        <Text color="white">{`Name: ${userData.first_name}`}</Text>
-      </Flex>
+    <Box bg='black' w='100%' color='white' minHeight='100vh' bgGradient="linear(to-b, black, gray.600)" > 
+      <div id="cartContainer">
+        <Flex justifyContent="space-between" alignItems="center" p={4}>
+          <Text fontSize="3xl" fontWeight="bold" color="white">Cart</Text>
+          <Text color="white">{`Customer ID: ${userData.customer_id}`}</Text>
+          <Text color="white">{`Name: ${userData.first_name}`}</Text>
+        </Flex>
 
-      <Box pt={20} pb={20} overflowY="auto">
-        {cartItems.length > 0 ? (
-          <>
-            {cartItems.map((item) => (
-              <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4} sx={indentPerks(item.service_package_id)}>
-                <Box onClick={() => handleImageClick(item.item_image)}>
-                  <Image src={item.item_image} alt={item.item_name} boxSize="50px" cursor="pointer" />
-                </Box>
-                <Box ml={4}>
-                  <Text color="white">{item.item_name}</Text>
-                  <Text color="white">${item.item_price}</Text>
-                </Box>
-                <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
-              </Flex>
-            ))}
-                        {/* contract section */}
-               {allCars.length > 0 && (<>         
-             {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
-             : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
-             <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
-            <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
-             </PDFViewer>}
-             </Center>
-            
-            <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
-             <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
-            <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
-            onChange={(e)=>setTempCustomerSignature(e.target.value)} />
-            </Box>
-            <Button  type="submit"  onClick={()=>{setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
-          </Flex>
+        <Box pt={20} pb={20} overflowY="auto">
+          {cartItems.length > 0 ? (
+            <>
+              {cartItems.map((item) => (
+                <Flex key={item.cart_id} alignItems="center" justify="space-between" mb={4} sx={indentPerks(item.service_package_id)}>
+                  <Box onClick={() => handleImageClick(item.item_image)}>
+                    <Image src={item.item_image} alt={item.item_name} boxSize="50px" cursor="pointer" />
+                  </Box>
+                  <Box ml={4}>
+                    <Text color="white">{item.item_name}</Text>
+                    <Text color="white">${item.item_price}</Text>
+                  </Box>
+                  <Button colorScheme="red" onClick={() => handleRemoveItem(item.cart_id, item.car_id, item.service_package_id)}>Remove</Button>
+                </Flex>
+              ))}
+                          {/* contract section */}
+                {allCars.length > 0 && (<>         
+              {showContract === false ? <Text onClick={()=>setShowContract(true)} color="green" cursor="pointer" textDecoration={"underline"}>Show Contract </Text> 
+              : <Text onClick={ ()=> setShowContract(false)} color="red" cursor="pointer" textDecoration={"underline"}> Hide Contract </Text>}
+              <Center> {showContract &&  <PDFViewer width="50%" height="500"  >
+              <ContractPDF isPaided ={false} customerSignature={customerSignature} allCars ={allCars} userData={userData}/>
+              </PDFViewer>}
+              </Center>
+              
+              <Flex justifyContent={"center"} flexDirection={"row"} mt="15px">
+              <Box   w="200px"  mr="10px"borderColor={signatureFieldColor} borderWidth={"2px"} > 
+              <Input  type="text" name="fullName" display={"inline-block"} placeholder=' Enter Fullname' value={customerSignature} 
+              onChange={(e)=>setTempCustomerSignature(e.target.value)} />
+              </Box>
+              <Button  type="submit"  onClick={()=>{setCustomerSignature(tempCustomerSignature)}}>Sign</Button>
+            </Flex>
 
-            </>)}
- {/* end contract section */}
-            
-            <Text fontSize="2xl" fontWeight="bold">
-              Total Price: ${totalPrice.toFixed(2)}
-            </Text>
-            <Button mt={4} colorScheme="blue" onClick={handleCheckout}>Checkout</Button>
-          </>
-        ) : (
-          <Text color="White">No items in the cart.</Text>
-        )}
-      </Box>
+              </>)}
+  {/* end contract section */}
+              
+              <Text fontSize="2xl" fontWeight="bold">
+                Total Price: ${totalPrice.toFixed(2)}
+              </Text>
+              <Button mt={4} colorScheme="blue" onClick={handleCheckout}>Checkout</Button>
+            </>
+          ) : (
+            <Text color="White">No items in the cart.</Text>
+          )}
+        </Box>
 
-      <Modal isOpen={selectedImage !== null} onClose={handleCloseModal}>
-        <ModalOverlay />
-        <ModalContent bg="transparent" boxShadow="none">
-          <ModalBody p={0}>
-            <Image src={selectedImage} alt="Large Image" />
-            <ModalCloseButton color="white" />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        <Modal isOpen={selectedImage !== null} onClose={handleCloseModal}>
+          <ModalOverlay />
+          <ModalContent bg="transparent" boxShadow="none">
+            <ModalBody p={0}>
+              <Image src={selectedImage} alt="Large Image" />
+              <ModalCloseButton color="white" />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </div>
     </Box>
-    )}
-    </>
   );
 };
 //CustomerSerivceAppointment
@@ -1853,7 +1843,7 @@ const CustomerSerivceAppointment = () => {
         alignItems="center" 
         justifyContent="center"
       >
-        <Box mx="auto" maxW="400px">
+        <Box mx="auto" maxW="400px" id="serviceRequestBox">
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '10px' }}>
             <Box>
               <Text fontSize="lg" fontWeight="bold" color='black' marginTop='-20px'>Schedule Service Appointment</Text>
@@ -1957,8 +1947,9 @@ const PastPurchase = () => {
         bg='black'
         w='100%'
         color='white'
-        height='100vh'
+        height='100%'
         bgGradient="linear(to-b, black, gray.600)"
+        id='pastPurchaseBox'
       >
         <Flex justifyContent="space-between" alignItems="center" p={4}>
           <Box>
@@ -2328,7 +2319,7 @@ const CarAccessories = () => {
         </Thead>
         <Tbody>
           {accessories.map((accessory, index) => (
-            <Tr key={index}>
+            <Tr key={index} className='accessoryFade' style={{ animationDelay: `${index * 200}ms` }}>
               <Td>{accessory.accessoire_id}</Td>
               <Td>{accessory.name}</Td>
               <Td>{accessory.description}</Td>
@@ -2467,7 +2458,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
       alignItems="center"
       overflowY="hidden"
     >
-      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto">
+      <Flex direction="column" p={5} rounded="md" bg="white" height="auto" shadow="sm" width="90%" maxWidth="700px" mx="auto" my={6} color="gray.800" overflowY="auto" id='modifyInfoBox'>
       <Flex justifyContent="space-between" alignItems="center" mb={6}>
         <Text fontSize="xl" fontWeight="semibold">Modify Personal Information</Text>
         <Button variant="outline" colorScheme="blue" size="sm" onClick={handleSignOut}>Sign Out</Button>

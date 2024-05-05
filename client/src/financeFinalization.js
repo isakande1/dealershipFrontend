@@ -3,7 +3,7 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import FinanceAgreementPDF from './financeAgreementPDF';
-import PageLoader from "./pageLoader";
+import FinanceLoader from "./financeLoader";
 import './App.css';
 
 export default function FinalizeFinance () {
@@ -17,15 +17,25 @@ export default function FinalizeFinance () {
     console.log(userData);
     console.log(carInfos);
     const [loaderVisible, setLoaderVisible] = useState(true);
+    const onLoadMessages = [
+        "Sending your information...",
+        "Determing affordability...",
+        "Analyzing credit history...",
+        "Decision Received!",
+      ];
 
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         setLoaderVisible(false);
-      }, 3000);
+      }, 4000);
     
       // Cleanup function to clear the timeout when the component unmounts
       return () => clearTimeout(timeoutId);
     }, []);
+
+    const handleBackToHome = () => {
+        navigate('/homepage', { state: { userData } })
+    }
 
     const handleSignedApp = async (e) => {
         e.preventDefault();
@@ -39,7 +49,7 @@ export default function FinalizeFinance () {
                 body: JSON.stringify({
                     customer_id: userData.customer_id,
                     car_id: carInfos.car_id,
-                    item_price: carInfos.price,
+                    item_price: financeTerms.terms.down_payment,
                     item_name: `${carInfos.make} ${carInfos.model}`,
                     item_image: carInfos.image0
                 }),
@@ -85,9 +95,10 @@ export default function FinalizeFinance () {
                 navigate('/Addons', {
                     state: {
                         userData: userData,
+                        carInfos: carInfos,
                         car_name: ` ${carInfos.make} ${carInfos.model} ${carInfos.year}`,
                         car_image: carInfos.image0,
-                        car_price: carInfos.price,
+                        car_price: financeTerms.terms.down_payment,
                         car_id: carInfos.car_id
                     },
                 });
@@ -120,7 +131,7 @@ export default function FinalizeFinance () {
         return(
             <>
                 {loaderVisible && (
-                    <PageLoader />
+                    <FinanceLoader messages={onLoadMessages} />
                 )}
                 {!loaderVisible && (
                     <div id="final-bg">
@@ -144,7 +155,7 @@ export default function FinalizeFinance () {
         return(
             <>
                 {loaderVisible && (
-                    <PageLoader />
+                    <FinanceLoader messages={onLoadMessages} />
                 )}
                 {!loaderVisible && (
                     <div id="final-bg">
@@ -154,7 +165,7 @@ export default function FinalizeFinance () {
                                 <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
                             </PDFViewer>
                         </div>
-                        <center><button id="finalize" className="blue-btn2">Back to Homepage</button></center>
+                        <center><button id="finalize" className="blue-btn2" onClick={handleBackToHome}>Back to Homepage</button></center>
                     </div>
                 )}
             </>

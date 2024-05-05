@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import FinalizeFinance from "./financeFinalization";
-import PageLoader from "./pageLoader";
 import './App.css';
 
 export default function FinanceApp () {
@@ -13,15 +12,9 @@ export default function FinanceApp () {
     const [ income, setIncome ] = useState('');
     const [ socialSecurity, setSocialSecurity ] = useState('');
     const [ financeTerms, setFinanceTerms ] = useState({});
-    const [loaderVisible, setLoaderVisible] = useState(true);
 
     useEffect(() => {
-      const timeoutId = setTimeout(() => {
-        setLoaderVisible(false);
-      }, 3000);
-    
-      // Cleanup function to clear the timeout when the component unmounts
-      return () => clearTimeout(timeoutId);
+      window.scrollTo({ top: 0 });
     }, []);
 
     let finTerms = {};
@@ -72,11 +65,6 @@ export default function FinanceApp () {
     }, [financeTerms, userData, carInfos]);
     
     return (
-      <>
-        {loaderVisible && (
-          <PageLoader />
-        )}
-        {!loaderVisible && (
           <div id="finAppBg">
               <span><svg xmlns="http://www.w3.org/2000/svg" width="250" height="200" fill="none" viewBox="0 0 284 225">
                   <path fill="url(#a)" d="M0-59h284v284H0z"/>
@@ -124,7 +112,5 @@ export default function FinanceApp () {
                   <Route path="/finalizeFinance" element={<FinalizeFinance />} />
               </Routes>
           </div>
-        )}
-      </>
     );
 }
