@@ -34,6 +34,7 @@ const Customer_View_Contract = ({contract}) => {
               <Text style={styles.heading}>Finance Terms</Text>
               <Text>Status: {contract.finance_decision}</Text>
               <Text>Loan Term: {contract.loan_term} Months</Text>
+              <Text>Down Payment: {contract.down_payment}</Text>
               <Text>APR: {(parseFloat(contract.loan_apr) * 100).toFixed(2)}%</Text>
               <Text>Monthly Payment: ${contract.loan_monthly_payment}</Text>
             </View>
