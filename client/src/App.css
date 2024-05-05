@@ -218,6 +218,7 @@ button:hover {
 #finAppBg {
   width: 100%;
   height: 100%;
+  min-height: 100vh;
   background-color: #000;
   background-image: linear-gradient(#000, #777);
   padding-bottom: 50px;
@@ -276,7 +277,7 @@ button:hover {
   background-image: linear-gradient(#000, #777);
   width: 100%;
   height: 100%;
-  min-height: 900px;
+  min-height: 100vh;
 }
 #checkoutBg h1 {
   color: white;
