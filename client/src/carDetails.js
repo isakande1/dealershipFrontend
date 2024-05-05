@@ -326,7 +326,7 @@ const redirectNotLoggedIn = (userData ) =>{
           <PageLoader message={`Loading Details For ${carInfos.year} ${carInfos.make} ${carInfos.model}`} />
         )}
         {!loaderVisible && (
-          <Grid templateRows="1fr 1fr">
+          <Grid templateRows="1fr 1fr" overflowY={"auto"}>
             <CarImagesLayout />
             <Options />
             <Routes>
