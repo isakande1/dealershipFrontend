@@ -33,6 +33,10 @@ export default function FinalizeFinance () {
       return () => clearTimeout(timeoutId);
     }, []);
 
+    const handleBackToHome = () => {
+        navigate('/homepage', { state: { userData } })
+    }
+
     const handleSignedApp = async (e) => {
         e.preventDefault();
 
@@ -161,7 +165,7 @@ export default function FinalizeFinance () {
                                 <FinanceAgreementPDF financeTerms={financeTerms} userData={userData} carInfos={carInfos} />
                             </PDFViewer>
                         </div>
-                        <center><button id="finalize" className="blue-btn2">Back to Homepage</button></center>
+                        <center><button id="finalize" className="blue-btn2" onClick={handleBackToHome}>Back to Homepage</button></center>
                     </div>
                 )}
             </>

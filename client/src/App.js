@@ -1,5 +1,6 @@
 // import necessary libraries
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import Tilt from 'react-vanilla-tilt';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate } from 'react-router-dom';
 import {
@@ -78,6 +79,7 @@ function App() {
               <Route path="/OwnCar" element={<OwnCar />} />
               <Route path="/carDetails/*" element={<CarDetails />} />
               <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+              <Route path="/CarPayments" element={<CarPayments />} />
               <Route path="/Service" element={<CustomerSerivceAppointment />} />
               <Route path="/ServiceHistory" element={<ServiceHistory />} />
               <Route path="/carAccessories" element={<CarAccessories />} />
@@ -344,49 +346,51 @@ const CarDisplayBox = ({ car }) => {
   };
 
   return (
-    <Box
-      id='target'
-      marginTop="100px"
-      marginLeft="25px"
-      marginRight="25px"
-      height="375px"
-      width="275px"
-      color="white"
-      bg="gray.700"
-      onClick={handleCarDetailsClick}
-      padding="10px 0 0 0"     // padding for top of the box where image and text goes of each car
-      boxShadow="0 0 18px rgba(255,255,255,0.9)" // soft white glow
-    >
-      <img
-        src={car.image}
-        alt="Car"
-        style={{
-          display: "block",
-          margin: "auto",
-          width: '240px',
-          height: '275px'
-        }}
-      />
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        marginLeft="15px"
-        marginTop="10px"
-        marginRight="15px"
+    <Tilt options={{ glare: true, max: 90, scale: 1.0, perspective: 200, speed: 150, glarePrerender: true }} style={{ opacity: 1 }}>
+      <Box
+        id='target'
+        marginTop="100px"
+        marginLeft="25px"
+        marginRight="25px"
+        height="375px"
+        width="275px"
+        color="white"
+        bg="gray.700"
+        onClick={handleCarDetailsClick}
+        padding="10px 0 0 0"     // padding for top of the box where image and text goes of each car
+        boxShadow="0 0 18px rgba(255,255,255,0.9)" // soft white glow
       >
-        <Text id='car-name'>{car.year} {car.make} {car.model}</Text>
-        <Text>${car.price}</Text>
-      </Flex>
-      <Flex
-        alignItems="center"
-        marginLeft="15px"
-        marginTop="10px"
-        marginRight="15px"
-      >
-        <Text fontWeight="bold" marginTop="-10px">Color:</Text>
-        <Text marginLeft="5px" marginTop="-10px">{car.color}</Text>
-      </Flex>
-    </Box>
+        <img
+          src={car.image}
+          alt="Car"
+          style={{
+            display: "block",
+            margin: "auto",
+            width: '240px',
+            height: '275px'
+          }}
+        />
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          marginLeft="15px"
+          marginTop="10px"
+          marginRight="15px"
+        >
+          <Text id='car-name'>{car.year} {car.make} {car.model}</Text>
+          <Text>${car.price}</Text>
+        </Flex>
+        <Flex
+          alignItems="center"
+          marginLeft="15px"
+          marginTop="10px"
+          marginRight="15px"
+        >
+          <Text fontWeight="bold" marginTop="-10px">Color:</Text>
+          <Text marginLeft="5px" marginTop="-10px">{car.color}</Text>
+        </Flex>
+      </Box>
+      </Tilt>
   );
 };
 
@@ -1068,6 +1072,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/CarPayments') }>Car Payments</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
@@ -1989,6 +1994,25 @@ const PastPurchase = () => {
             </Tbody>
           </Table>
         )}
+      </Box>
+    </>
+  );
+}
+
+const CarPayments = () => {
+  
+  return (
+    <>
+ 
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100%'
+        bgGradient="linear(to-b, black, gray.600)"
+        id='pastPurchaseBox'
+      >
+        
       </Box>
     </>
   );
