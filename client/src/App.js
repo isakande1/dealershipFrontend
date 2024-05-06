@@ -79,6 +79,7 @@ function App() {
               <Route path="/OwnCar" element={<OwnCar />} />
               <Route path="/carDetails/*" element={<CarDetails />} />
               <Route path="/carDetails/schedule-test-drive" element={<TestDriveForm />} />
+              <Route path="/CarPayments" element={<CarPayments />} />
               <Route path="/Service" element={<CustomerSerivceAppointment />} />
               <Route path="/ServiceHistory" element={<ServiceHistory />} />
               <Route path="/carAccessories" element={<CarAccessories />} />
@@ -1071,7 +1072,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
               onClick={() => setShowDashboardOptions(false)}
             >Close Dashboard</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Personal Information</Button>
-            {/*<Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToModifyInfo} >Car Payments</Button>*/}
+            <Button variant="ghost" color="white" marginBottom="10px" onClick={() =>navigate('/CarPayments') }>Car Payments</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToPastPurchase}>Past Purchase</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToService}>Schedule Service Appointment</Button>
             <Button variant="ghost" color="white" marginBottom="10px" onClick={handleNavigateToServiceHistory}>View Service Status/History</Button>
@@ -1993,6 +1994,25 @@ const PastPurchase = () => {
             </Tbody>
           </Table>
         )}
+      </Box>
+    </>
+  );
+}
+
+const CarPayments = () => {
+  
+  return (
+    <>
+ 
+      <Box
+        bg='black'
+        w='100%'
+        color='white'
+        height='100%'
+        bgGradient="linear(to-b, black, gray.600)"
+        id='pastPurchaseBox'
+      >
+        
       </Box>
     </>
   );
