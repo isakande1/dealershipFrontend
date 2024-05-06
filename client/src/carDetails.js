@@ -24,7 +24,7 @@ export default function CarDetails() {
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         setLoaderVisible(false);
-      }, 1500);
+      }, 800);
     
       // Cleanup function to clear the timeout when the component unmounts
       return () => clearTimeout(timeoutId);
