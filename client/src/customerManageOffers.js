@@ -101,7 +101,7 @@ console.log("data fetched", fetchedData)
 const OfferBox = (data) =>{
     // console.log("data smalle fetched", data.data.offer_id)
     return(
-  <Grid    gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="lg" h = "150px" w = "80%" marginBottom="20px">
+  <Grid    gridTemplateColumns="1fr 3fr" bg="rgba(128, 128, 128, 0.15)" color="white"borderRadius="lg" h = "150px" w = "80%" marginBottom="20px" >
      <Box h ="150px" w="200px">
     <Image overflow="hidden" w="100%" h="100%" alt="car" objectFit='cover' src={data.data.car_image}/>
     </Box>
@@ -126,7 +126,7 @@ return(
      
     <Box bg='black' bgGradient="linear(to-b, black, gray.600)" minH="100vh" minW="100vh" position="relative">
      <Heading position="fixed" color="white" paddingTop="20px"fontFamily="sans-serif"> Manage all offers  </Heading> 
-    <Grid > 
+    <Grid overflowY={"auto"}> 
         <Flex position="fixed"  bg="rgba(128, 128, 128, 0.15)" color="white" w="300px" h="500px" borderRadius="md" justifyContent="center" alignContent="center" flexDirection="column" marginTop="5%">
         <Button sx={{...buttonStyle,...highlight(" pending",category)}}   onClick={()=>{setCategory("pending"); setMessage("Pending offers")}}>Pending offers</Button>
         <Button sx={{...buttonStyle,...highlight(" pending",category)}}   onClick={()=>{setCategory("customerCountered"); setMessage("Pending counter offers")}}>Pending counter offers</Button>
