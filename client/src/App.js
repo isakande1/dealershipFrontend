@@ -2158,6 +2158,11 @@ const CarAccessories = () => {
 
   useEffect(() => {
     const handleAddToCart = async () => {
+      console.log("car stuiff", cartData.customer_id);
+      console.log("car stuiff", cartData.item_price);
+      console.log("car stuiff", cartData.item_image);
+      console.log("car stuiff", cartData.item_name);
+      console.log("car stuiff", cartData.accessoire_id);
       if (cartData.customer_id && cartData.item_price && cartData.item_image && cartData.item_name && cartData.accessoire_id) {
         try {
           const response = await fetch(`http://localhost:5000/addAccessoryToCart`, {
