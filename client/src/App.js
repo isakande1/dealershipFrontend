@@ -1166,6 +1166,27 @@ const Contract_View = () => {
     }
   }, [userData]);
 
+  const getNextDueDate = () => {
+    const contractDateString = contracts[currentContract].contract_date;
+    console.log(contractDateString);
+    const contractDateTimestamp = Date.parse(contractDateString);
+    console.log(contractDateTimestamp);
+    const contractDate = new Date(contractDateTimestamp);
+    console.log(contractDate.toISOString());
+    const isoString = contractDate.toISOString();
+    const dateString = isoString.substring(0, 10);
+    
+    let nextDueDate = new Date(contractDate.getFullYear(), contractDate.getMonth() + 1, contractDate.getDate());
+    console.log(nextDueDate)
+    const isoString2 = nextDueDate.toISOString();
+    console.log(isoString2)
+    const dateString2 = isoString2.substring(0, 10);
+    console.log(dateString2)
+
+
+    return dateString2;
+  };
+
 const Pdf = (index) => {
   setCurrentContract(index);
   setViewerOn(true);
@@ -1210,13 +1231,19 @@ const goBack = () => {
   {viewerOn && (
     
     <div id="customerContractContainer">
-      <Button onClick={goBack}>Go back to List</Button>
+      <Button id="backButton" onClick={goBack}>Go back to List</Button>
+      <br></br>
+      <br></br>
+      <h1>Your next payment due date is {getNextDueDate()}</h1>
+      <br></br>
+      <br></br>
       <br></br>
       <br></br>
       <PDFViewer id="customerContract" width="900px" height="600px">
         <Customer_View_Contract contract={contracts[currentContract]} />
       </PDFViewer>
-
+      <br></br>
+      <br></br>
     </div>
   )}
 </div>
@@ -2012,7 +2039,7 @@ const CarPayments = () => {
         bgGradient="linear(to-b, black, gray.600)"
         id='pastPurchaseBox'
       >
-        
+        <h1>Your next payment is due on</h1>
       </Box>
     </>
   );

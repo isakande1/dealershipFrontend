@@ -10,12 +10,14 @@ export default function FinanceApp () {
     const { userData, carInfos } = location.state;
     const [error, setError] = useState('');
     const [ income, setIncome ] = useState('');
-    const [ socialSecurity, setSocialSecurity ] = useState('');
+    const [socialSecurity, setSocialSecurity] = useState(userData.social_security);
     const [ financeTerms, setFinanceTerms ] = useState({});
 
     useEffect(() => {
       window.scrollTo({ top: 0 });
     }, []);
+
+    
 
     let finTerms = {};
 
@@ -101,7 +103,7 @@ export default function FinanceApp () {
                       <input type="number" id="vin_number" name="vin_number" readOnly value={`${carInfos.car_id}`} /><br /><br />
 
                       <label htmlFor="social-security">Social Security Number:</label><br />
-                      <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" readOnly value={`${userData.social_security}`} onChange={(e) => setSocialSecurity(e.target.value)}  /><br /><br />
+                      <input type="text" id="social-security" name="social-security" placeholder="i.e. 555-55-5555" pattern="\d{3}-?\d{2}-?\d{4}" readOnly={userData.social_security!== ''} value={`${userData.social_security}`} onChange={(e) => setSocialSecurity(e.target.value)}  /><br /><br />
 
                       <center id="finButtonDiv">
                           <input id="financeSubmit" type="submit" value="Submit" />

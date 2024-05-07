@@ -42,7 +42,7 @@ const Customer_View_Contract = ({contract}) => {
               <View style={styles.signatureContainer}>
                 <Text style={styles.signature}>Authorized Signature</Text>
               </View>
-              <Text style={styles.date}>Date: {new Date().toLocaleDateString()}</Text>
+              <Text style={styles.date}>Date: {contract.contract_date}</Text>
             </View>
           </View>
         </Page>

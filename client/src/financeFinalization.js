@@ -74,7 +74,7 @@ export default function FinalizeFinance () {
                         car_year: carInfos.year,
                         car_make: carInfos.make,
                         car_model: carInfos.model,
-                        car_price: carInfos.year,
+                        car_price: carInfos.price,
                         credit_score: financeTerms.credit_score,
                         finance_decision: financeTerms.status,
                         loan_term: financeTerms.terms.loan_term,

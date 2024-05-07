@@ -658,3 +658,7 @@ button:hover {
 #makeOfferBox {
   animation: fadeIn 1s ease-in-out;
 }
+
+#customerContract, #backButton {
+  margin: 0 auto;
+}
