@@ -18,20 +18,20 @@ import { PDFViewer, pdf } from '@react-pdf/renderer';
 import axios from 'axios';
 import './App.css';
 import { useLocation } from 'react-router-dom';
-import CarDetails from './carDetails';
+import CarDetails from './carDetails.js';
 import NavBar from './navBar.js';
-import TestDriveForm from './TestDriveForm';
-import FinanceApp from './financeApp';
-import FinalizeFinance from './financeFinalization';
+import TestDriveForm from './TestDriveForm.js';
+import FinanceApp from './financeApp.js';
+import FinalizeFinance from './financeFinalization.js';
 import FinanceReport from './financeReportManager.js';
 import ReactDOMServer from 'react-dom/server';
-import Addons from './Addons'
-import MakeOffer from './makeOffer'
-import Customer_View_Contract from './Customer_View_Contract'
-import ManageOffers from './customerManageOffers';
-import ManageOffersManager from './managerManageOffers';
-import ContractPDF from './contract';
-import SalesReport from './salesReport';
+import Addons from './Addons.js'
+import MakeOffer from './makeOffer.js'
+import Customer_View_Contract from './Customer_View_Contract.js'
+import ManageOffers from './customerManageOffers.js';
+import ManageOffersManager from './managerManageOffers.js';
+import ContractPDF from './contract.js';
+import SalesReport from './salesReport.js';
 import CheckoutLoader from './checkoutLoader.js';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -39,7 +39,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
-import { API_BASE_URL } from './api';
+import { API_BASE_URL } from './api.js';
 
 
 import { Document, Page, View, StyleSheet } from '@react-pdf/renderer';
