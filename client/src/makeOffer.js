@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
+import { API_BASE_URL } from './api';
 
 export default function MakeOffer(){
 const [ isOfferSent, SetIsOfferSent] = useState(null);
@@ -20,7 +21,7 @@ const customer_id =location.state?.customer_id;
 const [offerValue, setOfferValue] = useState("")
  console.log(car_image);
     const sendOffer = (customer_id, car_id, offer,status) => {
-        axios.post('http://localhost:5000/makeOffer',{customer_id, car_id, offer,status})
+        axios.post(`${API_BASE_URL}/makeOffer`,{customer_id, car_id, offer,status})
             .then(response => {
                 console.log('offer response:', response.data);
                 SetIsOfferSent(true)

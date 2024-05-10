@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link, useParams, useNavigate, u
 import axios from 'axios';
 import FinalizeFinance from "./financeFinalization";
 import './App.css';
+import { API_BASE_URL } from './api';
 
 export default function FinanceApp () {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ export default function FinanceApp () {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/receiveFinanceApp', formData)
+            const response = await axios.post('${API_BASE_URL}/receiveFinanceApp', formData)
             
             if (response.status === 200 || response.status === 201) {
               console.log("Response data: ", response.data);

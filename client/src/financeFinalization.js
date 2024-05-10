@@ -5,6 +5,7 @@ import axios from 'axios';
 import FinanceAgreementPDF from './financeAgreementPDF';
 import FinanceLoader from "./financeLoader";
 import './App.css';
+import { API_BASE_URL } from './api';
 
 export default function FinalizeFinance () {
     const location = useLocation();
@@ -41,7 +42,7 @@ export default function FinalizeFinance () {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:5000/add_to_cart', {
+            const response = await fetch(`${API_BASE_URL}/add_to_cart`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export default function FinalizeFinance () {
             if (response.status === 200 || response.status === 201) {
                 console.log('userData', userData)
 
-                const response2 = await fetch('http://localhost:5000/saveFinanceApplication', {
+                const response2 = await fetch(`${API_BASE_URL}/saveFinanceApplication`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

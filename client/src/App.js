@@ -39,6 +39,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from './img/logo.png'
+import { API_BASE_URL } from './api';
+
 
 import { Document, Page, View, StyleSheet } from '@react-pdf/renderer';
 import { use } from 'chai';
@@ -452,7 +454,7 @@ const CheckoutSuccess = () => {
   
     const formData = new FormData();
     formData.append("pdf", blob, "contract.pdf");
-    axios.post('/emailContract', formData, { params: { userEmail } })
+    axios.post(`${API_BASE_URL}/emailContract`, formData, { params: { userEmail } })
       .then(response => {
         alert(response.data);
       })
@@ -544,7 +546,7 @@ const Checkout = () => {
   useEffect(() => {
     const fetchBankAccounts = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/get_customer_bank_details?customer_id=${customer_id}`);
+        const response = await fetch(`${API_BASE_URL}/get_customer_bank_details?customer_id=${customer_id}`);
         if (!response.ok) throw new Error('Failed to fetch bank accounts');
         const data = await response.json();
         setBankAccounts(data.length ? data : []);
@@ -569,7 +571,7 @@ const Checkout = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch(`http://localhost:5000/get_cart_items/${customer_id}`);
+      const response = await fetch(`${API_BASE_URL}/get_cart_items/${customer_id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch cart items');
       }
@@ -579,7 +581,7 @@ const Checkout = () => {
         console.log(data.cart_items);
       }
 
-      const response2 = await fetch(`http://localhost:5000/preCheckout`, {
+      const response2 = await fetch(`${API_BASE_URL}/preCheckout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -589,7 +591,7 @@ const Checkout = () => {
         }),
       });
 
-      const response3 = await fetch(`http://localhost:5000/checkout/${customer_id}`, {
+      const response3 = await fetch(`${API_BASE_URL}/checkout/${customer_id}`, {
         method: 'DELETE'
       });
 
@@ -711,7 +713,7 @@ const Homepage = () => {
   }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
-    let url = 'http://localhost:5000/cars_details';
+    let url = `${API_BASE_URL}/cars_details`;
     let data;
   
     if (Object.keys(searchParams).length > 0) {
@@ -728,7 +730,6 @@ const Homepage = () => {
     setAllCars(data.cars);
     setTotalPages(data.total_pages);
     setCurrentPage(data.current_page);
-  
     // Check if any cars were found and set the message accordingly
     if (data.cars.length === 0) {
       alert("Sorry, no cars found with those filters")  // if no cars found, show this
@@ -942,7 +943,7 @@ const SignedInHomepage = ({setIsSignedIn}) => {
   }, [currentPage, searchParams]); 
 
   const fetchCars = async () => {
-    let url = 'http://localhost:5000/cars_details';
+    let url = `${API_BASE_URL}/cars_details`;
     let data;
   
     if (Object.keys(searchParams).length > 0) {
@@ -1148,7 +1149,7 @@ const Contract_View = () => {
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/view_finance_contract/${userData.customer_id}`);
+        const response = await fetch(`${API_BASE_URL}/view_finance_contract/${userData.customer_id}`);
         if (response.ok) {
           const data = await response.json();
           setContracts(data); 
@@ -1262,7 +1263,7 @@ const TestDriveHistory = () => {
 
   const fetchTestDriveHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/test_drive_appointments/${userData.customer_id}`);
+      const response = await fetch(`${API_BASE_URL}/test_drive_appointments/${userData.customer_id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
@@ -1347,7 +1348,7 @@ const OwnCar = () => {
   const handleSubmit = (e) => {
     e.preventDefault(); 
     
-    fetch(`http://localhost:5000/add_own_car/${userData.customer_id}`, {
+    fetch(`${API_BASE_URL}/add_own_car/${userData.customer_id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1380,7 +1381,7 @@ const OwnCar = () => {
   };
 
   const fetchCustomerCars = (customerId) => {
-    fetch(`http://localhost:5000/own_cars/${customerId}`)
+    fetch(`${API_BASE_URL}/own_cars/${customerId}`)
       .then((response) => response.json())
       .then((data) => {
         setCustomerCars(data.cars);
@@ -1399,7 +1400,7 @@ const OwnCar = () => {
 
 
   const handleRemoveCar = (carId) => {
-    fetch(`http://localhost:5000/delete_own_car/${carId}`, {
+    fetch(`${API_BASE_URL}/delete_own_car/${carId}`, {
       method: 'DELETE',
     })
       .then((response) => {
@@ -1523,7 +1524,7 @@ const ServiceHistory = () => {
 
   const fetchServiceHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/customer_service_requests/${userData.customer_id}`);
+      const response = await fetch(`${API_BASE_URL}/customer_service_requests/${userData.customer_id}`);
       const data = await response.json();
       setServiceHistory(data);
     } catch (error) {
@@ -1619,7 +1620,7 @@ const CustomerCart = () => {
 
   const fetchCartItems = async (customerId) => {
     try {
-      const response = await fetch(`http://localhost:5000/get_cart_items/${customerId}`);
+      const response = await fetch(`${API_BASE_URL}/get_cart_items/${customerId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch cart items');
       }
@@ -1645,7 +1646,7 @@ console.log("allcars", allCars);
 //modified to send  car_id also in order to delete the car along with it perks
   const handleRemoveItem = async (cartId,car_id,service_package_id) => {
     try {
-      const response = await fetch(`http://localhost:5000/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0')
+      const response = await fetch(`${API_BASE_URL}/delete_cart_item/${cartId}` + (car_id ? `/${car_id}` : '/0')
        +(service_package_id ? `/${service_package_id}` : '/0') + `/${customer_id}`, {
         method: 'DELETE',
       });
@@ -1771,7 +1772,7 @@ const CustomerSerivceAppointment = () => {
 
   // Fetch services from the endpoint
   useEffect(() => {
-    fetch('http://localhost:5000/services-offered', {
+    fetch(`${API_BASE_URL}/services-offered`, {
       method: 'GET',
     })
       .then(response => response.json())
@@ -1786,10 +1787,10 @@ const CustomerSerivceAppointment = () => {
   useEffect(() => {
     // Fetch VIN numbers from both endpoints and merge them
     Promise.all([
-      fetch(`http://localhost:5000/car_sold/${userData.customer_id}`, {
+      fetch(`${API_BASE_URL}/car_sold/${userData.customer_id}`, {
         method: 'GET',
       }).then(response => response.json()),
-      fetch(`http://localhost:5000/own_cars/${userData.customer_id}`, {
+      fetch(`${API_BASE_URL}/own_cars/${userData.customer_id}`, {
         method: 'GET',
       }).then(response => response.json()),
     ])
@@ -1826,7 +1827,7 @@ const CustomerSerivceAppointment = () => {
       proposed_datetime: formattedDate,
     };
     
-    fetch('http://localhost:5000/service-request', {
+    fetch(`${API_BASE_URL}/service-request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1953,7 +1954,7 @@ const PastPurchase = () => {
   useEffect(() => {
     const fetchItemsSold = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/items-sold/${userData?.customer_id}`);
+        const response = await fetch(`${API_BASE_URL}/items-sold/${userData?.customer_id}`);
         if (response.ok) {
           const data = await response.json();
           setItemsSold(data);
@@ -2069,7 +2070,7 @@ const CarAccessories = () => {
 
   const fetchAccessories = async (category) => {
     try {
-      const response = await fetch(`http://localhost:5000/accessories`, {
+      const response = await fetch(`${API_BASE_URL}/accessories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2087,7 +2088,7 @@ const CarAccessories = () => {
   const handleDeleteAccessory = async (accessoryID) => {
     console.log("the ID recieved: ", accessoryID) // testing that we recieved the accessory_id to be deleted
     try {
-      const response = await fetch(`http://localhost:5000/deleteAccessory`, {
+      const response = await fetch(`${API_BASE_URL}/deleteAccessory`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2109,7 +2110,7 @@ const CarAccessories = () => {
     try {
       // Add logic to send accessoryData to backend and handle addition
       console.log("Accessory data:", accessoryData); // Log the accessoryData
-      const response = await fetch(`http://localhost:5000/addAccessory`, {
+      const response = await fetch(`${API_BASE_URL}/addAccessory`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2137,7 +2138,7 @@ const CarAccessories = () => {
     try {
       // Add logic to send accessoryData to backend and handle cart
       console.log("Accessory data:", cartData); // Log the cartData
-      const response = await fetch(`http://localhost:5000/addAccessoryToCart`, {
+      const response = await fetch(`${API_BASE_URL}/addAccessoryToCart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2216,7 +2217,7 @@ const CarAccessories = () => {
       console.log("car stuiff", cartData.accessoire_id);
       if (cartData.customer_id && cartData.item_price && cartData.item_image && cartData.item_name && cartData.accessoire_id) {
         try {
-          const response = await fetch(`http://localhost:5000/addAccessoryToCart`, {
+          const response = await fetch(`${API_BASE_URL}/addAccessoryToCart`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -2260,7 +2261,7 @@ const CarAccessories = () => {
 
   useEffect(() => {
     // Fetch categories from the database
-    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+    axios.get(`${API_BASE_URL}/getAccessoryCategoryManager`)
       .then(response => {
         setCategories(response.data); // Assuming the response data is an array of categories
       })
@@ -2429,7 +2430,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
 
   const fetchBankInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/get-customer-bank_info/${userData?.customer_id}`);
+      const response = await fetch(`${API_BASE_URL}/get-customer-bank_info/${userData?.customer_id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch bank info');
       }
@@ -2458,7 +2459,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
 
   const handleBankInfoSubmission = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/add-customer-bank_info/${userData?.customer_id}`, {
+      const response = await fetch(`${API_BASE_URL}/add-customer-bank_info/${userData?.customer_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2477,7 +2478,7 @@ const CustomerModifyInfo = ({setIsSignedIn}) => {
 
   const handleEdit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/edit-customer/${userData?.customer_id}`, {
+      const response = await fetch(`${API_BASE_URL}/edit-customer/${userData?.customer_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -2624,7 +2625,7 @@ const Login = ({setIsSignedIn}) => {
     const userData = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch('http://localhost:5000/login_customer', {
+      const response = await fetch(`${API_BASE_URL}/login_customer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2676,7 +2677,7 @@ const Login = ({setIsSignedIn}) => {
     console.log('New Customer Data:', customerData);
 
     try {
-      const response = await fetch('http://localhost:5000/add_customer', {
+      const response = await fetch(`${API_BASE_URL}/add_customer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2815,17 +2816,17 @@ const Roles_login = () => {
       let nextPage = '';
       switch (role) {
         case 'Manager':
-          url = 'http://localhost:5000/login_managers';
+          url = `${API_BASE_URL}/login_managers`;
           setData = setManager;
-          nextPage = '/Manager';
+          nextPage = `/Manager`;
           break;
         case 'Admin':
-          url = 'http://localhost:5000/login_admin';
+          url = `${API_BASE_URL}/login_admin`;
           setData = setAdmin;
-          nextPage = '/admin';
+          nextPage = `/admin`;
           break;
         case 'Technicians':
-          url = 'http://localhost:5000/login_technicians';
+          url = `${API_BASE_URL}/login_technicians`;
           setData = setTech;
           nextPage = '/tech';
           break;
@@ -2970,7 +2971,7 @@ const HandleAddCars = ({managerId}) => {
   // function that sends the parsed data from the file to the backend
   const sendCars = (cars) => {
     console.log('Sending cars data to backend:', cars);   // ensure proper data is being sent beforehand
-    fetch('/add_cars_to_site', {
+    fetch(`${API_BASE_URL}/add_cars_to_site`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -3016,7 +3017,7 @@ const AssignTechnicians = () => {
   }, []);
 
   const fetchServiceRequests = () => {
-    axios.get('http://localhost:5000/get_upcoming_week_requests')
+    axios.get(`${API_BASE_URL}/get_upcoming_week_requests`)
       .then(response => {
         const { accepted_service_requests, assigned_service_requests } = response.data;
         setServiceRequests({ accepted: accepted_service_requests || [], assigned: assigned_service_requests || [] });
@@ -3036,7 +3037,7 @@ const AssignTechnicians = () => {
     setIsDateSelected(!!selectedRequest);
 
     if (selectedRequest) {
-      axios.get(`http://localhost:5000/get_available_technicians?date=${selectedRequest.date}`)
+      axios.get(`${API_BASE_URL}/get_available_technicians?date=${selectedRequest.date}`)
         .then(response => {
           setAvailableTechnicians(response.data);
         })
@@ -3055,7 +3056,7 @@ const AssignTechnicians = () => {
       return;
     }
 
-    axios.post('http://localhost:5000/assign_technicians', {
+    axios.post(`${API_BASE_URL}/assign_technicians`, {
       technician_id: selectedTechnician,
       service_request_id: selectedServiceRequest
     }).then(response => {
@@ -3163,7 +3164,7 @@ const Manager = () => {
 
   const getSalesReport = async () => {
     try{
-      const response = await axios.get('http://localhost:5000/getMonthlySales');
+      const response = await axios.get(`${API_BASE_URL}/getMonthlySales`);
       console.log(response.data);
       setSalesReport(response.data);
       console.log(salesReport);
@@ -3198,7 +3199,7 @@ const Manager = () => {
       status: 'Awaiting Customer Payment'
     };
   
-    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`${API_BASE_URL}/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3221,7 +3222,7 @@ const Manager = () => {
       service_offered_id: serviceRequest.service_offered_id,
       service_request_id: serviceRequest.service_request_id
     }
-    axios.post('http://localhost:5000/add_to_cart', formData)
+    axios.post(`${API_BASE_URL}/add_to_cart`, formData)
       .then(response => {
         // Handle success response
         alert('Service successfully added to cart');
@@ -3240,7 +3241,7 @@ const Manager = () => {
       status: 'declined'
     };
   
-    axios.patch(`http://localhost:5000/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
+    axios.patch(`${API_BASE_URL}/update_customer_service_requests/${serviceRequestId}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request declined:', response.data);
@@ -3252,7 +3253,7 @@ const Manager = () => {
   };
 
   const fetchServiceRequests = () => {
-    axios.get('http://localhost:5000/show_customer_service_requests/')
+    axios.get(`${API_BASE_URL}/show_customer_service_requests/`)
     .then(response => {
       setServiceRequests(response.data);
     })
@@ -3266,7 +3267,7 @@ const Manager = () => {
       status: 'accepted'
     };
   
-    axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+    axios.patch(`${API_BASE_URL}/update_test_drive_appointments/${appointment_id}`, updatedRequest)
       .then(response => {
         // Update UI if necessary
         console.log('Service request accepted:', response.data);
@@ -3282,7 +3283,7 @@ const Manager = () => {
         status: 'declined'
       };
     
-      axios.patch(`http://localhost:5000/update_test_drive_appointments/${appointment_id}`, updatedRequest)
+      axios.patch(`${API_BASE_URL}/update_test_drive_appointments/${appointment_id}`, updatedRequest)
         .then(response => {
           // Update UI if necessary
           console.log('Service request declined:', response.data);
@@ -3294,7 +3295,7 @@ const Manager = () => {
   };
   
   const fetchTestDriveRequests = () => {
-    axios.get('http://localhost:5000/show_test_drive_appointments')
+    axios.get(`${API_BASE_URL}/show_test_drive_appointments`)
         .then(response => {
           setTestDriveRequests(response.data);
         })
@@ -3311,7 +3312,7 @@ const Manager = () => {
       manager_id: userData.manager_id 
     };
   
-    axios.post('http://localhost:5000/add_technician', formData)
+    axios.post(`${API_BASE_URL}/add_technician`, formData)
     .then(response => {
       console.log('Technician added successfully');
       alert('Technician added successfully'); // Display success alert
@@ -3337,7 +3338,7 @@ const Manager = () => {
     }
     console.log("the car id is", removeCarFormData.car_id);
     try {
-        const response = await fetch(`http://localhost:5000/remove_car`, {
+        const response = await fetch(`${API_BASE_URL}/remove_car`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -3370,7 +3371,7 @@ const Manager = () => {
     }
     console.log("the accessory id is", accessory_ID);
     try {
-        const response = await fetch(`http://localhost:5000/deleteAccessoryManager`, {
+        const response = await fetch(`${API_BASE_URL}/deleteAccessoryManager`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -3404,7 +3405,7 @@ const Manager = () => {
     console.log("the car id is", accessoryData.image);
     console.log("the car id is", accessoryData.category);
     try {
-        const response = await fetch(`http://localhost:5000/addAccessory`, {
+        const response = await fetch(`${API_BASE_URL}/addAccessory`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -3451,50 +3452,6 @@ const Manager = () => {
   const handleCreateTechnician = () => {
     setShowTechnicianForm(true);
   };
-
-  // this is the function to add the service to the users cart when the service is accepted by a manager
-  // const acceptService = e => {
-  //   e.preventDefault();
-  //   const formattedDate = `${selectedDate} ${selectedTime}:00`;
-
-  //   const formData = {
-  //     customer_ID: userData.customer_id,
-  //     service_offered: selectedService,
-  //     car_id: vinNumber,
-  //     proposed_datetime: formattedDate,
-  //   };
-    
-  //   fetch('http://localhost:5000/service-request', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(formData),
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log(data);
-  //       setEditMessage('Submission went through');
-  //       setTimeout(() => {
-  //         setEditMessage(null);
-  //       }, 4000);
-  //       resetForm();
-  //     })
-  //     .catch(error => {
-  //       console.error('Error:', error);
-  //       setEditMessage('Submission did not go through');
-  //       setTimeout(() => {
-  //         setEditMessage(null);
-  //       }, 4000);
-  //     });
-
-  //   const resetForm = () => {
-  //     setSelectedService('');
-  //     setSelectedDate('');
-  //     setSelectedTime('');
-  //     setVinNumber('');
-  //   };
-  // };
 
   // ensures that when a button is clicked, only the relevant information of that button is shown
   const handleButtonClick = (section) => {
@@ -3609,7 +3566,7 @@ const Manager = () => {
 
   useEffect(() => {
     // Fetch categories from the database
-    axios.get('http://localhost:5000/getAccessoryCategoryManager')
+    axios.get(`${API_BASE_URL}/getAccessoryCategoryManager`)
       .then(response => {
         setCategories(response.data); // Assuming the response data is an array of categories
       })
@@ -3626,7 +3583,7 @@ const Manager = () => {
 
   const fetchAccessories = async (category) => {
     try {
-      const response = await fetch(`http://localhost:5000/accessories`, {
+      const response = await fetch(`${API_BASE_URL}/accessories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3644,7 +3601,7 @@ const Manager = () => {
   const handleDeleteAccessory = async (accessoryID) => {
     console.log("the ID recieved: ", accessoryID) // testing that we recieved the accessory_id to be deleted
     try {
-      const response = await fetch(`http://localhost:5000/deleteAccessory`, {
+      const response = await fetch(`${API_BASE_URL}/deleteAccessory`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3674,7 +3631,7 @@ const Manager = () => {
 
   useEffect(() => {
     // Fetch car make from the database
-    axios.get('http://localhost:5000/getCarMakeManager')
+    axios.get(`${API_BASE_URL}/getCarMakeManager`)
       .then(response => {
         setCarMakers(response.data); // Assuming the response data is an array of car makers
       })
@@ -3691,7 +3648,7 @@ const Manager = () => {
 
   const fetchCarMake = async (carMake) => {
     try {
-      const response = await fetch(`http://localhost:5000/fetchCarByMake`, {
+      const response = await fetch(`${API_BASE_URL}/fetchCarByMake`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3709,7 +3666,7 @@ const Manager = () => {
   const handleDeleteCar = async (carID) => {
     console.log("the ID recieved: ", carID) // testing that we recieved the accessory_id to be deleted
     try {
-      const response = await fetch(`http://localhost:5000/deleteCarManager`, {
+      const response = await fetch(`${API_BASE_URL}/deleteCarManager`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3729,16 +3686,6 @@ const Manager = () => {
     }
   };
 
-  // useEffect(() => {
-  //   // Fetch car models from the database
-  //   axios.get('http://localhost:5000/getCarModelManager')
-  //     .then(response => {
-  //       setCarModels(response.data); // Assuming the response data is an array of car models
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching categories:', error);
-  //     });
-  // }, []);
 
 
   return (
@@ -4209,7 +4156,7 @@ const Admin = () => {
       admin_id: userData.admin_id
     };
   
-    axios.post('/add_technician', formData)
+    axios.post(`${API_BASE_URL}/add_technician`, formData)
       .then(response => {
         console.log('Technician added successfully');
         alert('Technician account created successfully!');  // display an alert on success
@@ -4240,7 +4187,7 @@ const Admin = () => {
       admin_id: userData.admin_id
     };
 
-    axios.post('/add_manager', formData)
+    axios.post(`${API_BASE_URL}/add_manager`, formData)
       .then(response => {
         console.log('Manager added successfully');
         alert('Manager account created successfully!');  // display an alert on success
@@ -4504,7 +4451,7 @@ const Technician = () => {
     try {
         
         console.log("assigned service id", service.assigned_service_id);
-        const response = await axios.get(`http://localhost:5000/view_customer_service_details/${service.assigned_service_id}`);
+        const response = await axios.get(`${API_BASE_URL}/view_customer_service_details/${service.assigned_service_id}`);
 
        
         const details = response.data;
@@ -4534,7 +4481,7 @@ const handleSubmitReport = () => {
 const sendSubmitReport = (reportValue, statusValue, service_request_id ,assignedServiceId) => {
   // Perform an HTTP request to send the report value and assigned_service_id to the backend
   // Example using Fetch API:
-  fetch('http://localhost:5000/submitReport', {
+  fetch(`${API_BASE_URL}/submitReport`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -4559,7 +4506,7 @@ const sendSubmitReport = (reportValue, statusValue, service_request_id ,assigned
   });
 };
   const fetchAssignedServices = () => {
-    axios.get(`http://localhost:5000/show_assigned_services/${userData.technicians_id}`)
+    axios.get(`${API_BASE_URL}/show_assigned_services/${userData.technicians_id}`)
       .then(response => {
         console.log(response.data); 
         setAssignedServices(response.data);

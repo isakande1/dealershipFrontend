@@ -11,6 +11,7 @@ import TestDriveForm from './TestDriveForm';
 import FinanceApp from './financeApp';
 import PageLoader from './pageLoader';
 import './App.css';
+import { API_BASE_URL } from './api';
 
 
 export default function CarDetails() {
@@ -24,7 +25,7 @@ export default function CarDetails() {
     useEffect(() => {
       const timeoutId = setTimeout(() => {
         setLoaderVisible(false);
-      }, 800);
+      }, 500);
     
       // Cleanup function to clear the timeout when the component unmounts
       return () => clearTimeout(timeoutId);
@@ -34,7 +35,7 @@ export default function CarDetails() {
     useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/getCarInfos?car_id=${car_id}`);
+                const response = await fetch(`${API_BASE_URL}/getCarInfos?car_id=${car_id}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch the car detail');
                 }
@@ -176,7 +177,7 @@ const redirectNotLoggedIn = (userData ) =>{
             redirectNotLoggedIn(userData);
           try {
             // Send data to endpoint
-            const response = await fetch('http://localhost:5000/add_to_cart', {
+            const response = await fetch(`${API_BASE_URL}/add_to_cart`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

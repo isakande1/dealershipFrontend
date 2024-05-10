@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
+import { API_BASE_URL } from './api';
 
 export default function FinanceLoader({ messages }) {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);

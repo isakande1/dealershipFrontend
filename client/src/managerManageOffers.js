@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
+import { API_BASE_URL } from './api';
 
 export default function ManageOffersManager(){
     const [fetchedData,setFetchedData] = useState([]);
@@ -17,7 +18,7 @@ export default function ManageOffersManager(){
  
    
     const fetchOffers =()=>{
-    axios.post('/fetchOffersManager',{category} )
+    axios.post(`${API_BASE_URL}/fetchOffersManager`,{category} )
     .then( (response) =>{
         setFetchedData(response.data);
         // console.log("data fetched", response.data)
@@ -33,7 +34,7 @@ export default function ManageOffersManager(){
 }, [category,status]);
 
 const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=>{
-    axios.post('/acceptOffer',{customer_id,offer_id,car_id,offer_price,car_name,car_image} )
+    axios.post(`${API_BASE_URL}/acceptOffer`,{customer_id,offer_id,car_id,offer_price,car_name,car_image} )
     .then( (response) =>{
         setStatus((prev)=>!prev);
     }
@@ -44,7 +45,7 @@ const acceptOffer =(customer_id,offer_id,car_id,offer_price,car_name,car_image)=
 };
     const rejectOffer =(offer_id)=>{
         console.log("data smalle fetched", offer_id)
-        axios.post('/rejectOffer',{offer_id} )
+        axios.post(`${API_BASE_URL}/rejectOffer`,{offer_id} )
         .then( (response) =>{
             setStatus((prev)=>!prev);
         }

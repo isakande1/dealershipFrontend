@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page,  View, StyleSheet,  Text } from '@react-pdf/renderer';
+import { API_BASE_URL } from './api';
 
 
  export default function ContractPDF({ isPaided, customerSignature, allCars,userData }){

@@ -8,6 +8,8 @@ import {
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import {flushSync, unstable_batchedUpdates} from 'react-dom';
 import axios, { all } from 'axios';
+import { API_BASE_URL } from './api';
+
 
 export default function Addons(){
     const location = useLocation();
@@ -32,7 +34,7 @@ export default function Addons(){
 
     //fetch the service packages
     const fetchPackages = () => {
-      axios.get('http://localhost:5000/ServicesPackage')
+      axios.get(`${API_BASE_URL}/ServicesPackage`)
         .then(response => {
          // console.log('services package cars:', response.data);
           setAllpackagesInfos(response.data);
@@ -54,7 +56,7 @@ export default function Addons(){
       return;
     }
     //console.log("packages",packages);
-      axios.post('http://localhost:5000/addtoCartAndOwnedService', { customer_id , packages, car_id})
+      axios.post(`${API_BASE_URL}/addtoCartAndOwnedService`, { customer_id , packages, car_id})
         .then(()=> {
           navigate('/Cart', { state: { userData } }) ;
         })

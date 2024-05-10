@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { FaTimes, FaCheck, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
-
+import { API_BASE_URL } from './api';
 
 export default function FinanceReport () {
    const [fetchedReport, setFetchedReport] = useState([]);
@@ -15,7 +15,7 @@ export default function FinanceReport () {
    useEffect(() => {
       const financereport = async () => {
         try {
-          const response = await fetch('/fetchFinance',{method : 'POST'});
+          const response = await fetch(`${API_BASE_URL}/fetchFinance`,{method : 'POST'});
           if (response.ok) {
             const data = await response.json();
             setFetchedReport(data.finances);

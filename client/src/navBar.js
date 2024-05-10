@@ -3,7 +3,7 @@ import {
   Center, Text, Heading, Box, HStack, Flex, Grid, Button, Input, Td, Tr, Tbody, Table, Th, Thead, FormControl, Alert, FormLabel,
   AlertIcon, VStack, Menu, MenuItem, MenuList, MenuButton, Icon, Image
 } from "@chakra-ui/react";
-
+import { API_BASE_URL } from './api';
 
 export default function NavBar({isSignedIn}){
 const location = useLocation();
